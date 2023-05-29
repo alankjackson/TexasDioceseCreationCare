@@ -1,0 +1,33 @@
+---
+title: "Read_Convocations"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Read convocation coordinate file
+
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+```
+
+##  Read the data
+
+```{r read data in (and save it)}
+
+foo <- rvest::read_html(paste0(path, "Convocations.dat"))
+
+foo <- xml2::read_html(paste0(path, "Convocations.dat"))
+
+foo <- sf::st_read(paste0(path, "The Episcopal Diocese of Texas.kml"))
+
+```
+
+
+##  Plot the data
+
