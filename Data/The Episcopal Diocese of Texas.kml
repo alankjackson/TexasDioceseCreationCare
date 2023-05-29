@@ -1,0 +1,2930 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>The Episcopal Diocese of Texas</name>
+    <description>Episcopal Churches in the Diocese of Texas</description>
+    <Style id="icon-503-4186F0-normal">
+      <IconStyle>
+        <color>fff08641</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-4186F0-highlight">
+      <IconStyle>
+        <color>fff08641</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-4186F0">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-4186F0-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-4186F0-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-62AF44-normal">
+      <IconStyle>
+        <color>ff44af62</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-62AF44-highlight">
+      <IconStyle>
+        <color>ff44af62</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-62AF44">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-62AF44-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-62AF44-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-795046-normal">
+      <IconStyle>
+        <color>ff465079</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-795046-highlight">
+      <IconStyle>
+        <color>ff465079</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-795046">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-795046-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-795046-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-7C3592-normal">
+      <IconStyle>
+        <color>ff92357c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-7C3592-highlight">
+      <IconStyle>
+        <color>ff92357c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-7C3592">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-7C3592-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-7C3592-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-7C3592-nodesc-normal">
+      <IconStyle>
+        <color>ff92357c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-503-7C3592-nodesc-highlight">
+      <IconStyle>
+        <color>ff92357c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-503-7C3592-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-7C3592-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-7C3592-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-7CCFA9-normal">
+      <IconStyle>
+        <color>ffa9cf7c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-7CCFA9-highlight">
+      <IconStyle>
+        <color>ffa9cf7c</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-7CCFA9">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-7CCFA9-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-7CCFA9-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-93D7E8-normal">
+      <IconStyle>
+        <color>ffe8d793</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-93D7E8-highlight">
+      <IconStyle>
+        <color>ffe8d793</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-93D7E8">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-93D7E8-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-93D7E8-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-93D7E8-nodesc-normal">
+      <IconStyle>
+        <color>ffe8d793</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-503-93D7E8-nodesc-highlight">
+      <IconStyle>
+        <color>ffe8d793</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-503-93D7E8-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-93D7E8-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-93D7E8-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-D698AD-normal">
+      <IconStyle>
+        <color>ffad98d6</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-D698AD-highlight">
+      <IconStyle>
+        <color>ffad98d6</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-D698AD">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-D698AD-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-D698AD-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-DB4436-normal">
+      <IconStyle>
+        <color>ff3644db</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-DB4436-highlight">
+      <IconStyle>
+        <color>ff3644db</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-DB4436">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-DB4436-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-DB4436-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-F4EB37-normal">
+      <IconStyle>
+        <color>ff37ebf4</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-F4EB37-highlight">
+      <IconStyle>
+        <color>ff37ebf4</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-F4EB37">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-F4EB37-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-F4EB37-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-F8971B-normal">
+      <IconStyle>
+        <color>ff1b97f8</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-503-F8971B-highlight">
+      <IconStyle>
+        <color>ff1b97f8</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-503-F8971B">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-F8971B-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-F8971B-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-503-F8971B-nodesc-normal">
+      <IconStyle>
+        <color>ff1b97f8</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-503-F8971B-nodesc-highlight">
+      <IconStyle>
+        <color>ff1b97f8</color>
+        <scale>1.1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1.1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-503-F8971B-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-503-F8971B-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-503-F8971B-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-009D57-3000-89-nodesc-normal">
+      <LineStyle>
+        <color>ff579d00</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59579d00</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-009D57-3000-89-nodesc-highlight">
+      <LineStyle>
+        <color>ff579d00</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59579d00</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-009D57-3000-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-009D57-3000-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-009D57-3000-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-0BA9CC-3000-115-nodesc-normal">
+      <LineStyle>
+        <color>ffcca90b</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73cca90b</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-0BA9CC-3000-115-nodesc-highlight">
+      <LineStyle>
+        <color>ffcca90b</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73cca90b</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-0BA9CC-3000-115-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-0BA9CC-3000-115-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-0BA9CC-3000-115-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-333399-3000-89-nodesc-normal">
+      <LineStyle>
+        <color>ff993333</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59993333</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-333399-3000-89-nodesc-highlight">
+      <LineStyle>
+        <color>ff993333</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59993333</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-333399-3000-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-333399-3000-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-333399-3000-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-3366FF-3000-115-nodesc-normal">
+      <LineStyle>
+        <color>ffff6633</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ff6633</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-3366FF-3000-115-nodesc-highlight">
+      <LineStyle>
+        <color>ffff6633</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ff6633</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-3366FF-3000-115-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-3366FF-3000-115-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-3366FF-3000-115-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-33CC00-3000-89-nodesc-normal">
+      <LineStyle>
+        <color>ff00cc33</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5900cc33</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-33CC00-3000-89-nodesc-highlight">
+      <LineStyle>
+        <color>ff00cc33</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5900cc33</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-33CC00-3000-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-33CC00-3000-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-33CC00-3000-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-66FFFF-3000-115-nodesc-normal">
+      <LineStyle>
+        <color>ffffff66</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ffff66</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-66FFFF-3000-115-nodesc-highlight">
+      <LineStyle>
+        <color>ffffff66</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>73ffff66</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-66FFFF-3000-115-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-66FFFF-3000-115-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-66FFFF-3000-115-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-795046-2801-89-nodesc-normal">
+      <LineStyle>
+        <color>ff465079</color>
+        <width>2.801</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59465079</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-795046-2801-89-nodesc-highlight">
+      <LineStyle>
+        <color>ff465079</color>
+        <width>4.2015</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59465079</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-795046-2801-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-795046-2801-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-795046-2801-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-CC66CC-3000-89-nodesc-normal">
+      <LineStyle>
+        <color>ffcc66cc</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59cc66cc</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-CC66CC-3000-89-nodesc-highlight">
+      <LineStyle>
+        <color>ffcc66cc</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>59cc66cc</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-CC66CC-3000-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-CC66CC-3000-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-CC66CC-3000-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-F4B400-3801-87-nodesc-normal">
+      <LineStyle>
+        <color>ff00b4f4</color>
+        <width>3.801</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5700b4f4</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-F4B400-3801-87-nodesc-highlight">
+      <LineStyle>
+        <color>ff00b4f4</color>
+        <width>5.7015</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5700b4f4</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-F4B400-3801-87-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-F4B400-3801-87-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-F4B400-3801-87-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-FF6666-3000-115-nodesc-normal">
+      <LineStyle>
+        <color>ff6666ff</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>736666ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-FF6666-3000-115-nodesc-highlight">
+      <LineStyle>
+        <color>ff6666ff</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>736666ff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-FF6666-3000-115-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-FF6666-3000-115-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-FF6666-3000-115-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="poly-FFFF99-3000-89-nodesc-normal">
+      <LineStyle>
+        <color>ff99ffff</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5999ffff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="poly-FFFF99-3000-89-nodesc-highlight">
+      <LineStyle>
+        <color>ff99ffff</color>
+        <width>4.5</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>5999ffff</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="poly-FFFF99-3000-89-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-FFFF99-3000-89-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-FFFF99-3000-89-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Folder>
+      <name>EDOT</name>
+      <Placemark>
+        <name>East Harris Convocation</name>
+        <styleUrl>#poly-66FFFF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.4182201,29.8802883,0
+                -95.3804544,29.8266917,0
+                -95.3735869,29.7921358,0
+                -95.3804535,29.7641247,0
+                -95.4099789,29.7277584,0
+                -95.4491169,29.729547,0
+                -95.4586151,29.6733829,0
+                -95.4819605,29.6339986,0
+                -95.358364,29.5874369,0
+                -95.2100485,29.6053496,0
+                -95.1441299,29.5587733,0
+                -95.0905724,29.5898279,0
+                -94.9367146,29.5630367,0
+                -94.7884479,29.5241291,0
+                -94.9298989,29.6721946,0
+                -94.9051809,29.7437629,0
+                -94.9216619,29.8784087,0
+                -95.0013133,29.9188848,0
+                -95.0617386,29.9438772,0
+                -95.0809654,30.004547,0
+                -95.2045597,29.8998366,0
+                -95.2951964,29.8855486,0
+                -95.3350233,29.9545832,0
+                -95.4476331,29.947443,0
+                -95.4182201,29.8802883,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Christ Church Cathedral</name>
+        <description><![CDATA[Christ Church Cathedral<br>1117 Texas Avenue<br>Houston, TX 77002-3113<br>(713) 222-2593<br>christchurchcathedral.org (http://christchurchcathedral.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.361327,29.75995,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Episcopal Church of the Redeemer</name>
+        <description><![CDATA[Meets at Evangelical Lutheran Church of the Redeemer<br>5700 Lawndale Houston, TX 77023<br>Phone (713) 928-3221<br>http://redeemerhouston.org/]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.316716,29.726502,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Grace Episcopal Church and School</name>
+        <description><![CDATA[4040 West Bellfort Street<br>Houston, TX 77025<br>(713) 666-1408<br>graceinhouston.org (http://graceinhouston.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.443154,29.673822,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Lord of the Streets Episcopal Church</name>
+        <description><![CDATA[Lord of the Streets Episcopal Church<br>3401 Fannin Street<br>Houston, TX 77004-3806<br>(713) 526-0311<br>lordofthestreets.org (http://lordofthestreets.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.37703,29.739488,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Palmer Memorial Episcopal Church</name>
+        <description><![CDATA[6221 Main Street<br>Houston, TX 77030-1506<br>(713) 529-6196<br>palmerchurch.org (http://palmerchurch.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.396779,29.715999,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Alban's Episcopal Church]]></name>
+        <description><![CDATA[420 Woodard Street<br>Houston, TX 77009-1824<br>(713) 692-3080<br>stalbanshouston.org (http://stalbanshouston.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.366135,29.810859,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. James' Episcopal Church]]></name>
+        <description><![CDATA[3129 Southmore Boulevard<br>Houston, TX 77004-6214<br>(713) 526-9571<br>stjameshouston.org (http://stjameshouston.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.367912,29.717536,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[815 South Broadway Street<br>La Porte, TX 77571-5323<br>(281) 471-0383<br>stjohns-laporte.org (http://stjohns-laporte.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.018767,29.655761,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Luke the Evangelist Episcopal Church</name>
+        <description><![CDATA[3530 Wheeler Street<br>Houston, TX 77004-5527<br>(713) 748-5974]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.356522,29.720259,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mark's Episcopal Church]]></name>
+        <description><![CDATA[3816 Bellaire Boulevard<br>Houston, TX 77025-1209<br>(713) 664-3466<br>stmarks-houston.org (http://stmarks-houston.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.437963,29.706272,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[7843 Park Place Blvd.<br>Houston, TX 77087-4639<br>(713) 645-5031]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.281873,29.685535,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Peter's/ San Pedro Episcopal Church]]></name>
+        <description><![CDATA[705 Williams Street<br>Pasadena, TX 77506-3639<br>(713) 473-8090<br>stpeterspasadena.org (http://stpeterspasadena.org)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.198822,29.701618,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Timothy's Episcopal Church]]></name>
+        <description><![CDATA[13125 Indianapolis Street<br>Houston, TX 77015-3600<br>(713) 451-2909<br>sttimhouston.com (http://sttimhouston.com)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.193822,29.784393,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[5010 North Main Street<br>Baytown, TX 77521<br>(281) 421-0090<br>trinitybaytown.org]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -94.963181,29.779154,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[1015 Holman St<br>Houston, Texas 77004<br>(713) 528-4100<br>trinitychurchhouston.net (http://trinitychurchhouston.net)]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -95.378076,29.739871,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>West Harris Convocation</name>
+        <styleUrl>#poly-3366FF-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.53299,29.941845,0
+                -95.61927,29.94045,0
+                -95.66322,29.8726,0
+                -95.89119,30.0035,0
+                -95.84449,29.78682,0
+                -95.85685,29.70455,0
+                -95.56446,29.6623,0
+                -95.48275,29.63305,0
+                -95.45871,29.67005,0
+                -95.45116,29.71061,0
+                -95.44979,29.7297,0
+                -95.40996,29.72731,0
+                -95.38936,29.75116,0
+                -95.37906,29.76547,0
+                -95.37288,29.79288,0
+                -95.3764017,29.8114253,0
+                -95.381985,29.8284809,0
+                -95.3972003,29.8509112,0
+                -95.41603,29.87736,0
+                -95.44761,29.94759,0
+                -95.53299,29.941845,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Ascension Episcopal School</name>
+        <description><![CDATA[2525 Seagler Road<br>Houston, TX 77042-3194<br>(713) 783-0260<br>ascensionepiscopalschool.org (http://ascensionepiscopalschool.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.552584,29.739135,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ the King Episcopal Church</name>
+        <description><![CDATA[15325 Bellaire Boulevard<br>Houston, TX 77083-3110<br>(281) 933-6800<br>ckec.us (http://ckec.us)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.657193,29.699749,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Emmanuel Episcopal Church</name>
+        <description><![CDATA[3785 Barker Cypress Rd.<br>Houston, TX 77084<br>(281) 493-3161<br>emmanuel-houston.org (http://emmanuel-houston.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.6881203,29.8263039,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Epiphany Episcopal Church</name>
+        <description><![CDATA[9600 S. Gessner Dr.<br>Houston, TX 77071-1002<br>(713) 774-9619<br>epiphany-hou.org (http://epiphany-hou.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.527999,29.676065,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Apostles Episcopal Church</name>
+        <description><![CDATA[1225 W. Grand Pkwy. S.<br>Katy, TX 77494-8283<br>(281) 392-3310<br>holyapostles.cc (http://holyapostles.cc)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.774002,29.761993,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Spirit Episcopal Church and School</name>
+        <description><![CDATA[12535 Perthshire Road<br>Houston, TX 77024-4106<br>(713) 468-5138<br>hses.org (http://hses.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.551332,29.774395,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Hope Episcopal Church</name>
+        <description><![CDATA[Hope Episcopal Church<br>1613 West 43rd Street<br>Houston, TX 77018<br>(713) 681-6422<br>hope-episcopal.org (http://hope-episcopal.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.440072,29.829946,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>San Mateo Episcopal Church</name>
+        <description><![CDATA[6635 Alder Drive<br>Houston, TX 77081-5201<br>(713) 664-7792<br>iglesiasanmateo.org (http://www.iglesiasanmateo.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.480804,29.708332,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Santa Maria Virgen Episcopal Church</name>
+        <description><![CDATA[9600 Huntington Place Dr.<br>Houston, TX 77099-2316<br>(281) 879-6000]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.598907,29.672542,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Andrew's Episcopal Church]]></name>
+        <description><![CDATA[1819 Heights Boulevard<br>Houston, TX 77008-4025<br>(713) 861-5596<br>saintandrewsepiscopal.org (http://saintandrewsepiscopal.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.398097,29.802422,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Christopher's Episcopal Church]]></name>
+        <description><![CDATA[1656 Blalock Road<br>Houston, TX 77080-7321<br>(713) 465-6015<br>stchristophers-houston.org (http://stchristophers-houston.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.523932,29.803341,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St Francis Episcopal Church</name>
+        <description><![CDATA[345 Piney Point Road<br>Houston, TX 77024-6505<br>(713) 782-1270<br>sfch.org (http://sfch.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.51743,29.759355,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>The Church of St John the Divine</name>
+        <description><![CDATA[2450 River Oaks Boulevard<br>Houston, TX 77019-5826<br>(713) 622-3600<br>sjd.org (http://sjd.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.427242,29.743309,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Martin's Episcopal Church]]></name>
+        <description><![CDATA[717 Sage Road<br>Houston, TX 77056-2111<br>(713) 621-3040<br>stmartinsepiscopal.org (http://stmartinsepiscopal.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.465945,29.760168,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St Paul's Episcopal Church]]></name>
+        <description><![CDATA[5373 Franz Rd<br>Katy, TX 77493<br>(281) 391-2785<br>stpaulskaty.org (http://stpaulskaty.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.816144,29.801242,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Stephen's Episcopal Church]]></name>
+        <description><![CDATA[1805 West Alabama Street<br>Houston, TX 77098-2601<br>(713) 528-6665<br>ststephenshouston.org (http://ststephenshouston.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.40492,29.738101,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Thomas' Episcopal Church & School]]></name>
+        <description><![CDATA[4900 Jackwood Street<br>Houston, TX 77096-1505<br>(713) 666-3111<br>stes.org (http://stes.org)]]></description>
+        <styleUrl>#icon-503-4186F0</styleUrl>
+        <Point>
+          <coordinates>
+            -95.464877,29.685475,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>San Jacinto Convocation</name>
+        <styleUrl>#poly-FFFF99-3000-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.8786012,30.0027156,0
+                -95.662994,29.873595,0
+                -95.621796,29.937879,0
+                -95.333404,29.954538,0
+                -95.292206,29.883121,0
+                -95.201569,29.89979,0
+                -95.080719,30.002121,0
+                -94.924393,30.071273,0
+                -94.938126,30.268359,0
+                -94.980698,30.362014,0
+                -94.604416,30.344238,0
+                -94.641495,30.942084,0
+                -94.516525,30.999781,0
+                -94.839249,31.069207,0
+                -95.394058,30.878458,0
+                -95.497055,30.975058,0
+                -95.535507,31.116247,0
+                -95.654983,31.043326,0
+                -95.892563,30.90792,0
+                -95.830765,30.093851,0
+                -95.9074671,30.1280723,0
+                -95.8930308,30.064504,0
+                -95.8786012,30.0027156,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Christ the King Episcopal Church</name>
+        <description><![CDATA[19330 Pinehurst Trail Drive<br>Humble, TX 77346<br>(281) 852-1990<br>ctkatascocita.com]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.151341,30.001032,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Good Shepherd Episcopal Church</name>
+        <description><![CDATA[2929 Woodland Hills Drive<br>Kingwood, TX 77339<br>(281) 358-3154<br>goodshepherdkingwood.org]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.213906,30.055471,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Good Shepherd Episcopal Church</name>
+        <description><![CDATA[715 Farm to Market 2920<br>Tomball, TX 77375-4808<br>(281) 351-1609<br>goodshepherdtomball.org (http://goodshepherdtomball.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.604915,30.101075,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Comforter Episcopal Church</name>
+        <description><![CDATA[2322 Spring Cypress Road<br>Spring, TX 77388<br>(281) 288-8169<br>holycomforterspring.org]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.451643,30.067673,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Aidan's Episcopal Church]]></name>
+        <description><![CDATA[13131 Fry Road<br>Cypress, TX 77433<br>(281) 373-3203<br>staidanshouston.org (http://staidanshouston.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.702859,29.969128,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Cuthbert's Episcopal Church]]></name>
+        <description><![CDATA[17020 West Rd.<br>Houston, TX 77095-5578<br>(281) 463-7330<br>stcuthbert.org (http://stcuthbert.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.667931,29.906319,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[Saint Dunstan's Episcopal Church]]></name>
+        <description><![CDATA[Saint Dunstan's Episcopal Church<br>14301 Stuebner Airline Road<br>Houston, TX 77069<br>(281) 440-0904<br>saintdunstans.org (http://www.saintdunstans.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.501404,29.990029,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Luke's Episcopal Church]]></name>
+        <description><![CDATA[836 West Jones Street<br>Livingston, TX 77351-2721<br>(936) 653-5404<br>stlukeslivingston.org (http://stlukeslivingston.org/)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -94.941101,30.713504,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. James the Apostle Episcopal Church</name>
+        <description><![CDATA[1803 Highland Hollow Drive<br>Conroe, TX 77304-4092<br>(936) 756-8831<br>stjames-conroe.org (http://stjames-conroe.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.522003,30.34325,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mary's Episcopal Church]]></name>
+        <description><![CDATA[15415 North Eldridge Parkway<br>Cypress, TX 77429-2005<br>(281) 370-8000<br>stmaryscypress.org (http://stmaryscypress.org)]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.614626,29.99737,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Stephen's Episcopal Church]]></name>
+        <description><![CDATA[5019 Sam Houston Ave<br>Huntsville, TX 77340<br>(936) 295-7226<br>ststephens1.org]]></description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.532308,30.699601,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description>http://trinitywoodlands.org/</description>
+        <styleUrl>#icon-503-F4EB37</styleUrl>
+        <Point>
+          <coordinates>
+            -95.498564,30.154315,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Southwest Convocation</name>
+        <styleUrl>#poly-333399-3000-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -96.6408048,29.6757287,0
+                -96.4018518,29.1757497,0
+                -96.3991048,29.1661577,0
+                -96.4540368,29.1253777,0
+                -96.2590298,28.8923827,0
+                -96.3633998,28.4006667,0
+                -96.3386808,28.4175777,0
+                -95.4130818,28.8683327,0
+                -95.0834927,29.1157797,0
+                -95.1961017,29.2117157,0
+                -95.3554037,29.4415957,0
+                -95.3581507,29.5873957,0
+                -95.5629998,29.6616087,0
+                -95.8568838,29.7057527,0
+                -95.8637508,29.6818937,0
+                -95.8843498,29.6341577,0
+                -95.9392818,29.5840117,0
+                -96.2620048,29.6293837,0
+                -96.2963368,29.7141017,0
+                -96.6408048,29.6757287,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>All Saints Episcopal Church</name>
+        <description><![CDATA[605 Dulles Avenue<br>Stafford, TX 77477<br>(281) 499-9602<br>allsaintsstafford.com]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.582057,29.619387,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Calvary Episcopal Church</name>
+        <description><![CDATA[806 Thompson Road<br>Richmond, TX 77469-3334<br>(281) 342-2147<br>calvaryrichmond.org (http://calvaryrichmond.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.767136,29.575249,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[306 East Stockbridge Street<br>Eagle Lake, TX 77434<br>(979) 234-3437]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -96.330872,29.588983,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[675 Cypress<br>Matagorda, TX 77457<br>(979) 863-7239]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.966949,28.691792,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Comforter Episcopal Church</name>
+        <description><![CDATA[227 South Chenango Street<br>Angleton, TX 77515<br>(979) 849-1269<br>holycomforterangleton.org]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.42986,29.162819,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Cross Episcopal Church</name>
+        <description>Sugar Land, TX 77479</description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.63736,29.577637,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St Catherine-Sienna</name>
+        <description><![CDATA[4747 Sienna Parkway<br>Missouri City, TX 77459-6052<br>(281) 778-2046<br>siennachurch.org (http://siennachurch.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.531616,29.526865,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[3rd & Main Street<br>Palacios, TX 77465<br>(361) 972-2744<br>stjohnspalacios.org (http://stjohnspalacios.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -96.214142,28.701429,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mark's Episcopal Church]]></name>
+        <description><![CDATA[2200 Avenue East<br>Bay City, TX 77414-5009<br>(979) 245-2557<br>saint-mark.org (http://saint-mark.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.971069,28.981715,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mark's Episcopal Church]]></name>
+        <styleUrl>#icon-503-7C3592-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -95.6960295,29.523224,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mary's Episcopal Church]]></name>
+        <description><![CDATA[201 East Clay Street<br>West Columbia, TX 77486<br>(979) 345-3456<br>stmaryswestcolumbia.org]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.64703,29.143069,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[1307 West 5th Street<br>Freeport, TX 77541<br>(979) 233-3673<br>stpaulsfreeport.net]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.364101,28.951738,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Thomas' Episcopal Church]]></name>
+        <description><![CDATA[207 Bob-O-Link Lane<br>Wharton, TX 77488-3205<br>(979) 532-1723<br>stthomas-wharton.org (http://stthomas-wharton.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -96.094666,29.321128,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Timothy's Episcopal Church]]></name>
+        <description><![CDATA[200 Oyster Creek Drive<br>Lake Jackson, TX 77566-4402<br>(979) 297-6003<br>stimothy.org (http://stimothy.org)]]></description>
+        <styleUrl>#icon-503-7C3592</styleUrl>
+        <Point>
+          <coordinates>
+            -95.440292,29.042964,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Galveston Convocation</name>
+        <styleUrl>#poly-FF6666-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.354233,29.442986,0
+                -95.194931,29.207116,0
+                -95.076828,29.117175,0
+                -94.745865,29.298176,0
+                -94.722519,29.379582,0
+                -94.645615,29.446574,0
+                -94.395676,29.543394,0
+                -94.78981,29.525471,0
+                -95.005417,29.576841,0
+                -95.086441,29.589978,0
+                -95.144119,29.555341,0
+                -95.208664,29.605501,0
+                -95.358353,29.586395,0
+                -95.354233,29.442986,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[All Saints' Episcopal Church]]></name>
+        <description><![CDATA[10416 Highway 6<br>Hitchcock, TX 77563-4580<br>(409) 925-2544]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.055084,29.361232,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Good Shepherd Episcopal Church</name>
+        <description><![CDATA[1207 Winding Way Dr.<br>Friendswood, TX 77546-4808<br>(281) 482-7630<br>gshepherd.net (http://gshepherd.net)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.192413,29.517305,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Grace Episcopal Church</name>
+        <description><![CDATA[200 West Lang Street<br>Alvin, TX 77511-2396<br>(281) 331-5657<br>gracechurchalvin.org (http://gracechurchalvin.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.244598,29.421058,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Grace Episcopal Church</name>
+        <description><![CDATA[1115 36th Street<br>Galveston, TX 77550-4113<br>(409) 762-9676<br>gracechurchgalveston.org (http://gracechurchgalveston.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -94.806175,29.294483,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Trinity Episcopal Church</name>
+        <description><![CDATA[4613 Highway 3<br>Dickinson, TX 77539-6852<br>(281) 337-1833<br>holytrinitydickinson.org (http://holytrinitydickinson.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.048218,29.458133,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Saint Augustine of Hippo Episcopal Church</name>
+        <description><![CDATA[1410 41st Street<br>Galveston, Texas 77550<br>staugustinegalveston.org (http://staugustinegalveston.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -94.811668,29.289693,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Andrew's Episcopal Church]]></name>
+        <description><![CDATA[2535 Broadway St.<br>Pearland, TX 77581<br>(281) 485-3843<br>pumpkinchurch.com]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.256057,29.553113,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Christopher Episcopal Church</name>
+        <description><![CDATA[2508 Saint Christopher Avenue<br>League City, TX 77573<br>(281) 332-5553<br>stchrischurch.org]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.074178,29.521528,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. George's Episcopal Church]]></name>
+        <description><![CDATA[510 13th Avenue North<br>Texas City, TX 77590-6250<br>(409) 945-2583<br>stgeorges-tc.org (http://stgeorges-tc.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -94.901276,29.39773,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Michael's Episcopal Church]]></name>
+        <description><![CDATA[1601 Lake Road<br>La Marque, TX 77568<br>(409) 935-3559<br>smec-lamarque.org]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -94.979263,29.364147,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Thomas the Apostle Episcopal Church</name>
+        <description><![CDATA[18300 Upper Bay Road<br>Houston, TX 77058-4110<br>(281) 333-2384<br>stthomasepiscopalchurch.org (http://stthomasepiscopalchurch.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -95.088043,29.545385,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[2216 Ball Street<br>Galveston, TX 77550-2224<br>(409) 765-6317<br>trinitygalv.org (http://trinitygalv.org)]]></description>
+        <styleUrl>#icon-503-DB4436</styleUrl>
+        <Point>
+          <coordinates>
+            -94.792099,29.302867,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Southeast Convocation</name>
+        <styleUrl>#poly-009D57-3000-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -94.520416,30.998408,0
+                -94.641266,30.941887,0
+                -94.602814,30.344041,0
+                -94.979095,30.363001,0
+                -94.937897,30.272905,0
+                -94.924164,30.071075,0
+                -95.080719,30.002121,0
+                -95.058746,29.942639,0
+                -95.001068,29.921217,0
+                -94.921417,29.878358,0
+                -94.902191,29.744904,0
+                -94.929657,29.668565,0
+                -94.786835,29.525272,0
+                -94.40506,29.54439,0
+                -93.990326,29.685269,0
+                -93.84201,29.666178,0
+                -93.927154,29.80927,0
+                -93.822784,29.906933,0
+                -93.806305,29.966436,0
+                -93.718414,30.061567,0
+                -93.696442,30.106722,0
+                -93.712921,30.199344,0
+                -93.712921,30.284765,0
+                -93.759613,30.336929,0
+                -93.765106,30.386697,0
+                -93.710175,30.448279,0
+                -93.715668,30.483789,0
+                -93.718414,30.509822,0
+                -93.743133,30.528751,0
+                -93.575592,30.774486,0
+                -93.542633,30.953665,0
+                -93.553619,31.007825,0
+                -93.526154,31.0596,0
+                -93.531647,31.090182,0
+                -93.5289,31.160717,0
+                -93.54538,31.195965,0
+                -93.586578,31.221806,0
+                -94.383087,30.972507,0
+                -94.520416,30.998408,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Holy Trinity Episcopal Church</name>
+        <description><![CDATA[2425 Nall Street<br>Port Neches, TX 77651-4703<br>(409) 722-6238<br>holytrinityportneches.com (http://holytrinityportneches.com)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -93.966064,29.976349,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[1305 Roosevelt Dr<br>Silsbee, TX 77656<br>(409) 385-4371<br>stjohnssilsbee.com (http://stjohnssilsbee.com)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.191817,30.358487,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mark's Episcopal Church]]></name>
+        <description><![CDATA[680 Calder St.<br>Beaumont TX 77701<br>(409) 832-3405<br>stmarksbeaumont.org]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.100546,30.08705,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[1401 West Park Avenue<br>Orange, TX 77630-4950<br>(409) 883-2969<br>stpaulsorangetx.org (http://stpaulsorangetx.org)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -93.743591,30.099395,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[1703 W. Bluff<br>Woodville, TX 75979<br>(409) 283-3710<br>stpaulswoodville.com (http://stpaulswoodville.com)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.438477,30.772519,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Stephen's Episcopal Church]]></name>
+        <description><![CDATA[4090 Delaware Street<br>Beaumont, TX 77706-7801<br>(409) 892-4227<br>ststephensbmt.org (http://ststephensbmt.org)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.145279,30.104742,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Stephen's Episcopal Church]]></name>
+        <description><![CDATA[2041 Trinity Street<br>Liberty, TX 77575<br>(936) 336-3762<br>saintstephensliberty.org]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.794973,30.060139,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[907 Washington Avenue<br>Anahuac, TX 77514<br>(409) 267-6582<br>trinityanahuac.org (http://trinityanahuac.org)]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.684296,29.764377,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[800 North Main Street<br>Jasper, TX 75951<br>(409) 384-3719<br>trinityepiscopaljasper.com]]></description>
+        <styleUrl>#icon-503-7CCFA9</styleUrl>
+        <Point>
+          <coordinates>
+            -94.000635,30.929187,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Central Convocation</name>
+        <styleUrl>#poly-795046-2801-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -96.6925427,30.694974,0
+                -97.0935481,30.5058445,0
+                -96.8408596,30.1882288,0
+                -96.7200082,30.178732,0
+                -96.7804338,30.0932179,0
+                -96.6815555,30.036168,0
+                -96.5881703,29.9267311,0
+                -96.7090213,29.683635,0
+                -96.6353205,29.674488,0
+                -96.2919936,29.7150484,0
+                -96.2590341,29.6267484,0
+                -95.9349344,29.5861527,0
+                -95.8827478,29.6339118,0
+                -95.8607756,29.6816478,0
+                -95.8415495,29.7889708,0
+                -95.9157078,30.1268787,0
+                -95.8278167,30.0936158,0
+                -95.8909894,30.9100528,0
+                -95.6547807,31.04428,0
+                -95.7618991,31.1548169,0
+                -95.6685141,31.2957409,0
+                -95.7921119,31.5816359,0
+                -96.844065,31.0207438,0
+                -96.6925427,30.694974,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Epiphany Episcopal Church</name>
+        <description><![CDATA[700 Gregg Street<br>Calvert, TX 77837<br>(979) 364-3784]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.677499,30.974534,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Innocents Episcopal Church</name>
+        <description><![CDATA[600 North McIver Street<br>Madisonville, TX 77864<br>(936) 348-2034<br>holyinnocentsmadisonville.com]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -95.916835,30.952185,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Andrew's Episcopal Church]]></name>
+        <description><![CDATA[St. Andrew's Episcopal Church<br>217 West 26th Street<br>Bryan, TX 77806<br>(979) 822-5176<br>standrewsbcs.org (http://standrewsbcs.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.374963,30.673809,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Bartholomew's Episcopal Church]]></name>
+        <description><![CDATA[811 14th Street<br>Hempstead, TX 77445<br>(979) 826-2525<br>stbartshempstead.org (http://stbartshempstead.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.083679,30.097613,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Francis' Episcopal Church]]></name>
+        <description><![CDATA[1101 Rock Prairie Road<br>College Station, TX 77845-8344<br>(979) 696-1491<br>stfrancisonline.org (http://stfrancisonline.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.300986,30.578687,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St Francis of Assisi Episcopal Church</name>
+        <description>204 Dooley St, Prairie View, TX 77446</description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -95.991287,30.08732,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[915 Travis Street<br>Columbus, TX 78934<br>(979) 732-2590<br>stjohncolumbus.org (http://stjohncolumbus.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.538929,29.708449,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St John's Episcopal Church]]></name>
+        <description><![CDATA[515 Meyer Street<br>Sealy, TX 77474-2711<br>(979) 885-2359<br>stjohnssealy.com (http://stjohnssealy.com)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.15715,29.778086,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mary's Episcopal Church]]></name>
+        <description><![CDATA[24 North Masonic Street<br>Bellville, TX 77418-1444<br>(979) 865-2330]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.25844,29.951084,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[414 McAlpine Street<br>Navasota, TX 77868<br>(936) 825-7726<br>stpaulsnavasota.org]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.085929,30.388534,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Peter's Episcopal Church]]></name>
+        <description><![CDATA[2310 Airline<br>Brenham, TX 77834<br>(979) 836-7248<br>stpetersbrenham.org (http://stpetersbrenham.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.395443,30.146333,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Philip's Episcopal Church]]></name>
+        <description><![CDATA[408 Cedar Street<br>Hearne, TX 77859<br>(979) 279-5372]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.595917,30.878655,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Thomas' Episcopal Church]]></name>
+        <description><![CDATA[906 George Bush Drive<br>College Station, TX 77840-3056<br>(979) 696-1726<br>stthomasbcs.org (http://stthomasbcs.org)]]></description>
+        <styleUrl>#icon-503-795046</styleUrl>
+        <Point>
+          <coordinates>
+            -96.33281,30.609582,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Austin Convocation</name>
+        <styleUrl>#poly-33CC00-3000-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -98.058014,31.339172,0
+                -98.200836,31.282854,0
+                -98.310699,30.531117,0
+                -98.074493,30.445911,0
+                -98.096466,30.37485,0
+                -97.857513,30.142356,0
+                -96.863251,29.685269,0
+                -96.712189,29.67811,0
+                -96.591339,29.923597,0
+                -96.684723,30.04017,0
+                -96.7836,30.090088,0
+                -96.720428,30.180352,0
+                -96.846771,30.189849,0
+                -97.09671,30.509822,0
+                -97.250519,30.443543,0
+                -97.272491,30.687132,0
+                -97.673492,30.80044,0
+                -97.915192,30.781565,0
+                -98.058014,31.339172,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[All Saints' Episcopal Church]]></name>
+        <description><![CDATA[209 West 27th Street<br>Austin, TX 78705-1043<br>(512) 476-3589<br>allsaints-austin.org (http://allsaints-austin.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.739959,30.291654,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Calvary Episcopal Church</name>
+        <description><![CDATA[1028 Main Street<br>Bastrop, TX 78602-3217<br>(512) 303-6615<br>calvaryepiscopal-bastroptx.org (http://calvaryepiscopal-bastroptx.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.320701,30.111225,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[3520 West Whitestone Boulevard<br>Cedar Park, TX 78613<br>(512) 267-2428<br>cectx.org (http://cectx.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.881516,30.511133,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Epiphany Episcopal Church</name>
+        <description><![CDATA[601 N. Wood<br>Burnet, TX 78611<br>(512) 756-2334<br>epiphanyburnet.org (http://epiphanyburnet.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -98.224479,30.763807,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Good Shepherd Episcopal Church</name>
+        <description><![CDATA[3201 Windsor Road<br>Austin, TX 78703-2243<br>(512) 476-3523<br>gsaustin.org (http://gsaustin.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.768536,30.296587,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Grace Episcopal Church</name>
+        <description><![CDATA[1314 East University Ave.<br>Georgetown, Texas<br>(512) 863-2068<br>graceepis.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.663897,30.63325,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Resurrection Episcopal Church</name>
+        <description><![CDATA[2200 Justin Lane<br>Austin, TX 78757<br>(512) 459-0027<br>ecraustin.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.735847,30.345071,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>San Francisco de Asis Episcopal Church</name>
+        <description><![CDATA[7000 Woodhue Drive<br>Austin, TX 78745<br>(512) 439-0721<br>sfaepiscopal.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.801638,30.19938,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Alban's Episcopal Church]]></name>
+        <description><![CDATA[11819 I H 35 South<br>Austin, TX 78747<br>(512) 282-5631<br>stalbansaustin.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.798252,30.129696,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Christophers Episcopal Church</name>
+        <description><![CDATA[8724 Travis Hills Dr.<br>Austin, Texas 78735]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.890238,30.258979,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. David's Episcopal Church]]></name>
+        <description><![CDATA[304 East 7th Street<br>Austin, TX 78701-3202<br>(512) 472-1196<br>stdave.org (http://stdave.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.73946,30.26838,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St George's Episcopal Church]]></name>
+        <description><![CDATA[4301 N I H 35<br>Austin, TX 78722<br>(512) 454-2523<br>sgchurch.org (http://sgchurch.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.71502,30.299713,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. James' Episcopal Church]]></name>
+        <description><![CDATA[1941 Webberville Road<br>Austin, TX 78721-1679<br>(512) 926-6339<br>stjamesaustin.org (http://stjamesaustin.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.673488,30.283366,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. James' Episcopal Church]]></name>
+        <description><![CDATA[156 North Monroe Street<br>La Grange, TX 78945<br>(979) 968-3910]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -96.873869,29.908003,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. James' Episcopal Church]]></name>
+        <description><![CDATA[614 Davis Street<br>Taylor, TX 76574<br>(512) 352-2330]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.414801,30.572824,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[11201 Parkfield Drive<br>Austin, TX 78758-4264<br>(512) 836-3974<br>austinstjohns.org (http://austinstjohns.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.695923,30.384723,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St.Julian of Norwich Episcopal Church</name>
+        <description><![CDATA[Suite 204<br>7700 Cat Hollow Drive, Round Rock, TX 78681<br>(512) 716-1285<br>stjuliansaustin.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.725747,30.496776,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Luke's on the Lake Episcopal Church]]></name>
+        <description><![CDATA[5600 Ranch Road 620 North<br>Austin, TX 78732-1823<br>(512) 266-2455<br>stlukesonthelake.org (http://stlukesonthelake.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.875159,30.393746,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mark's Episcopal Church]]></name>
+        <description><![CDATA[2128 Barton Hills Drive<br>Austin, TX 78704-4651<br>(512) 444-1449<br>stmarksaustin.org (http://stmarksaustin.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.786031,30.253881,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mary's Episcopal Church]]></name>
+        <description><![CDATA[501 South Chestnut Street<br>Lampasas, TX 76550<br>(512) 556-5433<br>ourstmarys.org (http://ourstmarys.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -98.180813,31.064034,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Mary Magdelene Episcopal Church</name>
+        <description><![CDATA[Meeting in Manor High School Cafeteria<br>12700 Gregg Manor Road<br>        Manor, TX 78653<br>http://iamsmm.com/]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.56158,30.352934,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Matthew's Episcopal Church]]></name>
+        <description><![CDATA[8134 Mesa Drive<br>Austin, TX 78759<br>(512) 345-8314<br>stmattsaustin.org (http://stmattsaustin.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.756452,30.374622,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Michael's Episcopal Church]]></name>
+        <description><![CDATA[1500 North Capital of Texas Highway<br>Austin, TX 78746<br>(512) 327-1474<br>st-michaels.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.823531,30.3178,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Saint Peters Episcopal Church</name>
+        <description><![CDATA[3305 Pinnacle Cove<br>Lago Vista, Texas 78645<br>512-267-2744<br>stpeterslv.org (http://stpeterslv.org)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -98.014226,30.434318,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[Saint Richard's Episcopal Church]]></name>
+        <description><![CDATA[Saint Richard's Episcopal Church<br>1420 E Palm Valley Blvd<br>Round Rock, TX 78664<br>(512) 255-5436<br>saintrichards.org]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -97.663106,30.518604,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[909 Ave D<br>Marble Falls, TX 78654<br>(830) 693-2822<br>trinitymarblefalls.org (http://www.trinitymarblefalls.org/)]]></description>
+        <styleUrl>#icon-503-62AF44</styleUrl>
+        <Point>
+          <coordinates>
+            -98.267212,30.575268,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Northwest Convocation</name>
+        <styleUrl>#poly-F4B400-3801-87-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -98.058014,31.339172,0
+                -97.915192,30.781565,0
+                -97.673492,30.80044,0
+                -97.272491,30.687132,0
+                -97.250519,30.443543,0
+                -96.6925427,30.694974,0
+                -96.844065,31.0207438,0
+                -95.7886787,31.5638123,0
+                -95.926208,31.886109,0
+                -96.6758247,31.7368296,0
+                -96.837873,31.7181405,0
+                -97.0136543,31.6129445,0
+                -97.0768256,31.6877628,0
+                -97.6124091,31.43501,0
+                -97.6838203,31.5123126,0
+                -98.058014,31.339172,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[All Saints' Episcopal Church]]></name>
+        <description><![CDATA[200 North Travis Avenue<br>Cameron, TX 76520<br>(254) 697-2167<br>allsaintscameron.org (http://allsaintscameron.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -96.977806,30.851889,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[509 East Commerce Street<br>Mexia, TX 76667-2862<br>(903) 626-4926]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -96.480489,31.681357,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[300 N. Main Street<br>Temple, TX 76501-3244<br>(254) 773-1657<br>christchurchtemple.org (http://christchurchtemple.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.340378,31.100279,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Holy Spirit Episcopal Church</name>
+        <description><![CDATA[1624 Wooded Acres Drive<br>Waco, TX 76710-2852<br>(254) 772-1982<br>holyspiritwaco.org (http://holyspiritwaco.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.19317,31.536591,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Alban's Episcopal Church]]></name>
+        <description><![CDATA[305 North 30th Street<br>Waco, TX 76710-7225<br>(254) 752-1773<br>stalbanswaco.com (http://stalbanswaco.com)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.156948,31.538222,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Christopher's Episcopal Church]]></name>
+        <description><![CDATA[2800 Trimmier Rd.<br>Killeen, TX 76542-6003<br>(254) 634-7474<br>stchris-online.com (http://stchris-online.com)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.735018,31.087398,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Francis' Episcopal Church]]></name>
+        <description><![CDATA[5001 Hickory Road<br>Temple, TX 76502-3012<br>(254) 773-4255<br>stfrancistemple.org (http://stfrancistemple.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.396296,31.059802,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St Josephs Episcopal Church</name>
+        <description><![CDATA[945 North Main Street<br>Salado, TX 76571<br>(254) 939-1033<br>stjosephsalado.org]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.534102,30.95528,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Martin's Episcopal Church]]></name>
+        <description><![CDATA[1602 S. FM 116<br>Copperas Cove, TX 76522-4204<br>(254) 547-0331<br>stmartins-episcopal.org (http://stmartins-episcopal.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.915649,31.109389,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[515 Columbus Ave. <br>Waco, TX 76701-1347<br>(254) 753-4501<br>stpaulswaco.org (http://stpaulswaco.org)]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.135287,31.558507,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Thomas' Episcopal Church]]></name>
+        <description><![CDATA[302 East Davilla Avenue<br>Rockdale, TX 76567<br>(512) 446-5932<br>saintthomasrockdale.org]]></description>
+        <styleUrl>#icon-503-F8971B</styleUrl>
+        <Point>
+          <coordinates>
+            -97.000544,30.658311,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Northeast Convocation</name>
+        <styleUrl>#poly-CC66CC-3000-89-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.926208,31.886109,0
+                -95.673523,31.291852,0
+                -95.766907,31.155625,0
+                -95.657043,31.042737,0
+                -95.536194,31.118011,0
+                -95.497742,30.976824,0
+                -95.393371,30.877869,0
+                -94.838562,31.070972,0
+                -94.382629,30.972114,0
+                -93.575134,31.221414,0
+                -93.688202,31.311017,0
+                -93.660736,31.381388,0
+                -93.693695,31.458735,0
+                -93.751373,31.498555,0
+                -93.828278,31.603881,0
+                -93.798065,31.650654,0
+                -93.787079,31.723105,0
+                -93.880463,31.872504,0
+                -94.034271,32.021661,0
+                -94.053497,32.860748,0
+                -94.638519,32.872283,0
+                -94.70993,32.625111,0
+                -94.828033,32.655178,0
+                -95.088959,32.46304,0
+                -95.240021,32.45377,0
+                -95.454254,32.613544,0
+                -95.459747,32.330851,0
+                -95.435028,32.105455,0
+                -95.926208,31.886109,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[All Saints' Episcopal Church]]></name>
+        <description><![CDATA[1301 East Houston Avenue<br>Crockett, TX 75835<br>(936) 544-8914]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.443683,31.321931,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[703 South Main Street<br>Jefferson, TX 75657-2227<br>(903) 665-2693]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.350193,32.755418,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[502 East Starr Avenue<br>Nacogdoches, TX 75961-4052<br>(409) 564-0421<br>christchurch-nacogdoches.org (http://christchurch-nacogdoches.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.649028,31.616075,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[201 Ayish St.<br>San Augustine, TX 75972<br>(936) 275-3325<br>christchurchsatx.org (http://christchurchsatx.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.10614,31.529385,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Christ Episcopal Church</name>
+        <description><![CDATA[118 South Bois D Arc Avenue<br>Tyler, TX 75702-7101<br>(903) 597-9854<br>christchurchtyler.com (http://christchurchtyler.com)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.302636,32.349916,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Cyprian's Episcopal Church]]></name>
+        <description><![CDATA[919 South John Redditt Drive<br>Lufkin, TX 75904-4326<br>(936) 639-1253<br>stcyprianschurch.org (http://stcyprianschurch.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.754333,31.32314,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Francis' Episcopal Church]]></name>
+        <description><![CDATA[3232 Jan Avenue<br>Tyler, TX 75701-9115<br>(903) 593-8459<br>stfrancistyler.org (http://stfrancistyler.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.284866,32.313137,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[308 Cottage Road<br>Carthage, TX 75633-1512<br>(903) 693-5566]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.344775,32.16684,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <description><![CDATA[1063 Southview Circle<br>Center, TX 75935<br>(936) 598-4101<br>shelbystjohnsepiscopal.org (http://shelbystjohnsepiscopal.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.185668,31.782926,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. John the Baptist Episcopal Church</name>
+        <description><![CDATA[514 West Vance Street<br>Tyler, TX 75702-3251<br>(903) 597-5923]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.305978,32.366689,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St Luke's Episcopal Church]]></name>
+        <description><![CDATA[16292 FM 849<br>Lindale, TX 75771<br>(903) 881-8733<br>slesl.org]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.418851,32.503614,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Matthew's Episcopal Church]]></name>
+        <description><![CDATA[214 College Avenue<br>Henderson, TX 75654-4131<br>(903) 657-3154]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.797871,32.1441,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Michael & All Angels' Episcopal Church]]></name>
+        <description><![CDATA[909 Reel Road<br>Longview, TX 75604-2528<br>(903) 759-2051<br>smaalongview.org (http://smaalongview.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.793714,32.530402,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church]]></name>
+        <description><![CDATA[314 North Henderson Boulevard<br>Kilgore, TX 75662-2712<br>(903) 984-3929]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.868751,32.383074,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Paul's Episcopal Church - Leigh]]></name>
+        <description><![CDATA[St. Paul's Episcopal Church - Leigh<br>Farm to Market Road 134<br>Leigh, TX 75670<br>(381) 869-8229]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.161072,32.62781,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Philip's Episcopal Church]]></name>
+        <description><![CDATA[106 East Crawford Street<br>Palestine, TX 75801-2805<br>(903) 729-4214<br>stphilipepiscopalchurch.org (http://stphilipepiscopalchurch.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.630971,31.763284,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[1000 South Jackson Street<br>Jacksonville, TX 75766-3016<br>(903) 586-4336]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -95.265761,31.955148,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[906 Padon Street<br>Longview, TX 75601<br>(903) 753-3366<br>trinityparish.org]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.728632,32.49913,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <description><![CDATA[106 North Grove Street<br>Marshall, TX 75670-3237<br>(903) 938-4246<br>trinityepiscopalmarshall.org (http://trinityepiscopalmarshall.org)]]></description>
+        <styleUrl>#icon-503-D698AD</styleUrl>
+        <Point>
+          <coordinates>
+            -94.371307,32.545149,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. John's Episcopal Church]]></name>
+        <styleUrl>#icon-503-F8971B-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -96.8924859,31.3110927,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>All Souls Episcopal Church</name>
+        <description><![CDATA[holding services at Theatre Arlington<br>305 W. Main, Arlington, TX 76010]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -97.109878171756,32.7369757462293,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>The Episcopal Church of the Resurrection </name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -97.5853969,33.2283322,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>All Saints’ Episcopal Church</name>
+        <description><![CDATA[Now worshiping at<br>All Saints Chapel<br>All Saints’ Episcopal School]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -97.4921139,32.7310675,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St Matthew's Lutheran Church]]></name>
+        <description><![CDATA[Now worshiping at<br>St. Matthew’s Lutheran Church]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -97.3916894,32.6654315,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Luke’s in the Meadow Episcopal Church</name>
+        <description><![CDATA[Meadowbrook-Poly United Methodist Church<br>Family Life Center]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -97.2671164,32.7422249,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Trinity Episcopal Church</name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -97.3659228,32.7012223,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Episcopal Church of the Good Shepherd</name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -97.7145343,32.44455,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>The Episcopal Church of Hamilton County</name>
+        <description>St. Catherine’s Episcopal Church</description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -98.1289702,31.693256,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Mary's Episcopal Church]]></name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -97.1292917,32.0058825,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Stephen’s Episcopal Church</name>
+        <description>Southeast corner of Harwood at Hurstview, in the Village Plaza Shopping Center</description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -97.1767026,32.8472845,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>St. Martin-in-the-Fields Episcopal Church</name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -97.2024333,32.931405,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[St. Luke's Episcopal Church]]></name>
+        <styleUrl>#icon-503-93D7E8-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -98.2148171,32.2185796,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>The Episcopal Church of Wichita Falls</name>
+        <description><![CDATA[Now worshiping at<br>Faith Lutheran Church]]></description>
+        <styleUrl>#icon-503-93D7E8</styleUrl>
+        <Point>
+          <coordinates>
+            -98.502546,33.8537425,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>North Region</name>
+        <styleUrl>#poly-0BA9CC-3000-115-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>
+                -95.6600825,32.0099493,0
+                -95.8633296,32.2379049,0
+                -96.2917964,32.4282049,0
+                -96.71477,32.7244572,0
+                -96.8301264,33.0749822,0
+                -96.7861811,33.4928591,0
+                -97.082812,33.2772824,0
+                -97.1102778,33.5798553,0
+                -96.8026606,33.7764177,0
+                -96.9619624,33.9497495,0
+                -97.2201411,33.8311921,0
+                -97.6925532,33.9770855,0
+                -97.9891841,33.9178464,0
+                -98.0935542,34.0408353,0
+                -98.2144038,34.1500093,0
+                -98.7472407,34.1545552,0
+                -99.0603511,34.1591008,0
+                -99.0438716,33.2589107,0
+                -99.1702143,32.8906682,0
+                -99.0768306,32.0704828,0
+                -99.1097895,31.7160287,0
+                -98.4011714,31.2287836,0
+                -98.200836,31.282854,0
+                -97.6838203,31.5123126,0
+                -97.6124091,31.43501,0
+                -97.0768256,31.6877628,0
+                -97.0136543,31.6129445,0
+                -96.837873,31.7181405,0
+                -96.3302485,31.8001016,0
+                -95.926208,31.886109,0
+                -95.6600825,32.0099493,0
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
