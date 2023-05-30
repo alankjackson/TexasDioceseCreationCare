@@ -20,11 +20,27 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 ```{r read data in (and save it)}
 
-foo <- rvest::read_html(paste0(path, "Convocations.dat"))
-
-foo <- xml2::read_html(paste0(path, "Convocations.dat"))
-
 foo <- sf::st_read(paste0(path, "The Episcopal Diocese of Texas.kml"))
+
+Convocations <- foo %>% 
+  filter(stringr::str_detect(Name, "Convocation|Region"))
+
+#   Add convocation to parish
+
+Parishes <- foo %>% 
+  mutate(Convocation=NA)
+
+for (i in 1:nrow(foo)){
+  if (stringr::str_detect(foo[i,]$Name, "Convocation|Region")){  
+    Convo <- foo[i,]$Name
+  }
+  print(Convo)
+  Parishes[i,]$Convocation <- Convo 
+}
+
+Parishes <- Parishes %>% 
+  filter(!stringr::str_detect(Name, "Convocation|Region"))
+  
 
 ```
 
