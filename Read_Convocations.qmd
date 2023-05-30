@@ -41,6 +41,8 @@ for (i in 1:nrow(foo)){
 Parishes <- Parishes %>% 
   filter(!stringr::str_detect(Name, "Convocation|Region"))
   
+saveRDS(Convocations, paste0(path, "Convocations.rds"))
+saveRDS(Parishes, paste0(path, "Parishes.rds"))
 
 ```
 
