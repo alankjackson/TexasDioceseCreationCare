@@ -47,3 +47,25 @@ Parishes <- Parishes %>%
 
 ##  Plot the data
 
+```{r plot}
+
+#   Plot
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+
+tmap::tm_shape(Convocations) + 
+    tmap::tm_sf(alpha=0.3) +
+  tmap::tm_shape(Parishes) + 
+    tmap::tm_dots()
+
+
+```
+
+
+
+
+
+
