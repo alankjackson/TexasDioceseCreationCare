@@ -5,8 +5,29 @@ format: html
 editor: visual
 ---
 
-## setup
+## Setup
 
+Data scraped (with somne difficulty) from <https://www.arcgis.com/home/webmap/viewer.html?webmap=1e3c97ed53e2476bb842ceccd6a90514&extent=-96.3605,29.2149,-94.1042,30.3246>
+
+Found from the website for the [Harris-Galveston Subsidence District](https://hgsubsidence.org/science-research/).
+
+Scraping process
+
+-   Install clipit to increase clipboard buffer size
+
+-   Open table
+
+-   Open information screen
+
+-   Find table in info screen
+
+-   Select all the data with `ctl-C`
+
+-   Dump into file with `xsel -b > foo8`
+
+-   Shorten extremely long line with `cat foo8 | sed 's/<tr>/\r<tr>/g' > foo9.html`
+
+-   Read into editor and add `<html> <body> <table>` after eliminating un-needed stuff.
 
 ```{r setup}
 
@@ -16,8 +37,7 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 ```
 
-#       Read and parse the data
+# Read and parse the data
 
 ```{r read and parse}
 ```
-
