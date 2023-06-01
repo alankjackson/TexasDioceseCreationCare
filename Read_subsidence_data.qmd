@@ -1,0 +1,23 @@
+---
+title: "Read subsidence data"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## setup
+
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+```
+
+#       Read and parse the data
+
+```{r read and parse}
+```
+
