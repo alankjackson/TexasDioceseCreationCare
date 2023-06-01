@@ -40,4 +40,29 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 # Read and parse the data
 
 ```{r read and parse}
+
+# Import the data
+data <- rvest::read_html(paste0(path, "SubsidenceDataHarris.html")) %>%
+  rvest::html_table()
+
+data <- do.call(rbind, data)
+
+data <- data %>% 
+  rename(Station=X1, Operator=X2, Latitude=X3, Longitude=X4, Start_Year=X5, End_Year=X6,
+  Years_Monitoring=X7, Total_Vertical_Displacement_cm=X8, Subsidence_Rate_cmperyr=X9,
+  POR_Plot=X10, RateLabel=X11, FID=X12
+)
+
 ```
+
+
+
+
+
+
+
+
+
+
+
+
