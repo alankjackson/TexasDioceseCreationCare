@@ -79,6 +79,8 @@ df <- df %>%
 df_sf <- sf::st_as_sf(df, coords=c("Longitude", "Latitude"), crs=googlecrs, agr = "identity")
 df_xy <- sf::st_transform(df_sf, crs=localUTM)
 
+saveRDS(df_xy, paste0(path, "Subsidence_xy.rds"))
+
 bbox <- sf::st_bbox(df_sf)
 
 #   Expand box by 20% to give a little extra room
