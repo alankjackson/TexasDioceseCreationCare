@@ -1,0 +1,22 @@
+---
+title: "Intersect subsidence with parishes"
+format: html
+editor: visual
+---
+
+
+```{r setup}
+
+library(tidyverse)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+Contours_LL <- readRDS(paste0(path, "Contours_LL_Subsidence.rds"))
+Krig_star_LL <- readRDS(paste0(path, "Star_Grid_LL_Subsidence.rds"))
+
+```
+
