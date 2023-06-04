@@ -299,6 +299,8 @@ dat.fit <- gstat::fit.variogram(var.smpl, fit.ranges = TRUE, fit.sills = TRUE,
                                    debug.level = 0,
                             gstat::vgm(psill=NA, model="Gau", range=NA, nugget=0))
 
+saveRDS(dat.fit, paste0(path, "gstat_variogram_Subsidence.rds"))
+
 Krigged_grid <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
                              df_xy,
                              grd_sf,
