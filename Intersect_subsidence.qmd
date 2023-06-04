@@ -109,9 +109,10 @@ Krigged_locs %>%
 ```{r table}
 
 Krigged_locs %>% 
-  select(Name, Convocation, Subsidence_rate) %>% 
+  select(Name, Address, Convocation, Subsidence_rate) %>% 
   filter(Subsidence_rate < -0.4) %>% 
   arrange(Subsidence_rate) %>% 
+  mutate(Subsidence_rate=signif(Subsidence_rate, 3)) %>% 
   mutate(Convocation = stringr::str_remove(Convocation, " Convocation")) %>% 
   mutate(Name = stringr::str_remove(Name, " Episcopal Church")) %>% 
   gt() %>% 
@@ -126,6 +127,7 @@ Krigged_locs %>%
   ) %>% 
   cols_label(
     Name=html("<em>Parish"),
+    Address=html("<em>Location"),
     Convocation=html("<em>Convocation"),
     Subsidence_rate=html("<em>Subsidence Rate<br>(cm/yr)")
   )
