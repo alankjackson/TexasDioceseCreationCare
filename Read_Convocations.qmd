@@ -23,7 +23,8 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 foo <- sf::st_read(paste0(path, "The Episcopal Diocese of Texas.kml"))
 
 Convocations <- foo %>% 
-  filter(stringr::str_detect(Name, "Convocation|Region"))
+  filter(stringr::str_detect(Name, "Convocation|Region")) %>% 
+  mutate(ConvoColor=row_number())
 
 #   Add convocation to parish
 
@@ -39,7 +40,9 @@ for (i in 1:nrow(foo)){
 }
 
 Parishes <- Parishes %>% 
-  filter(!stringr::str_detect(Name, "Convocation|Region"))
+  filter(!stringr::str_detect(Name, "Convocation|Region")) %>% 
+  mutate(description=stringr::str_replace(description, "http://trinitywoodlands.org/", 
+                                          "3901 South Panther Creek Drive<br>The Woodlands, TX 77381<br>281-367-8113<br>trinitywoodlands.org (https://www.trinitywoodlands.org/)"))
   
 saveRDS(Convocations, paste0(path, "Convocations.rds"))
 saveRDS(Parishes, paste0(path, "Parishes.rds"))
@@ -59,7 +62,9 @@ tmap::tmap_mode("view") # set mode to interactive plots
 
 
 tmap::tm_shape(Convocations) + 
-    tmap::tm_sf(alpha=0.3) +
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "ConvoColor", title = "Convocation", alpha=0.3, style="cat")+
+  tmap::tm_borders() +
   tmap::tm_shape(Parishes) + 
     tmap::tm_dots()
 
