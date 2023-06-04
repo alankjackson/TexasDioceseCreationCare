@@ -312,7 +312,7 @@ ggplot() +
   stars::geom_stars(data=Krigged_star) +
   scale_fill_gradientn(colors=rainbow(5)) +
   geom_sf(data=df_xy, color="Black", size=1) +
-  labs(title="Residuals from Kriging without drift")
+  labs(title="Residuals from Kriging")
 
 ```
 
@@ -343,6 +343,9 @@ ggplot() +
 
 Contours_LL <- sf::st_transform(Contours_Krig, crs=googlecrs) 
 Krig_star_LL <- sf::st_transform(Krigged_star, crs=googlecrs)
+
+saveRDS(Contours_LL, paste0(path, "Contours_LL_Subsidence.rds"))
+saveRDS(Krig_star_LL, paste0(path, "Star_Grid_LL_Subsidence.rds"))
 
 ggplot() +
   #   this is the best looking basemap
