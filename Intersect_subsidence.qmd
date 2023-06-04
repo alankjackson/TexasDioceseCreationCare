@@ -8,6 +8,7 @@ editor: visual
 ```{r setup}
 
 library(tidyverse)
+library(gt)
 
 googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
@@ -15,8 +16,120 @@ localUTM <- "EPSG:32615"
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
+Subsidence_xy <- readRDS(paste0(path, "Subsidence_xy.rds"))
 Contours_LL <- readRDS(paste0(path, "Contours_LL_Subsidence.rds"))
 Krig_star_LL <- readRDS(paste0(path, "Star_Grid_LL_Subsidence.rds"))
+dat.fit <- readRDS(paste0(path, "gstat_variogram_Subsidence.rds"))
+
+
+```
+
+##    Krige from data to parish locations
+
+```{r interpolate}
+
+#   Transform parishes to X-Y
+
+Parish_xy <- sf::st_transform(Parishes, crs=localUTM)
+
+#   Krige values to parish locations
+
+Krigged_locs <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
+                             Subsidence_xy,
+                             Parish_xy,
+                             debug.level=0,
+                             dat.fit) %>% 
+  bind_cols(Parish_xy$Name, Parish_xy$description, Parish_xy$Convocation, .) %>% 
+  rename(Name=1, Address=2, Convocation=3, Subsidence_rate=4, Variance=5)
+
+
+```
+
+##   Make a map
+
+```{r map}
+
+bbox <- sf::st_bbox(Krig_star_LL)
+
+#   Expand box by 20% to give a little extra room
+Dx <- (bbox[["xmax"]]-bbox[["xmin"]])*0.1
+Dy <- (bbox[["ymax"]]-bbox[["ymin"]])*0.1
+bbox["xmin"] <- bbox["xmin"] - Dx
+bbox["xmax"] <- bbox["xmax"] + Dx
+bbox["ymin"] <- bbox["ymin"] - Dy
+bbox["ymax"] <- bbox["ymax"] + Dy
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+ggplot() +
+  #   this is the best looking basemap
+  Base_basemapR +
+  #   Gridded data
+  stars::geom_stars(data=Krig_star_LL, alpha=0.4) +  
+  #   Add points
+  geom_sf(data=sf::st_crop(Parishes, bbox)) +
+  #   Create filled density "contours" 
+  geom_sf(data=Contours_LL, color="black") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence Rate\n(cm/yr)") +
+  #   Add a scale bar
+  ggspatial::annotation_scale(data=df_sf, aes(unit_category="imperial", style="ticks"),
+    location="br", width_hint=0.2, bar_cols=1) +
+  #   Add CI annotation at specified window coordinates
+  annotate("text", label="C.I. = 0.2 cm per year subsidence
+           Data sourced from the Harris-Galveston Subsidence District 2022 Annual Groundwater Report
+           Map a product of Alan Jackson, June 2023", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 3) +
+  coord_sf(crs=googlecrs) + # required 
+  #   Add title
+  labs(title="Subsidence Rate in cm/yr",
+       subtitle="Points are church locations",
+       x="Longitude", y="Latitude")
+
+
+
+```
+
+##    Generate some statistics
+
+```{r stats}
+
+Krigged_locs %>% 
+  ggplot(aes(x=Subsidence_rate)) +
+  geom_histogram()+
+  labs(title="Distribution of subsidence rates at all the churches",
+       y="Number",
+       x="Subsidence Rate (cm/yr)")
+
+```
+
+##    Make a table of worst cases
+
+```{r table}
+
+Krigged_locs %>% 
+  select(Name, Convocation, Subsidence_rate) %>% 
+  filter(Subsidence_rate < -0.4) %>% 
+  arrange(Subsidence_rate) %>% 
+  mutate(Convocation = stringr::str_remove(Convocation, " Convocation")) %>% 
+  mutate(Name = stringr::str_remove(Name, " Episcopal Church")) %>% 
+  gt() %>% 
+  tab_header(
+    title="Top 12 churches for subsidence"
+  ) %>% 
+   tab_source_note(
+    source_note = "Source: Harris-Galveston Subsidence District 2022 Annual Groundwater Report"
+  ) %>% 
+   tab_source_note(
+    source_note = "Krigged interpolation, June 2023 by A. Jackson"
+  ) %>% 
+  cols_label(
+    Name=html("<em>Parish"),
+    Convocation=html("<em>Convocation"),
+    Subsidence_rate=html("<em>Subsidence Rate<br>(cm/yr)")
+  )
+  
 
 ```
 
