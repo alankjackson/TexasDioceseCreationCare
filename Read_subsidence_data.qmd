@@ -56,6 +56,26 @@ df <- df %>%
   POR_Plot=X10, RateLabel=X11, FID=X12
 )
 
+#   Some records are recorded at stations at the same location, which screws up kriging.
+#   We will find those records and replace them with one record at that spot and average
+#   the variable values.
+
+df <- df %>% 
+  mutate(index=paste0(as.character(Latitude), as.character(Longitude))) %>% 
+  group_by(index) %>% 
+    summarise( 
+              Station=first(Station),
+              Operator=first(Operator),
+              Subsidence_Rate_cmperyr=mean(Subsidence_Rate_cmperyr),
+              Total_Vertical_Displacement_cm=mean(Total_Vertical_Displacement_cm),
+              Start_Year=min(Start_Year),
+              End_Year=max(End_Year),
+              Years_Monitoring=max(Years_Monitoring),
+              NumInAvg=n(),
+              Latitude=first(Latitude),
+              Longitude=first(Longitude)) %>% 
+  select(-index)
+
 df_sf <- sf::st_as_sf(df, coords=c("Longitude", "Latitude"), crs=googlecrs, agr = "identity")
 df_xy <- sf::st_transform(df_sf, crs=localUTM)
 
@@ -104,13 +124,13 @@ bbox_xy = bbox %>%
 #     sfc POINT file
 grd_sf <- sf::st_make_grid(x=bbox_xy,
                                   what="corners",
-                                  cellsize=500,
+                                  cellsize=2000,
                                   crs=localUTM
                                   )
 #     Data frame
 grd_df <- expand.grid(
-  X = seq(from = bbox_xy["xmin"], to = bbox_xy["xmax"]+1000, by = 1000),
-  Y = seq(from = bbox_xy["ymin"], to = bbox_xy["ymax"]+1000, by = 1000) # 1000 m resolution
+  X = seq(from = bbox_xy["xmin"], to = bbox_xy["xmax"]+2000, by = 2000),
+  Y = seq(from = bbox_xy["ymin"], to = bbox_xy["ymax"]+2000, by = 2000) # 1000 m resolution
 )
 ```
 
@@ -277,13 +297,14 @@ ggplot(var.smpl, aes(x = dist, y = gamma)) +
 #   We have our model, so now let's use it
 dat.fit <- gstat::fit.variogram(var.smpl, fit.ranges = TRUE, fit.sills = TRUE,
                                    debug.level = 0,
-                            gstat::vgm(psill=NA, model="Sph", range=NA, nugget=0))
+                            gstat::vgm(psill=NA, model="Gau", range=NA, nugget=0))
 
 Krigged_grid <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
                              df_xy,
                              grd_sf,
-                             debug.level=0,
+                             debug.level=1,
                              dat.fit)
+
 Krigged_star <- stars::st_rasterize(Krigged_grid %>% dplyr::select(Subsidence_Rate_cmperyr=var1.pred, geometry))
 
 #     Residuals
@@ -295,5 +316,62 @@ ggplot() +
 
 ```
 
+##  Contours
+
+```{r contours}
+
+brks <- seq(from = -1, to = 0.2, by = 0.2)
+#   Create contour lines
+Contours_Krig <- stars::st_contour(Krigged_star, contour_lines=TRUE, breaks=brks)
+#   Plot to see what it all looks like
+ggplot() +
+  stars::geom_stars(data=Krigged_star) +
+  scale_fill_gradientn(colors=rainbow(5), limits=c(-1,0.2)) +
+  geom_sf(data=df_xy, aes(color=Subsidence_Rate_cmperyr), size=5) +
+  scale_color_gradientn(colors=rainbow(5), limits=c(-1,0.2)) +
+  geom_sf(data=df_xy, color="Black", size=1) +
+  geom_sf(data=Contours_Krig, color="black") 
+
+
+```
+
+##      Final publication quality map
+
+```{r final map}
+
+#   Now lets transform the contours to lat-long space and plot on the basemap
+
+Contours_LL <- sf::st_transform(Contours_Krig, crs=googlecrs) 
+Krig_star_LL <- sf::st_transform(Krigged_star, crs=googlecrs)
+
+ggplot() +
+  #   this is the best looking basemap
+  Base_basemapR +
+  #   Gridded data
+  stars::geom_stars(data=Krig_star_LL, alpha=0.4) +  
+  #   Add points
+  geom_sf(data=df_sf) +
+  #   Create filled density "contours" 
+  geom_sf(data=Contours_LL, color="black") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence Rate (cm/yr)") +
+  #   Add a scale bar
+  ggspatial::annotation_scale(data=df_sf, aes(unit_category="imperial", style="ticks"),
+    location="br", width_hint=0.2, bar_cols=1) +
+  #   Add CI annotation at specified window coordinates
+  annotate("text", label="C.I. = 0.2 cm per year subsidence
+           Data sourced from the Harris-Galveston Subsidence District 2022 Annual Groundwater Report
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 3) +
+  coord_sf(crs=googlecrs) + # required 
+  #   Add title
+  labs(title="Subsidence Rate",
+       subtitle="Points represent the measurement locations",
+       x="Longitude", y="Latitude")
+
+
+
+```
 
 
