@@ -115,6 +115,7 @@ Krigged_locs %>%
   mutate(Subsidence_rate=signif(Subsidence_rate, 3)) %>% 
   mutate(Convocation = stringr::str_remove(Convocation, " Convocation")) %>% 
   mutate(Name = stringr::str_remove(Name, " Episcopal Church")) %>% 
+  mutate(Address=stringr::str_split_i(Address, "<br>", 2)) %>% 
   gt() %>% 
   tab_header(
     title="Top 12 churches for subsidence"
