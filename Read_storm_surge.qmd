@@ -1,0 +1,82 @@
+---
+title: "Read Storm Surge data"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Setup
+
+Data downloaded from <https://www.nhc.noaa.gov/nationalsurge/>
+
+- Data comes in NAD83
+
+Each dataset contains an ESRI World File (.tfw) and metadata .xml file. These GeoTIFFs are 8-bit unsigned integer raster datasets that correspond to 1 ft inundation bins (e.g., Class Value 1 corresponds to the 0-1 ft inundation bin, Class Value 2 corresponds to the 1-2 ft inundation bin, and so on). The maximum Class Value is 21, and inundation in excess of 20 ft is assigned a Class Value of 21. A Class Value of 99 is assigned to leveed areas. A more detailed description of the data can be found in the associated metadata.
+
+
+
+```{r setup}
+
+library(tidyverse)
+library(stars)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+inputcrs <- "EPSG:4269" # from metadata file
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+#   Define an AOI
+bbox <- sf::st_bbox(sf::st_transform(Parishes, crs=inputcrs))
+
+bbox["xmin"] <- -96.38
+bbox["xmax"] <- -93.66
+bbox["ymin"] <- 28.39
+bbox["ymax"] <- 30.47
+
+```
+
+##        Read in the files and clip to AOI
+
+```{r read in and clip}
+
+# tif = system.file(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif"), package = "stars")
+x <- stars::read_stars(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
+# par(mar = rep(0,4))
+# plot(x, col = grey((4:10)/10))
+
+#   Clip to AOI
+
+cropped <-  sf::st_crop(x, bbox)
+par(mar = rep(0,4))
+plot(cropped, col = grey((4:10)/10))
+plot(cropped, col = sf::sf.colors(6))
+plot(sf::st_crop(sf::st_transform(Parishes, crs=inputcrs), bbox), col="black")
+
+ggplot() +
+  stars::geom_stars(data=cropped, downsample=100) +
+  geom_sf(data=sf::st_crop(sf::st_transform(Parishes, crs=inputcrs), bbox),
+          aes(color="black"))
+
+
+CropPoly <- st_as_sfc(cropped, as_points=FALSE, merge=TRUE, downsample=10)
+
+
+```
+
+#       Intersect church locations with stars object
+
+```{r intersect}
+
+extract <- stars::st_extract(cropped, sf::st_transform(Parishes, crs=inputcrs)) 
+
+
+```
+
+
+
+
+
+
