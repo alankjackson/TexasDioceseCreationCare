@@ -116,16 +116,17 @@ st_as_sf(foo) %>%
   Base_basemapR +
   geom_sf(color="black") +
   # geom_sf_label(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2)))) +
-  ggsflabel::geom_sf_label_repel(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2)))) +
-  labs(title="SLOSH model results from NOAA, Category 1 Hurricane Storm Surge in feet") +
+  ggsflabel::geom_sf_label_repel(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2), "ft"))) +
+  labs(title="SLOSH model from NOAA, Cat 1 Hurricane Storm Surge in feet",
+       x="Longitude",
+       y="Latitude") +
   coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
-  coord_sf(xlim=c(-95.2, -94.75), ylim=c(29.25, 30))
 
-ggsave("/home/ajackson/")
+ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
 
-plot.new()
-plot(terra::crop(cropped, pt1))
-points(vect(pt))
+# plot.new()
+# plot(terra::crop(cropped, pt1))
+# points(vect(pt))
 
 ```
 
