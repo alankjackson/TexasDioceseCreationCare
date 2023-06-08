@@ -130,11 +130,21 @@ ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
 
 ```
 
-# Intersect church locations with stars object
+# Make contours from the geotiff grid
 
-```{r intersect}
+```{r contour}
 
-extract <- stars::st_extract(cropped, sf::st_transform(Parishes, crs=inputcrs)) 
+Lowres <- cropped %>% 
+  aggregate(fact=50, fun="median", na.rm=TRUE) %>% 
+  filter(data_range<99)
+
+ggplot() +
+  geom_spatraster(data=Lowres) +
+  geom_sf(data=sf::st_crop(sf::st_transform(Parishes, crs=inputcrs), bbox),
+          color="black")
 
 
 ```
+
+
+
