@@ -135,7 +135,7 @@ ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
 ```{r contour}
 
 Lowres <- cropped %>% 
-  aggregate(fact=25, fun="median", na.rm=TRUE) %>% 
+  aggregate(fact=10, fun="median", na.rm=TRUE) %>% 
   filter(data_range<99)
 
 ggplot() +
@@ -153,15 +153,21 @@ ggplot() +
   basemapR::base_map(Tinybox, basemap="mapnik", increase_zoom=3)+
   geom_spatraster(data=terra::crop(Lowres, Tinybox), alpha=0.5)
 
-mapiso::mapiso(Lowres)
+# foo_sm <- terra::focal(foo_terra, w=3, fun=mean)
 
-Contours <- smoothr::smooth(mapiso::mapiso(terra::crop(Lowres, Tinybox)), 
-                            method="ksmooth", smoothness=2)
+Contours <- Lowres %>% 
+  terra::crop(Tinybox) %>% 
+  terra::focal(w=3, fun=mean) %>% 
+  mapiso::mapiso() %>% 
+  smoothr::smooth(method="ksmooth", smoothness=2)
+  # smoothr::smooth(mapiso::mapiso(terra::crop(Lowres, Tinybox)), 
+  #                           method="ksmooth", smoothness=2)
 
 ggplot() +
   basemapR::base_map(Tinybox, basemap="mapnik", increase_zoom=3)+
   geom_sf(data=Contours, color="black") +
-  geom_spatraster(data=terra::crop(Lowres, Tinybox), alpha=0.5)
+  geom_spatraster(data=terra::crop(Lowres, Tinybox), alpha=0.5)+
+  scale_fill_gradientn(colors=rainbow(5), limits=c(0,3), na.value="transparent") 
 
 
 ```
