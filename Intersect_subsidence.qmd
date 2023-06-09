@@ -4,7 +4,6 @@ format: html
 editor: visual
 ---
 
-
 ```{r setup}
 
 library(tidyverse)
@@ -24,7 +23,7 @@ dat.fit <- readRDS(paste0(path, "gstat_variogram_Subsidence.rds"))
 
 ```
 
-##    Krige from data to parish locations
+## Krige from data to parish locations
 
 ```{r interpolate}
 
@@ -45,7 +44,7 @@ Krigged_locs <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
 
 ```
 
-##   Make a map
+## Make a map
 
 ```{r map}
 
@@ -91,7 +90,7 @@ ggplot() +
 
 ```
 
-##    Generate some statistics
+## Generate some statistics
 
 ```{r stats}
 
@@ -104,7 +103,7 @@ Krigged_locs %>%
 
 ```
 
-##    Make a table of worst cases
+## Make a table of worst cases
 
 ```{r table}
 
@@ -135,4 +134,3 @@ Krigged_locs %>%
   
 
 ```
-
