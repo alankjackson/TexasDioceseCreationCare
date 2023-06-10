@@ -186,7 +186,16 @@ Levees <- cropped %>%
   filter(data_range>98) %>% 
   as.polygons() %>% 
   st_as_sf() %>% 
-  st_make_valid()
+  st_make_valid() %>% 
+  st_cast("POLYGON") %>% 
+  mutate(Levee_ID=row_number()) %>% 
+  mutate(Levee_name=case_when(
+    Levee_ID==1 ~ "Port Arthur",
+    Levee_ID==2 ~ "Texas City",
+    Levee_ID==3 ~ "Freeport",
+    Levee_ID==4 ~ "Matagorda"
+  )) %>% 
+  select(Levee_ID, Levee_name, geometry) 
 
 tmap::tmap_options(basemaps="OpenStreetMap")
 
@@ -194,11 +203,39 @@ tmap::tmap_mode("view") # set mode to interactive plots
 
 
 tmap::tm_shape(Levees) + 
-    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
   tmap::tm_fill(title = "Levees", alpha=0.5, style="cat")+
+  tmap::tm_text("Levee_name")+
   tmap::tm_borders()
 
 saveRDS(Levees, paste0(path, "StormSurge_Levee_Polygons.rds"))
 ```
+
+##        Which churches are behind levees?
+
+```{r levee protected}
+
+Protected <- st_join(pts, Levees, join=st_within) %>% 
+  filter(!is.na(Levee_ID))
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Protected) + 
+  tmap::tm_fill(title = "Levees", alpha=0.5, style="cat")+
+  tmap::tm_text("Name")+
+  tmap::tm_borders()
+
+
+```
+
+
+
+
+
+
+
+
+
 
 
