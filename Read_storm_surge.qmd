@@ -13,7 +13,13 @@ Zachry, B. C., W. J. Booth, J. R. Rhome, and T. M. Sharon, 2015: A National View
 
 -   Data comes in NAD83
 
-Each dataset contains an ESRI World File (.tfw) and metadata .xml file. These GeoTIFFs are 8-bit unsigned integer raster datasets that correspond to 1 ft inundation bins (e.g., Class Value 1 corresponds to the 0-1 ft inundation bin, Class Value 2 corresponds to the 1-2 ft inundation bin, and so on). The maximum Class Value is 21, and inundation in excess of 20 ft is assigned a Class Value of 21. A Class Value of 99 is assigned to leveed areas. A more detailed description of the data can be found in the associated metadata.
+Each dataset contains an ESRI World File (.tfw) and metadata .xml file. These
+GeoTIFFs are 8-bit unsigned integer raster datasets that correspond to 1 ft
+inundation bins (e.g., Class Value 1 corresponds to the 0-1 ft inundation bin,
+Class Value 2 corresponds to the 1-2 ft inundation bin, and so on). The maximum
+Class Value is 21, and inundation in excess of 20 ft is assigned a Class Value
+of 21. A Class Value of 99 is assigned to leveed areas. A more detailed
+description of the data can be found in the associated metadata.
 
 ```{r setup}
 
@@ -49,26 +55,18 @@ expand_box <- function(bbox, pct=0.2){
   return(bbox)
 }
 
+Basemap_attribution <- 'attribution: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 ```
 
 ## Read in the files and clip to AOI
 
 ```{r read in and clip}
 
-# tif = system.file(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif"), package = "stars")
-# x <- stars::read_stars(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
 x <- terra::rast(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
-# par(mar = rep(0,4))
-# plot(x, col = grey((4:10)/10))
 
 #   Clip to AOI
 
-# cropped <-  sf::st_crop(x, bbox)
 cropped <- terra::crop(x, bbox)
-# par(mar = rep(0,4))
-# plot(cropped, col = grey((4:10)/10))
-# plot(cropped, col = sf::sf.colors(6))
-# plot(sf::st_crop(sf::st_transform(Parishes, crs=inputcrs), bbox), col="black")
 
  pt1 <- sf::st_transform(Parishes, crs=inputcrs)[62,] %>% 
    st_buffer(100) %>% st_as_sf() # Units are meters
@@ -214,7 +212,6 @@ saveRDS(Levees, paste0(path, "StormSurge_Levee_Polygons.rds"))
 ##        Which churches are behind levees?
 
 ```{r levee protected}
-
 Protected <- st_join(sf::st_transform(Parishes, crs=inputcrs), Levees, join=st_within) %>%
   filter(!is.na(Levee_ID))
 # Protected <- st_join(Levees, sf::st_transform(Parishes, crs=inputcrs), join=st_contains) %>% 
@@ -224,44 +221,44 @@ tmap::tmap_options(basemaps="OpenStreetMap")
 
 tmap::tmap_mode("view") # set mode to interactive plots
 
-tmap::tm_shape(Protected) + 
+tmap::tm_shape(Levees) + 
   tmap::tm_fill(title = "Levees", alpha=0.5, style="cat")+
-  tmap::tm_text("Name")+
-  tmap::tm_borders()
+  tmap::tm_text("Levee_name")+
+  tmap::tm_borders() +
+tmap::tm_shape(Protected) + 
+  tmap::tm_dots() +
+  tmap::tm_text("Label")
+```
 
+
+```{r levee protected 2}
+#| warning: FALSE
 #   Make small maps around each of the levees showing those churches
 
 for (Levee in c("Port Arthur", "Texas City", "Freeport", "Matagorda")){
   temp <- Protected %>% 
     filter(Levee_name==Levee)
   
-  # Protected %>% 
-  #   filter(Levee_name==Levee) %>% 
-  #   ggplot() +
-    
   box <- Levees %>%
     filter(Levee_name==Levee) %>% 
     st_bbox() %>% expand_box(., 0.5)
 
-  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=3)
-
+  Base_basemapR <- suppressMessages(basemapR::base_map(box, basemap="mapnik", increase_zoom=3))
 
   print(Protected %>%
     filter(Levee_name==Levee) %>%
     ggplot() +
     Base_basemapR +
     geom_sf(data=Levees, alpha=0.4) +
-    geom_sf_label(aes(label=stringr::str_remove(Name, "Episcopal Church"),
+    geom_sf_label(aes(label=Label),
                       hjust=0,
-                      vjust=0)) +
+                      vjust=0) +
     geom_sf(color="black") +
-    # ggsflabel::geom_sf_label_repel(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2), "ft"))) +
     labs(title=paste("Churches behind", Levee, "levee"),
          x="Longitude",
          y="Latitude") +
     coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))  
-  )
-    
+  ) 
 }
 
 
