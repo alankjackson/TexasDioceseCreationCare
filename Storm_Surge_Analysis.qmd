@@ -1,0 +1,106 @@
+---
+title: "Storm Surge Analysis"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Storm Surge Analysis
+
+1. Build a table of which churches are affected under each storm category
+2. Define AOI's for maps to illustrate the different areas
+3. Build the maps
+4. Extend the maps and tables with Sealevel rise? 
+
+##        Setup
+
+Read in files and get everything onto the same CRS
+
+We will do all our work in EPSG:4269 since the GeoTIFF data comes in that CRS.
+
+
+```{r setup}
+library(tidyverse)
+library(terra)
+library(tidyterra)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+inputcrs <- "EPSG:4269" # from metadata file
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+#   Transform Parishes to the GeoTIFF input grid and add an ID needed later for joins
+Parishes <- sf::st_transform(Parishes, crs=inputcrs) %>% 
+  mutate(ID=row_number())
+
+#   Define some 100 m polygons around each church
+Parish_polys <- Parishes %>% 
+  st_buffer(100) %>% st_as_sf() # Units are meters
+
+#   Define an AOI
+bbox <- sf::st_bbox(Parishes)
+
+bbox["xmin"] <- -96.38
+bbox["xmax"] <- -93.66
+bbox["ymin"] <- 28.39
+bbox["ymax"] <- 30.47
+
+#   Expand box by 20% to give a little extra room
+expand_box <- function(bbox, pct=0.2){
+  Dx <- (bbox[["xmax"]]-bbox[["xmin"]])*pct
+  Dy <- (bbox[["ymax"]]-bbox[["ymin"]])*pct
+  bbox["xmin"] <- bbox["xmin"] - Dx
+  bbox["xmax"] <- bbox["xmax"] + Dx
+  bbox["ymin"] <- bbox["ymin"] - Dy
+  bbox["ymax"] <- bbox["ymax"] + Dy
+  return(bbox)
+}
+
+Basemap_attribution <- 'attribution: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+```
+
+
+```{r Read in grids}
+
+x <- terra::rast(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
+
+#   Clip to AOI
+
+Cat1_slosh <- terra::crop(x, bbox)
+
+#   Extract values at church locations
+
+foo <- cropped %>% 
+  terra::extract(vect(Parish_polys), method="bilinear", ID=TRUE) %>% 
+    group_by(ID) %>% 
+    summarize(value=mean(data_range, na.rm=TRUE)) %>% 
+  filter(!is.nan(value)) %>% 
+  filter(value<99) %>% 
+  inner_join(., Parishes, by="ID") %>% 
+  st_as_sf()
+
+box <- sf::st_transform(foo, crs=inputcrs) %>%
+  st_as_sf() %>% st_bbox() %>% expand_box(., 0.5)
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=3)
+
+
+st_as_sf(foo) %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(color="black") +
+  # geom_sf_label(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2)))) +
+  ggsflabel::geom_sf_label_repel(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2), "ft"))) +
+  labs(title="SLOSH model from NOAA, Cat 1 Hurricane Storm Surge in feet",
+       x="Longitude",
+       y="Latitude") +
+  coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
+
+ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
+
+```
+
+
