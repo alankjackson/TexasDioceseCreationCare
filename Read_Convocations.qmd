@@ -7,7 +7,6 @@ editor: visual
 
 ## Read convocation coordinate file
 
-
 ```{r setup}
 
 library(tidyverse)
@@ -16,7 +15,7 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 ```
 
-##  Read the data
+## Read the data
 
 ```{r read data in (and save it)}
 
@@ -43,14 +42,52 @@ Parishes <- Parishes %>%
   filter(!stringr::str_detect(Name, "Convocation|Region")) %>% 
   mutate(description=stringr::str_replace(description, "http://trinitywoodlands.org/", 
                                           "3901 South Panther Creek Drive<br>The Woodlands, TX 77381<br>281-367-8113<br>trinitywoodlands.org (https://www.trinitywoodlands.org/)"))
+
+#   Create shorter Label names for churches
+
+Parishes <- Parishes %>% 
+  mutate(Label=stringr::str_remove(Name, " Episcopal Church$")) %>% 
+  mutate(Label=stringr::str_replace(Label, "^Christ$", "Christ Church")) %>% 
+  mutate(Label=stringr::str_remove(Label, "^Episcopal Church of the ")) %>% 
+  mutate(Label=stringr::str_remove(Label, " Episcopal Church and School")) %>% 
+  mutate(Label=stringr::str_remove(Label, " Episcopal Church & School")) %>% 
+  mutate(Label=stringr::str_remove(Label, "The Church of ")) %>% 
+  mutate(Label=stringr::str_remove(Label, " - Leigh")) %>% 
+  mutate(Label=stringr::str_replace(Label, "The Episcopal Church of Hamilton County", "St. Mary's")) %>% 
+  mutate(description=stringr::str_replace(description, "St. Catherine's Episcopal Church",
+                                          "1101 S Rice St, Hamilton, TX 76531")) %>% 
+  select(Name, Label, Description=description, Convocation) %>% 
+  st_as_sf()
+  
+Parishes[54,]$Description <- "7615 FM 762 Rd<br>Richmond, TX 77469"
+Parishes[50,]$Description <- "5653 W Riverpark Dr<br>Sugar Land, TX 77479"
+
+Parishes <- Parishes %>% 
+  mutate(Convocation = stringr::str_remove(Convocation, " Convocation")) %>% 
+  mutate(City=stringr::str_split_i(Description, "<br>|,", 2)) %>% 
+  select(Name, Label, City, Description, Convocation) %>% 
+  st_as_sf()
+
+Parishes[149,]$City <- "Marlin"
+Parishes[149,]$Description <- "514 Carter St<br>Marlin, TX 76661"
+Parishes[149,]$Convocation <- "Northwest"
+Parishes[153,]$Label <- "St. Matthew's"
+
+Special_cases <- c(1,2,4,22,39,73,82,109,113,117,144,150:162)
+Special_values <- c(rep("Houston",5), "Beaumont", "Bryan", "Round Rock", "Manor (temp)",
+                    "Round Rock", "Leigh", "Arlington (temp)", "Decatur (temp)", 
+                    "Fort Worth (temp)", "Fort Worth (temp)", "Fort Worth (temp)",
+                    "Fort Worth (temp)", "Granbury (temp)", "Hamilton", "Hillsboro (temp)",
+                    "Hurst (temp)", "Keller", "Stephenville", "Wichita Falls (temp)")
+
+Parishes[Special_cases,]$City <- Special_values
   
 saveRDS(Convocations, paste0(path, "Convocations.rds"))
 saveRDS(Parishes, paste0(path, "Parishes.rds"))
 
 ```
 
-
-##  Plot the data
+## Plot the data
 
 ```{r plot}
 
@@ -70,9 +107,3 @@ tmap::tm_shape(Convocations) +
 
 
 ```
-
-
-
-
-
-
