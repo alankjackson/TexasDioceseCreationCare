@@ -87,6 +87,8 @@ for (i in 1:5){
     inner_join(., Parishes, by="ID") %>% 
     sf::st_as_sf()
   
+  saveRDS(Church_values, paste0(path, "Churches_Stormsurge_Cat", i, ".rds"))
+  
   box <- Church_values %>%
     sf::st_bbox() %>% expand_box(., 0.2)
   
