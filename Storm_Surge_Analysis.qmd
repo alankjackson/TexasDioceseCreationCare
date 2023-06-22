@@ -12,6 +12,8 @@ editor: visual
 3.  Build the maps
 4.  Extend the maps and tables with Sealevel rise?
 
+Data is from https://www.nhc.noaa.gov/nationalsurge/#data where it is stored as geotiff files.
+
 ## Setup
 
 Read in files and get everything onto the same CRS
@@ -63,6 +65,11 @@ expand_box <- function(bbox, pct=0.2){
 Basemap_attribution <- 'attribution: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 ```
 
+##        Read in the grids
+
+Note that values of 99 in the grids designate areas inside of levees, so will be eliminated
+
+
 ```{r Read in grids}
 
 for (i in 1:5){
@@ -73,8 +80,8 @@ for (i in 1:5){
   
   Slosh <- terra::crop(x, bbox)
   rm(x)
-  Slosh <- ifel(Slosh==99, NA, Slosh)
-  Slosh <- as.numeric(Slosh)
+  Slosh <- ifel(Slosh==99, NA, Slosh) # get rid of inter-levee data
+  Slosh <- as.numeric(Slosh) # change to floating point
   
   #   Extract values at church locations
   
@@ -110,6 +117,8 @@ for (i in 1:5){
     coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
   
   ggsave(paste0(output_path, "Cat_",i,"_slosh_model.jpg"))
+  
+  #   Make a table
   
   table <- Church_values %>% 
     select(Label, City, value) %>% 
