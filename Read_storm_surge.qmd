@@ -227,7 +227,7 @@ tmap::tm_shape(Levees) +
   tmap::tm_borders() +
 tmap::tm_shape(Protected) + 
   tmap::tm_dots() +
-  tmap::tm_text("Label")
+  tmap::tm_text("Label", just = "left", xmod = 0.1)
 ```
 
 
