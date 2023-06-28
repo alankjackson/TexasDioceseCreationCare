@@ -1,0 +1,69 @@
+---
+title: "Read FEMA data"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Read FEMA data
+
+FEMA data by census tract in a csv file
+
+https://hazards.fema.gov/nri/
+
+
+
+```{r setup}
+
+library(tidyverse)
+# library(stars)
+# library(terra)
+# library(tidyterra)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
+
+##        Read data
+
+```{r read csv file}
+
+df <- read_csv(paste0(path, "NRI_Table_CensusTracts_Texas.csv")) %>% 
+  select(NRI_ID, COUNTY, COUNTYFIPS, STCOFIPS, TRACT, TRACTFIPS, POPULATION, AREA, 
+         SOVI_SCORE, RESL_SCORE, 
+         CFLD_EVNTS, CFLD_AFREQ, CFLD_EXPT,
+         CWAV_EVNTS, CWAV_AFREQ, CWAV_EXPT,
+         DRGT_EVNTS, DRGT_AFREQ, DRGT_EXPT,
+         ERQK_EVNTS, ERQK_AFREQ, ERQK_EXPT,
+         HAIL_EVNTS, HAIL_AFREQ, HAIL_EXPT,
+         HWAV_EVNTS, HWAV_AFREQ, HWAV_EXPT,
+         HRCN_EVNTS, HRCN_AFREQ, HRCN_EXPT,
+         ISTM_EVNTS, ISTM_AFREQ, ISTM_EXPT,
+         LTNG_EVNTS, LTNG_AFREQ, LTNG_EXPT,
+         RFLD_EVNTS, RFLD_AFREQ, RFLD_EXPT,
+         SWND_EVNTS, SWND_AFREQ, SWND_EXPT,
+         TRND_EVNTS, TRND_AFREQ, TRND_EXPT,
+         WFIR_EVNTS, WFIR_AFREQ, WFIR_EXPT,
+         WNTW_EVNTS, WNTW_AFREQ, WNTW_EXPT
+         )
+
+saveRDS(df, paste0(path, "NRI_Table.rds"))
+
+```
+
+##        Build table of census tracts by church location
+
+Need tract number church is located in, plus the tracts in a 1 mile radius
+
+```{r census tracts}
+
+```
+
+
+
+
