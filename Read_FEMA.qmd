@@ -16,9 +16,6 @@ https://hazards.fema.gov/nri/
 ```{r setup}
 
 library(tidyverse)
-# library(stars)
-# library(terra)
-# library(tidyterra)
 
 googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
@@ -55,15 +52,6 @@ df <- read_csv(paste0(path, "NRI_Table_CensusTracts_Texas.csv")) %>%
 saveRDS(df, paste0(path, "NRI_Table.rds"))
 
 ```
-
-##        Build table of census tracts by church location
-
-Need tract number church is located in, plus the tracts in a 1 mile radius
-
-```{r census tracts}
-
-```
-
 
 
 
