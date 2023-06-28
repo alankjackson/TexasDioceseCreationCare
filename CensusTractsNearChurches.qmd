@@ -1,0 +1,25 @@
+---
+title: "Census Tracts near churches"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+##  Find the census tracts near the churches
+
+Create a data frame with census tracts that each church lives in, plus a list of tracts within
+a 1 mile radius
+
+```{r setup}
+
+library(tidyverse)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
+
