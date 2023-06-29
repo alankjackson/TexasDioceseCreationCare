@@ -13,13 +13,114 @@ a 1 mile radius
 ```{r setup}
 
 library(tidyverse)
+library(tidycensus)
+
+census_api_key("c458095036ca1037f97b9c7019b6a7ac2dbf90d4")
+
+#   What data available
+
+Looky1 <- load_variables(2020, c("pl"), cache=TRUE)
+Looky <- load_variables(2020, c("acs5"), cache=TRUE)
+Looky2 <- load_variables(2020, c("dhc"), cache=TRUE)
+Looky3 <- load_variables(2020, c("dp"), cache=TRUE)
+
+#     All these by block
+dec_vars <- c(Households="H1_001N", # total households
+              Households_occ="H1_002N", # total households occupied
+              Pop="P1_001N", # total population
+              Pop_white="P1_003N", # white
+              Pop_black="P1_004N", # black
+              Pop_asian="P1_006N", # Asian
+              Pop_hispanic="P2_002N", # Hispanic
+              Pop_not_hisp="P2_005N"  # White not Hispanic
+              )
+
+#   All these by block group
+acs_vars_b <- c(Pop_blk_grp="B01001_001", # Total population by blk grp
+              Med_inc="B19013_001", # median household income, blk grp
+              Per_cap_inc="B19301_001", # Per capita income, blk grp
+              Aggreg_inc="B19025_001", # Aggregate household income, blk grp
+              Med_age="B01002_001") # median age, blk grp
+
+#   All these by tract
+acs_vars_t <- c(Pop_tract="B05001_001", # Total population by Tract
+              Born_US="B05002_002", # Born in the US, tract
+              Born_foreign="B05002_013", # Foreign born, tract
+              Not_US_citizen="B05002_021"  # Not a US citizen, tract
+              )
+
 
 googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
+censuscrs <- "EPSG:4269"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
+
+
+##    Start with one county to see what it looks like
+
+```{r harris county}
+
+Pop <- get_decennial(geography="tract",
+                     variables=dec_vars,
+                     year=2020,
+                     state="TX",
+                     county="201",
+                     output="wide",
+                     geometry=FALSE) %>% 
+  select(-NAME)
+
+ACS_b <- get_acs(geography="tract",
+               variables=acs_vars_b,
+               year=2020,
+               state="TX",
+               county="201",
+               output="wide",
+               geometry=FALSE) %>%  
+  select(-NAME)
+
+ACS_t <- get_acs(geography="tract",
+               variables=acs_vars_t,
+               year=2020,
+               state="TX",
+               county="201",
+               output="wide",
+               geometry=TRUE) 
+
+#   Combine and transform to to google CRS
+
+Census <- left_join(Pop, ACS_b, by="GEOID") %>% 
+  left_join(., ACS_t, by="GEOID") %>% 
+  sf::st_as_sf() %>% 
+  sf::st_transform(googlecrs)
+
+#   Find intersecting tract plus tracts within 1 mile
+
+a <- sf::st_intersects(Parishes, Census, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 1116))
+
+temp <- Census
+temp[1116,] <- temp[1115,]
+temp$GEOID[1116] <- 0
+
+Parish2 <- Parishes
+Parish2$Tract <- temp$GEOID[unlist(a)]
+
+#   Now look at a 1 mile radius
+
+Parish2 <- Parish2 %>% 
+  rowid_to_column("ID")
+
+#   pts are really polygons surrounding church locations
+Parish_polys <- Parish2 %>% 
+  st_buffer(1609) %>% st_as_sf() # Units are meters
+
+a <- sf::st_intersects(Parish_polys, Census, sparse=TRUE)
+
 
 ```
 
