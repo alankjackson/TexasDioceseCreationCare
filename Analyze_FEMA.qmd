@@ -1,0 +1,26 @@
+---
+title: "Analyze FEMA data"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Combine FEMA and church data to analyze
+
+
+```{r setup}
+
+library(tidyverse)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+```
+
+
+
+
+
+
