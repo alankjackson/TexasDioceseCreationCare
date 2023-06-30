@@ -65,11 +65,12 @@ temp <- Census
 temp[6897,] <- temp[6896,]
 temp$GEOID[6897] <- 0
 
-Convocations$Tracts <- list(0)
+Convocations$Tract <- list(0)
 for (i in 1:nrow(Convocations)) {
-  Convocations$Tracts[i] <- list(Pos_to_GEOID(a[[i]], temp))
+  Convocations$Tract[i] <- list(Pos_to_GEOID(a[[i]], temp))
 }
 
+Convocations <- sf::st_as_sf(Convocations)
 
 
 ```
@@ -77,6 +78,12 @@ for (i in 1:nrow(Convocations)) {
 ##        Maps by convocation of Frequency and Annual Occurrance
 
 ```{r convo}
+
+Long_Convo <- Convocations %>% 
+  sf::st_drop_geometry() %>% 
+  unnest_longer(Tract)
+
+Long_Convo <- left_join(Long_Convo, FEMA, by="Tract")
 
 
 
