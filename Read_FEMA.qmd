@@ -30,7 +30,8 @@ Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
 ```{r read csv file}
 
-df <- read_csv(paste0(path, "NRI_Table_CensusTracts_Texas.csv")) %>% 
+df <- read_csv(paste0(path, "NRI_Table_CensusTracts_Texas.csv"),
+               col_types="ccccccccccciii?") %>% 
   select(NRI_ID, COUNTY, COUNTYFIPS, STCOFIPS, TRACT, TRACTFIPS, POPULATION, AREA, 
          SOVI_SCORE, RESL_SCORE, 
          CFLD_EVNTS, CFLD_AFREQ, CFLD_EXPT,
