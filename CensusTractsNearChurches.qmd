@@ -91,7 +91,7 @@ ACS_t <- get_acs(geography="tract",
                output="wide",
                geometry=TRUE) 
 
-#   Combine and transform to to google CRS
+#   Combine and transform to the Google CRS
 
 Census <- left_join(Pop, ACS_b, by="GEOID") %>% 
   left_join(., ACS_t, by="GEOID") %>% 
@@ -116,11 +116,100 @@ Parish2 <- Parish2 %>%
   rowid_to_column("ID")
 
 #   pts are really polygons surrounding church locations
+
+Pos_to_GEOID <- function(Position_list, Census_df){
+  return(Census_df$GEOID[Position_list])
+}
+
 Parish_polys <- Parish2 %>% 
   st_buffer(1609) %>% st_as_sf() # Units are meters
 
 a <- sf::st_intersects(Parish_polys, Census, sparse=TRUE)
 
+Parish2$Nearby <- list(0)
+for (i in 1:nrow(Parish2)) {
+  Parish2$Nearby[i] <- list(Pos_to_GEOID(a[[i]], temp))
+}
 
 ```
+
+##        Now do for all churches
+
+```{r everyone}
+
+Pop <- get_decennial(geography="tract",
+                     variables=dec_vars,
+                     year=2020,
+                     state="TX",
+                     # county="201",
+                     output="wide",
+                     geometry=FALSE) %>% 
+  select(-NAME)
+
+ACS_b <- get_acs(geography="tract",
+               variables=acs_vars_b,
+               year=2020,
+               state="TX",
+               # county="201",
+               output="wide",
+               geometry=FALSE) %>%  
+  select(-NAME)
+
+ACS_t <- get_acs(geography="tract",
+               variables=acs_vars_t,
+               year=2020,
+               state="TX",
+               # county="201",
+               output="wide",
+               geometry=TRUE) 
+
+#   Combine and transform to the Google CRS
+
+Census <- left_join(Pop, ACS_b, by="GEOID") %>% 
+  left_join(., ACS_t, by="GEOID") %>% 
+  sf::st_as_sf() %>% 
+  sf::st_transform(googlecrs)
+
+#   Find intersecting tract plus tracts within 1 mile
+
+a <- sf::st_intersects(Parishes, Census, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 6897))
+
+temp <- Census
+temp[6897,] <- temp[6896,]
+temp$GEOID[6897] <- 0
+
+Parish2 <- Parishes
+Parish2$Tract <- temp$GEOID[unlist(a)]
+
+#   Now look at a 1 mile radius
+
+Parish2 <- Parish2 %>% 
+  rowid_to_column("ID")
+
+#   pts are really polygons surrounding church locations
+
+Pos_to_GEOID <- function(Position_list, Census_df){
+  return(Census_df$GEOID[Position_list])
+}
+
+Parish_polys <- Parish2 %>% 
+  sf::st_buffer(1609) %>% sf::st_as_sf() # Units are meters
+
+a <- sf::st_intersects(Parish_polys, Census, sparse=TRUE)
+
+Parish2$Nearby <- list(0)
+for (i in 1:nrow(Parish2)) {
+  Parish2$Nearby[i] <- list(Pos_to_GEOID(a[[i]], temp))
+}
+
+```
+
+
+
+
+
+
+
+
 
