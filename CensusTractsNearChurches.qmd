@@ -10,6 +10,10 @@ editor: visual
 Create a data frame with census tracts that each church lives in, plus a list of tracts within
 a 1 mile radius
 
+Also pull likely useful census data per tract
+
+Everything in google CRS
+
 ```{r setup}
 
 library(tidyverse)
@@ -202,6 +206,10 @@ Parish2$Nearby <- list(0)
 for (i in 1:nrow(Parish2)) {
   Parish2$Nearby[i] <- list(Pos_to_GEOID(a[[i]], temp))
 }
+
+saveRDS(Parish2, paste0(path, "Parishes_plus_Census_tracts.rds"))
+
+saveRDS(Census, paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 ```
 
