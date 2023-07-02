@@ -16,11 +16,13 @@ Produce the following:
 ```{r setup}
 
 library(tidyverse)
+library(sf)
 
 googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/"
 
 Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
@@ -79,14 +81,63 @@ Convocations <- sf::st_as_sf(Convocations)
 
 ```{r convo}
 
+Control <- tribble(~Freq_var, ~Freq_label, ~Freq_units,
+                   "Coastal_Flood_Freq", "Coastal Flooding", "Flood/yr",
+                   "Cold_freq", "Cold Waves", "Cold Wave Days/yr",
+                   "Drought_freq", "Droughts", "Drought Days/yr",
+                   "Quake_freq", "Earthquakes", "Quakes/yr",
+                   "Hail_freq", "Hail", "Large Hail events/yr",
+                   "Heat_freq", "Heat Waves", "Heat Wave Days/yr",
+                   "Hurricane_freq", "Hurricanes", "Hurricanes/yr",
+                   "Ice_freq", "Ice Storms", "Ice Storm Days/yr",
+                   "Lightning_freq", "Lightning", "Lightening Strikes/yr",
+                   "River_Flood_freq", "River Flooding", "Flood Days/yr",
+                   "Wind_freq",
+                   "Tornado_freq",
+                   "Wildfire_freq",
+                   "Winter_freq")
+
 Long_Convo <- Convocations %>% 
   sf::st_drop_geometry() %>% 
   unnest_longer(Tract)
 
 Long_Convo <- left_join(Long_Convo, FEMA, by="Tract")
 
+Tract_geoms <- Census %>% 
+  select(Tract=GEOID)  
 
+Long_Convo <- Long_Convo %>% 
+  left_join(., Tract_geoms, by="Tract") %>% 
+  st_as_sf()
 
+Convo_parishes <- Parishes %>% 
+  filter(Convocation=="East Harris")
+
+box <- Long_Convo %>%
+  filter(Name=="East Harris Convocation") %>% 
+  sf::st_bbox() 
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+Long_Convo %>% 
+  filter(Name=="East Harris Convocation") %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(fill=Coastal_Flood_Freq) ,alpha=0.5) +
+  scale_fill_gradient("Floods/yr", na.value = "transparent", low="white", high="blue") +
+  geom_sf(data=Convo_parishes, show.legend=FALSE) +
+  ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+                                 size=2, max.overlaps=20, force=100) +
+  labs(title="FEMA Coastal Flooding Frequency, East Harris Convocation ",
+       subtitle="Number of expected floods each year, per census tract") +
+  annotate("text", label="
+         Data sourced from FEMA, National Risk Index, March 2023 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 3)
+
+  # ggsave(paste0(output_path, "FEMA_",i,"_slosh_model.jpg"))
 ```
 
 
