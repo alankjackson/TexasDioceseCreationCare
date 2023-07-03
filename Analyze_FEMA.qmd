@@ -43,6 +43,7 @@ FEMA <- readRDS(paste0(path, "NRI_Table.rds")) %>%
          Heat_num=HWAV_EVNTS, Heat_freq=HWAV_AFREQ,
          Hurricane_num=HRCN_EVNTS, Hurricane_freq=HRCN_AFREQ,
          Ice_num=ISTM_EVNTS, Ice_freq=ISTM_AFREQ,
+         Landslide_num=LNDS_EVNTS, Landslide_freq=LNDS_AFREQ,
          Lightning_num=LTNG_EVNTS, Lightning_freq=LTNG_AFREQ,
          River_Flood_num=RFLD_EVNTS, River_Flood_freq=RFLD_AFREQ,
          Wind_num=SWND_EVNTS, Wind_freq=SWND_AFREQ,
@@ -88,14 +89,15 @@ Control <- tribble(~Freq_var, ~Freq_label, ~Freq_units,
                    "Quake_freq", "Earthquakes", "Quakes/yr",
                    "Hail_freq", "Hail", "Large Hail events/yr",
                    "Heat_freq", "Heat Waves", "Heat Wave Days/yr",
-                   "Hurricane_freq", "Hurricanes", "Hurricanes/yr",
+                   "Hurricane_freq", "Hurricane / T.S.", "Hurricanes/yr",
                    "Ice_freq", "Ice Storms", "Ice Storm Days/yr",
-                   "Lightning_freq", "Lightning", "Lightening Strikes/yr",
+                   "Landslide_freq", "Landslides", "Landslides/yr",
+                   "Lightning_freq", "Lightning", "Lightning Strikes/yr",
                    "River_Flood_freq", "River Flooding", "Flood Days/yr",
-                   "Wind_freq",
-                   "Tornado_freq",
-                   "Wildfire_freq",
-                   "Winter_freq")
+                   "Wind_freq", "Strong Winds", "Strong Wind Events/yr",
+                   "Tornado_freq", "Tornados", "Tornados/yr", 
+                   "Wildfire_freq", "Wildfire", "Wildfire Probability/yr",
+                   "Winter_freq", "Winter Weather", "Winter Weather Days/yr")
 
 Long_Convo <- Convocations %>% 
   sf::st_drop_geometry() %>% 
