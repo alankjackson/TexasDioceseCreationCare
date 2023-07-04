@@ -78,12 +78,30 @@ Convocations <- sf::st_as_sf(Convocations)
 
 ```
 
+##        Interactive map of diocese to trouble shoot the data
+
+```{r trouble shoot}
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Long_Convo) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "Landslide_freq", title = "Landslides", alpha=0.3, style="pretty")+
+  tmap::tm_borders() 
+
+
+```
+
+
+
 ##        Maps by convocation of Frequency and Annual Occurrance
 
 ```{r convo}
 
 Control <- tribble(~Freq_var, ~Freq_label, ~Freq_units,
-                   "Coastal_Flood_Freq", "Coastal Flooding", "Flood/yr",
+                   "Coastal_Flood_Freq", "Coastal Flooding", "Floods/yr",
                    "Cold_freq", "Cold Waves", "Cold Wave Days/yr",
                    "Drought_freq", "Droughts", "Drought Days/yr",
                    "Quake_freq", "Earthquakes", "Quakes/yr",
@@ -101,7 +119,8 @@ Control <- tribble(~Freq_var, ~Freq_label, ~Freq_units,
 
 Long_Convo <- Convocations %>% 
   sf::st_drop_geometry() %>% 
-  unnest_longer(Tract)
+  unnest_longer(Tract) %>% 
+  filter(Tract != "48071710600") # unoccupied spoil banks in Galveston Bay
 
 Long_Convo <- left_join(Long_Convo, FEMA, by="Tract")
 
@@ -109,37 +128,62 @@ Tract_geoms <- Census %>%
   select(Tract=GEOID)  
 
 Long_Convo <- Long_Convo %>% 
+  mutate(Name=stringr::str_remove(Name, " Convocation| Region")) %>% 
   left_join(., Tract_geoms, by="Tract") %>% 
   st_as_sf()
 
-Convo_parishes <- Parishes %>% 
-  filter(Convocation=="East Harris")
+#   Loop through convocations, and produce maps for each one (a lot of maps)
 
-box <- Long_Convo %>%
-  filter(Name=="East Harris Convocation") %>% 
-  sf::st_bbox() 
-
-Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+for (Convo in stringr::str_remove(Convocations$Name, " Convocation| Region")) {
   
-Long_Convo %>% 
-  filter(Name=="East Harris Convocation") %>% 
-  ggplot() +
-  Base_basemapR +
-  geom_sf(aes(fill=Coastal_Flood_Freq) ,alpha=0.5) +
-  scale_fill_gradient("Floods/yr", na.value = "transparent", low="white", high="blue") +
-  geom_sf(data=Convo_parishes, show.legend=FALSE) +
-  ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
-                                 size=2, max.overlaps=20, force=100) +
-  labs(title="FEMA Coastal Flooding Frequency, East Harris Convocation ",
-       subtitle="Number of expected floods each year, per census tract") +
-  annotate("text", label="
-         Data sourced from FEMA, National Risk Index, March 2023 
-         Map a product of Alan Jackson", 
-         x=-Inf, 
-         y=-Inf,
-         hjust="inward", vjust="inward", size = 3)
+  print(Convo)
+  
+  Convo_parishes <- Parishes %>% 
+    mutate(Convocation=stringr::str_remove(Convocation, " Convocation| Region")) %>% 
+    filter(stringr::str_equal(Convocation, Convo))
+  
+  box <- Long_Convo %>%
+    filter(Name==Convo) %>% 
+    sf::st_bbox() 
+  
+  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+    
+  for (i in 1:15) {
+    
+    print(paste("--------->", Control[i,]$Freq_var))
+  
+    filler <- sym(Control[i,]$Freq_var)
+    
+    max_val <- max(sf::st_drop_geometry(Long_Convo[Control[i,]$Freq_var]), na.rm = TRUE)
+      
+    
+    Long_Convo %>% 
+      filter(Name==Convo) %>% 
+      ggplot() +
+      Base_basemapR +
+      geom_sf(aes(fill=!!filler) ,alpha=0.5) +
+      scale_fill_gradient(Control[i,]$Freq_units, 
+                          na.value = "transparent", 
+                          low="white", 
+                          high="blue",
+                          limits=c(0, max_val)) +
+      geom_sf(data=Convo_parishes, show.legend=FALSE) +
+      ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+                                     size=2, max.overlaps=20, force=80) +
+      labs(title=paste("FEMA", Control[i,]$Freq_label,"Frequency", Convo, "Convocation "),
+           subtitle=paste("Number of expected", Control[i,]$Freq_units, "per census tract")) +
+      annotate("text", label="
+             Data sourced from FEMA, National Risk Index, March 2023 
+             Map a product of Alan Jackson", 
+             x=-Inf, 
+             y=-Inf,
+             hjust="inward", vjust="inward", size = 2)
+    
+      ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_", 
+                    paste(Convo, sep="_"), "_.jpg"))
+  }
+}
 
-  # ggsave(paste0(output_path, "FEMA_",i,"_slosh_model.jpg"))
 ```
 
 
