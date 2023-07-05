@@ -10,6 +10,7 @@ editor: visual
 FEMA data by census tract in a csv file
 
 https://hazards.fema.gov/nri/
+https://hazards.fema.gov/nri/data-resources#csvDownload
 
 
 
