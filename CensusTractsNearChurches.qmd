@@ -62,6 +62,8 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
+Counties <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/County_Outlines.rds")
+
 ```
 
 
@@ -206,6 +208,19 @@ Parish2$Nearby <- list(0)
 for (i in 1:nrow(Parish2)) {
   Parish2$Nearby[i] <- list(Pos_to_GEOID(a[[i]], temp))
 }
+
+#   Add county names and FIPS codes
+
+a <- sf::st_intersects(Parish2, Counties, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 255))
+
+temp <- Counties
+temp[255,] <- temp[254,]
+temp$CNTY_NM[255] <- "0"
+
+Parish2$County <- temp$CNTY_NM[unlist(a)]
+
+#     Save results
 
 saveRDS(Parish2, paste0(path, "Parishes_plus_Census_tracts.rds"))
 
