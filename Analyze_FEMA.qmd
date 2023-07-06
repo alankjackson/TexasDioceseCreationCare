@@ -17,6 +17,7 @@ Produce the following:
 
 library(tidyverse)
 library(sf)
+library(gt)
 
 googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
@@ -39,6 +40,25 @@ Convocations <- readRDS(paste0(path,"Convocations.rds")) %>%
 
 FEMA <- readRDS(paste0(path, "NRI_Table.rds")) %>% 
   select(Tract=TRACTFIPS, SocVuln=SOVI_SCORE, Resilience=RESL_SCORE, 
+         Coastal_Flood_num=CFLD_EVNTS, Coastal_Flood_Freq=CFLD_AFREQ,
+         Cold_num=CWAV_EVNTS, Cold_freq=CWAV_AFREQ,
+         Drought_num=DRGT_EVNTS, Drought_freq=DRGT_AFREQ,
+         Quake_num=ERQK_EVNTS, Quake_freq=ERQK_AFREQ,
+         Hail_num=HAIL_EVNTS, Hail_freq=HAIL_AFREQ,
+         Heat_num=HWAV_EVNTS, Heat_freq=HWAV_AFREQ,
+         Hurricane_num=HRCN_EVNTS, Hurricane_freq=HRCN_AFREQ,
+         Ice_num=ISTM_EVNTS, Ice_freq=ISTM_AFREQ,
+         Landslide_num=LNDS_EVNTS, Landslide_freq=LNDS_AFREQ,
+         Lightning_num=LTNG_EVNTS, Lightning_freq=LTNG_AFREQ,
+         River_Flood_num=RFLD_EVNTS, River_Flood_freq=RFLD_AFREQ,
+         Wind_num=SWND_EVNTS, Wind_freq=SWND_AFREQ,
+         Tornado_num=TRND_EVNTS, Tornado_freq=TRND_AFREQ,
+         Wildfire_num=WFIR_EVNTS, Wildfire_freq=WFIR_AFREQ,
+         Winter_num=WNTW_EVNTS, Winter_freq=WNTW_AFREQ
+         )
+
+FEMA_county <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
+  select(County=COUNTY, SocVuln=SOVI_SCORE, Resilience=RESL_SCORE, 
          Coastal_Flood_num=CFLD_EVNTS, Coastal_Flood_Freq=CFLD_AFREQ,
          Cold_num=CWAV_EVNTS, Cold_freq=CWAV_AFREQ,
          Drought_num=DRGT_EVNTS, Drought_freq=DRGT_AFREQ,
@@ -242,28 +262,71 @@ for (i in 1:15) {
 
 ```{r tables}
 
-{
-  table <- Church_values %>% 
-    select(Label, City, value) %>% 
-    rename(Parish=Label, Feet=value) %>% 
+#   First Add data by county as some measures are not appropriate for tract
+
+Hazard_names <- tribble(~from, ~to,
+                        "Lightning_freq",	 "Lightening strikes",
+                        "Drought_freq",	   "Drought Days",
+                        "Hail_freq",	     "Hail Storms",
+                        "Wind_freq",	     "Wind Stroms",
+                        "Winter_freq",	   "Winter Stroms",
+                        "River_Flood_freq",	"River Flooding",
+                        "Ice_freq",	        "Ice Storms",
+                        "Heat_freq",	      "Heat Waves (Days)",
+                        "Tornado_freq",	    "Tornadoes",
+                        "Cold_freq",        "Cold Waves (Days)",
+                        "Landslide_freq",	  "Landslides",
+                        "Hurricane_freq",	  "Hurricanes",
+                        "Wildfire_freq",	  "Wildfire",
+                        "Quake_freq",	      "Earthquake",
+                        "Coastal_Flood_Freq", "Coastal Flooding")
+
+
+for (i in 1:162) {
+  
+  Table_to_be <- tribble(~Hazard, ~Frequency, ~Source)
+  County <- Parishes[i,]$County
+  
+  FEMA_tract <- FEMA %>% 
+    select(Tract, SocVuln, Resilience, Coastal_Flood_Freq, Landslide_freq, River_Flood_freq)
+  FEMA_cty <- FEMA_county %>% 
+    select(County, SocVuln_cty=SocVuln, Resil_cty=Resilience, Cold_freq, Drought_freq,
+           Quake_freq, Hail_freq, Heat_freq, Hurricane_freq, Ice_freq, Lightning_freq,
+           Wind_freq, Tornado_freq, Wildfire_freq, Winter_freq)
+  
+  foo <- Parishes[i,] %>% 
+    left_join(., FEMA_tract, by="Tract") %>% 
+    left_join(., FEMA_cty, by="County") %>% 
+    mutate(Coastal_Flood_Freq=replace_na(Coastal_Flood_Freq, 0)) %>% 
     sf::st_drop_geometry() %>% 
-    arrange(-Feet) %>% 
+    select(-ID, -Name, -Description, -Convocation, -Tract, -Nearby, -County, -SocVuln, -Resilience,
+           -SocVuln_cty, -Resil_cty) 
+  
+  Label <- foo$Label
+  City <- foo$City
+  
+  # table <-  
+    foo %>% 
+    select(-Label, -City) %>% 
+    pivot_longer(cols=ends_with("freq"), names_to="Hazard", values_to="Frequency") %>% 
+    arrange(-Frequency) #%>% 
+      
     gt() %>% 
     tab_header(
-      title = md(paste("**Churches affected by Storm Surge from a Cat ",i, "Hurricane**")),
-      subtitle="Worst case NOAA SLOSH model, feet above ground level"
+      title = md(paste0("**FEMA Derived Hazards for ", Label, ", ", City, "**")),
+      subtitle="Annual frequency (or days per year) from Census Tract or County"
     ) %>% 
     tab_source_note(
-      source_note="Source: https://www.nhc.noaa.gov/nationalsurge/") %>% 
+      source_note="Source: https://hazards.fema.gov/nri/") %>% 
     fmt_number(
-      columns = 3,
+      columns = 2,
       decimals = 1
     ) %>% 
     tab_options(
       column_labels.font.weight = 'bold'
     )
     
-  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.png"))
+  gtsave(table, paste0(output_path, Label, "_", City, "_FEMA_table.png"))
 }
   
 ```
