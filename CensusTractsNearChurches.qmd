@@ -60,7 +60,8 @@ censuscrs <- "EPSG:4269"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
-Parishes <- readRDS(paste0(path, "Parishes.rds"))
+Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
+  mutate(Label=stringr::str_replace(Label, "Peter's/ ", "Peters and "))
 
 Counties <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/County_Outlines.rds")
 
