@@ -102,21 +102,6 @@ Convocations <- sf::st_as_sf(Convocations)
 
 ```
 
-##        Interactive map of diocese to trouble shoot the data
-
-```{r trouble shoot}
-
-tmap::tmap_options(basemaps="OpenStreetMap")
-
-tmap::tmap_mode("view") # set mode to interactive plots
-
-tmap::tm_shape(Long_Convo) + 
-    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
-  tmap::tm_fill(col = "Landslide_freq", title = "Landslides", alpha=0.3, style="pretty")+
-  tmap::tm_borders() 
-
-
-```
 
 
 
@@ -210,6 +195,22 @@ for (Convo in stringr::str_remove(Convocations$Name, " Convocation| Region")) {
 
 ```
 
+##        Interactive map of diocese to trouble shoot the data
+
+```{r trouble shoot}
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Long_Convo) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "Landslide_freq", title = "Landslides", alpha=0.3, style="pretty")+
+  tmap::tm_borders() 
+
+
+```
+
 ##        Maps of Diocese
 
 Maps of each hazard over the whole diocese
@@ -264,7 +265,15 @@ Maps of each hazard over the whole diocese
 
 ```{r diocese by county}
 
-box <- Long_Convo %>%
+Diocese <- Convocations %>% 
+  select(-Tract, -Label)
+
+a <- sf::st_intersects(Diocese, Counties, sparse=TRUE)  
+
+Diocese <- Counties[unique(unlist(a)),] %>% 
+  left_join(., FEMA_county, by=join_by(CNTY_NM == County))
+
+box <- Diocese %>%
   sf::st_bbox() 
 
 Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
@@ -275,10 +284,10 @@ for (i in 1:15) {
 
   filler <- sym(Control[i,]$Freq_var)
   
-  max_val <- max(sf::st_drop_geometry(Long_Convo[Control[i,]$Freq_var]), na.rm = TRUE)
+  max_val <- max(sf::st_drop_geometry(Diocese[Control[i,]$Freq_var]), na.rm = TRUE)
     
   
-  Long_Convo %>% 
+  Diocese %>% 
     ggplot() +
     Base_basemapR +
     geom_sf(aes(fill=!!filler) ,alpha=0.5) +
@@ -291,7 +300,7 @@ for (i in 1:15) {
     # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
     #                                size=2, max.overlaps=20, force=80) +
     labs(title=paste("FEMA", Control[i,]$Freq_label,"Frequency"),
-         subtitle=paste("Number of expected", Control[i,]$Freq_units, "per census tract")) +
+         subtitle=paste("Number of expected", Control[i,]$Freq_units, "per county")) +
     annotate("text", label="
            Data sourced from FEMA, National Risk Index, March 2023 
            Map a product of Alan Jackson", 
@@ -299,7 +308,7 @@ for (i in 1:15) {
            y=-Inf,
            hjust="inward", vjust="inward", size = 2)
   
-    ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_Diocese_.jpg"))
+    ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_Diocese_County.jpg"))
 }
 
 
