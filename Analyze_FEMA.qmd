@@ -112,7 +112,7 @@ tmap::tmap_mode("view") # set mode to interactive plots
 
 tmap::tm_shape(Long_Convo) + 
     #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
-  tmap::tm_fill(col = "Quake_freq", title = "Earthquakes", alpha=0.3, style="pretty")+
+  tmap::tm_fill(col = "Landslide_freq", title = "Landslides", alpha=0.3, style="pretty")+
   tmap::tm_borders() 
 
 
@@ -258,6 +258,54 @@ for (i in 1:15) {
 
 ```
 
+##        Maps of Diocese by county
+
+Maps of each hazard over the whole diocese
+
+```{r diocese by county}
+
+box <- Long_Convo %>%
+  sf::st_bbox() 
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+for (i in 1:15) {
+  
+  print(paste("--------->", Control[i,]$Freq_var))
+
+  filler <- sym(Control[i,]$Freq_var)
+  
+  max_val <- max(sf::st_drop_geometry(Long_Convo[Control[i,]$Freq_var]), na.rm = TRUE)
+    
+  
+  Long_Convo %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_sf(aes(fill=!!filler) ,alpha=0.5) +
+    scale_fill_gradient(Control[i,]$Freq_units, 
+                        na.value = "transparent", 
+                        low="white", 
+                        high="blue",
+                        limits=c(0, max_val)) +
+    geom_sf(data=Parishes, show.legend=FALSE) +
+    # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+    #                                size=2, max.overlaps=20, force=80) +
+    labs(title=paste("FEMA", Control[i,]$Freq_label,"Frequency"),
+         subtitle=paste("Number of expected", Control[i,]$Freq_units, "per census tract")) +
+    annotate("text", label="
+           Data sourced from FEMA, National Risk Index, March 2023 
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2)
+  
+    ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_Diocese_.jpg"))
+}
+
+
+
+```
+
 ##  Tables for each parish
 
 ```{r tables}
@@ -265,22 +313,22 @@ for (i in 1:15) {
 #   First Add data by county as some measures are not appropriate for tract
 
 Hazard_names <- tribble(~from, ~to,
-                        "Lightning_freq",	 "Lightening strikes",
+                        "Lightning_freq",	 "Lightning strikes",
                         "Drought_freq",	   "Drought Days",
                         "Hail_freq",	     "Hail Storms",
-                        "Wind_freq",	     "Wind Stroms",
-                        "Winter_freq",	   "Winter Stroms",
-                        "River_Flood_freq",	"River Flooding",
+                        "Wind_freq",	     "Wind Storms",
+                        "Winter_freq",	   "Winter Storms",
+                        "River_Flood_freq",	"River Flooding*",
                         "Ice_freq",	        "Ice Storms",
                         "Heat_freq",	      "Heat Waves (Days)",
                         "Tornado_freq",	    "Tornadoes",
                         "Cold_freq",        "Cold Waves (Days)",
-                        "Landslide_freq",	  "Landslides",
+                        "Landslide_freq",	  "Landslides*",
                         "Hurricane_freq",	  "Hurricanes",
                         "Wildfire_freq",	  "Wildfire",
                         "Quake_freq",	      "Earthquake",
-                        "Coastal_Flood_Freq", "Coastal Flooding")
-
+                        "Coastal_Flood_Freq", "Coastal Flooding*") %>% 
+  arrange(from)
 
 for (i in 1:162) {
   
@@ -305,22 +353,29 @@ for (i in 1:162) {
   Label <- foo$Label
   City <- foo$City
   
-  # table <-  
+  foo <-
     foo %>% 
     select(-Label, -City) %>% 
     pivot_longer(cols=ends_with("freq"), names_to="Hazard", values_to="Frequency") %>% 
-    arrange(-Frequency) #%>% 
+    arrange(Hazard)
+    # mutate(Hazard=stringr::str_replace(Hazard, ))
+    # mutate(Hazard = ifelse(stringr::str_detect(from, i), i, NA))
+    
+    foo$Hazard <- Hazard_names$to
       
+    table <- foo %>% 
+    arrange(-Frequency) %>% 
+      filter(Frequency>0.001) %>% 
     gt() %>% 
     tab_header(
-      title = md(paste0("**FEMA Derived Hazards for ", Label, ", ", City, "**")),
-      subtitle="Annual frequency (or days per year) from Census Tract or County"
+      title = md(paste0("**FEMA Hazards: ", Label, ", ", City, "**")),
+      subtitle="Annual frequency (or days/year) by Census Tract(*) or County"
     ) %>% 
     tab_source_note(
       source_note="Source: https://hazards.fema.gov/nri/") %>% 
     fmt_number(
       columns = 2,
-      decimals = 1
+      decimals = 2
     ) %>% 
     tab_options(
       column_labels.font.weight = 'bold'
