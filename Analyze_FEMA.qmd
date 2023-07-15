@@ -323,7 +323,7 @@ for (i in 1:15) {
 
 Hazard_names <- tribble(~from, ~to,
                         "Lightning_freq",	 "Lightning strikes",
-                        "Drought_freq",	   "Drought Days",
+                        "Drought_freq",	   "Drought (Days)",
                         "Hail_freq",	     "Hail Storms",
                         "Wind_freq",	     "Wind Storms",
                         "Winter_freq",	   "Winter Storms",
@@ -332,10 +332,10 @@ Hazard_names <- tribble(~from, ~to,
                         "Heat_freq",	      "Heat Waves (Days)",
                         "Tornado_freq",	    "Tornadoes",
                         "Cold_freq",        "Cold Waves (Days)",
-                        "Landslide_freq",	  "Landslides*",
+                        # "Landslide_freq",	  "Landslides*",
                         "Hurricane_freq",	  "Hurricanes",
                         "Wildfire_freq",	  "Wildfire",
-                        "Quake_freq",	      "Earthquake",
+                        # "Quake_freq",	      "Earthquake",
                         "Coastal_Flood_Freq", "Coastal Flooding*") %>% 
   arrange(from)
 
@@ -345,10 +345,10 @@ for (i in 1:162) {
   County <- Parishes[i,]$County
   
   FEMA_tract <- FEMA %>% 
-    select(Tract, SocVuln, Resilience, Coastal_Flood_Freq, Landslide_freq, River_Flood_freq)
+    select(Tract, SocVuln, Resilience, Coastal_Flood_Freq, River_Flood_freq)
   FEMA_cty <- FEMA_county %>% 
     select(County, SocVuln_cty=SocVuln, Resil_cty=Resilience, Cold_freq, Drought_freq,
-           Quake_freq, Hail_freq, Heat_freq, Hurricane_freq, Ice_freq, Lightning_freq,
+           Hail_freq, Heat_freq, Hurricane_freq, Ice_freq, Lightning_freq,
            Wind_freq, Tornado_freq, Wildfire_freq, Winter_freq)
   
   foo <- Parishes[i,] %>% 
@@ -373,8 +373,8 @@ for (i in 1:162) {
     foo$Hazard <- Hazard_names$to
       
     table <- foo %>% 
-    arrange(-Frequency) %>% 
-      filter(Frequency>0.001) %>% 
+    arrange(Hazard) %>% 
+      # filter(Frequency>0.001) %>% 
     gt() %>% 
     tab_header(
       title = md(paste0("**FEMA Hazards: ", Label, ", ", City, "**")),
