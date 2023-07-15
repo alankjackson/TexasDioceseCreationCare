@@ -1,0 +1,29 @@
+---
+title: "First Street Flood"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+##        Read in and analyze the First Street Foundation flood data
+
+Data acquired from FSF through a request on an AWS server
+After access granted, copied to a bucket on my AWS account
+Then downloaded (one at a time) the files to my PC
+
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/FSF_Flood/"
+
+```
+
+##        Read the data in by census tract and filter out diocese
+
+```{r}
+
+```
+
+
