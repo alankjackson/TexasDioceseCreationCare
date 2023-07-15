@@ -16,13 +16,49 @@ Then downloaded (one at a time) the files to my PC
 
 library(tidyverse)
 
-path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/FSF_Flood/"
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+#   Some useful data
+
+Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 ```
 
 ##        Read the data in by census tract and filter out diocese
 
 ```{r}
+
+df <- read_csv(paste0(path, "FSF_Flood/fsf_flood_tract_summary.csv")) %>% 
+  rename(GEOID=fips)
+
+#   Add polygons and census data
+
+df2 <- inner_join(df, Census, by="GEOID") %>%
+  sf::st_as_sf() %>% 
+  sf::st_make_valid()
+
+df2 %>%
+  mutate(Fact5=count_floodfactor5/count_property*100) %>% 
+  # mutate(count_floodfactor10=pmin(count_floodfactor10, 100)) %>% 
+  ggplot() + 
+  geom_histogram(aes(x=Fact5))
+
+df3 <- df2 %>% 
+  mutate(Fact5=count_floodfactor5/count_property*100)  
+  
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(df3) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "Fact5", title = "Flood Factor 5 Percent", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.1) 
+
+
 
 ```
 
