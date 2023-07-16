@@ -99,6 +99,7 @@ for (i in 1:nrow(Convocations)) {
 
 Convocations <- sf::st_as_sf(Convocations)
 
+saveRDS(Convocations, paste0(path, "Convocation_and_tracts.rds"))
 
 ```
 
