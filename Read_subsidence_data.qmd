@@ -7,7 +7,7 @@ editor: visual
 
 ## Setup
 
-Data scraped (with somne difficulty) from <https://www.arcgis.com/home/webmap/viewer.html?webmap=1e3c97ed53e2476bb842ceccd6a90514&extent=-96.3605,29.2149,-94.1042,30.3246>
+Data scraped (with some difficulty) from <https://www.arcgis.com/home/webmap/viewer.html?webmap=1e3c97ed53e2476bb842ceccd6a90514&extent=-96.3605,29.2149,-94.1042,30.3246>
 
 Found from the website for the [Harris-Galveston Subsidence District](https://hgsubsidence.org/science-research/).
 
@@ -94,7 +94,7 @@ bbox["ymax"] <- bbox["ymax"] + Dy
 bb <- c(bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"])
 ```
 
-##        Plot the data
+## Plot the data
 
 ```{r plot}
 
@@ -108,10 +108,9 @@ df_sf %>%
 
 ```
 
-##  Grid and contour
+## Grid and contour
 
-Though really what I care most about is the grid, since that will yield the subsidence
-values at each of the church locations
+Though really what I care most about is the grid, since that will yield the subsidence values at each of the church locations
 
 ```{r grid}
 
@@ -136,7 +135,7 @@ grd_df <- expand.grid(
 )
 ```
 
-##    Inverse distance weighting
+## Inverse distance weighting
 
 ```{r IDW}
 
@@ -176,7 +175,7 @@ ggplot() +
 
 ```
 
-##        Search for best IDW power
+## Search for best IDW power
 
 Even optimizing, the result is kind of sucky.
 
@@ -215,7 +214,7 @@ RMS %>%
     labs(title="RMS Error vs. Inverse Distance Weighting Power")
 ```
 
-##  Kriging
+## Kriging
 
 First the drift.
 
@@ -259,7 +258,7 @@ ggplot() +
 
 ```
 
-##        Kriging
+## Kriging
 
 I pick the Spherical model
 
@@ -292,7 +291,7 @@ ggplot(var.smpl, aes(x = dist, y = gamma)) +
 
 ```
 
-##        Do Kriging
+## Do Kriging
 
 ```{r kriging}
 
@@ -320,7 +319,7 @@ ggplot() +
 
 ```
 
-##  Contours
+## Contours
 
 ```{r contours}
 
@@ -339,7 +338,7 @@ ggplot() +
 
 ```
 
-##      Final publication quality map
+## Final publication quality map
 
 ```{r final map}
 
@@ -360,7 +359,7 @@ ggplot() +
   geom_sf(data=df_sf) +
   #   Create filled density "contours" 
   geom_sf(data=Contours_LL, color="black") +
-  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence Rate (cm/yr)") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence\nRate (cm/yr)") +
   #   Add a scale bar
   ggspatial::annotation_scale(data=df_sf, aes(unit_category="imperial", style="ticks"),
     location="br", width_hint=0.2, bar_cols=1) +
@@ -370,15 +369,14 @@ ggplot() +
            Map a product of Alan Jackson", 
            x=-Inf, 
            y=-Inf,
-           hjust="inward", vjust="inward", size = 3) +
+           hjust="inward", vjust="inward", size = 2) +
   coord_sf(crs=googlecrs) + # required 
   #   Add title
   labs(title="Subsidence Rate",
        subtitle="Points represent the measurement locations",
        x="Longitude", y="Latitude")
 
+ggsave(paste0(path, "Subsidence_map.png"),dpi=400)
 
 
 ```
-
-

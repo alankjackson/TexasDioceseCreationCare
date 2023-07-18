@@ -38,7 +38,7 @@ Krigged_locs <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
                              Parish_xy,
                              debug.level=0,
                              dat.fit) %>% 
-  bind_cols(Parish_xy$Name, Parish_xy$description, Parish_xy$Convocation, .) %>% 
+  bind_cols(Parish_xy$Name, Parish_xy$Description, Parish_xy$Convocation, .) %>% 
   rename(Name=1, Address=2, Convocation=3, Subsidence_rate=4, Variance=5)
 
 
@@ -69,24 +69,25 @@ ggplot() +
   geom_sf(data=sf::st_crop(Parishes, bbox)) +
   #   Create filled density "contours" 
   geom_sf(data=Contours_LL, color="black") +
-  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence Rate\n(cm/yr)") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4, name="Subsidence\nRate (cm/yr)") +
   #   Add a scale bar
   ggspatial::annotation_scale(data=df_sf, aes(unit_category="imperial", style="ticks"),
     location="br", width_hint=0.2, bar_cols=1) +
   #   Add CI annotation at specified window coordinates
   annotate("text", label="C.I. = 0.2 cm per year subsidence
-           Data sourced from the Harris-Galveston Subsidence District 2022 Annual Groundwater Report
+           Data sourced from the Harris-Galveston Subsidence District 
+           2022 Annual Groundwater Report
            Map a product of Alan Jackson, June 2023", 
            x=-Inf, 
            y=-Inf,
-           hjust="inward", vjust="inward", size = 3) +
+           hjust="inward", vjust="inward", size = 2) +
   coord_sf(crs=googlecrs) + # required 
   #   Add title
   labs(title="Subsidence Rate in cm/yr",
        subtitle="Points are church locations",
        x="Longitude", y="Latitude")
 
-
+ggsave(paste0(path, "Subsidence_map_churches.png"),dpi=400)
 
 ```
 
@@ -107,14 +108,14 @@ Krigged_locs %>%
 
 ```{r table}
 
-Krigged_locs %>% 
+subsidetable <- Krigged_locs %>% 
   select(Name, Address, Convocation, Subsidence_rate) %>% 
   filter(Subsidence_rate < -0.4) %>% 
   arrange(Subsidence_rate) %>% 
   mutate(Subsidence_rate=signif(Subsidence_rate, 3)) %>% 
   mutate(Convocation = stringr::str_remove(Convocation, " Convocation")) %>% 
   mutate(Name = stringr::str_remove(Name, " Episcopal Church")) %>% 
-  mutate(Address=stringr::str_split_i(Address, "<br>", 2)) %>% 
+  mutate(Address=stringr::str_split_i(Address, "<br>", 2)) %>%
   gt() %>% 
   tab_header(
     title="Top 12 churches for subsidence"
@@ -132,5 +133,9 @@ Krigged_locs %>%
     Subsidence_rate=html("<em>Subsidence Rate<br>(cm/yr)")
   )
   
+gtsave(subsidetable, paste0(path, "Subsidence_table.png"))
+
+subsidetable
+
 
 ```
