@@ -365,7 +365,8 @@ ggplot() +
     location="br", width_hint=0.2, bar_cols=1) +
   #   Add CI annotation at specified window coordinates
   annotate("text", label="C.I. = 0.2 cm per year subsidence
-           Data sourced from the Harris-Galveston Subsidence District 2022 Annual Groundwater Report
+           Data sourced from the Harris-Galveston Subsidence District 
+           2022 Annual Groundwater Report
            Map a product of Alan Jackson", 
            x=-Inf, 
            y=-Inf,
