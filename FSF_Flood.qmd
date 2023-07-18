@@ -22,6 +22,8 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
+Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
+
 ```
 
 ##        Read the data in by census tract and filter out diocese
@@ -37,13 +39,31 @@ df2 <- inner_join(df, Census, by="GEOID") %>%
   sf::st_as_sf() %>% 
   sf::st_make_valid()
 
-df2 %>%
-  mutate(Fact5=count_floodfactor5/count_property*100) %>% 
-  # mutate(count_floodfactor10=pmin(count_floodfactor10, 100)) %>% 
-  ggplot() + 
-  geom_histogram(aes(x=Fact5))
+#   Add Convocations and filter out data ouside the diocese
 
-df3 <- df2 %>% 
+Convocations <- Convocations %>% 
+  sf::st_drop_geometry() %>% 
+  unnest_longer(Tract) %>% 
+  filter(Tract != "48071710600") %>% # unoccupied spoil banks in Galveston Bay
+  rename(GEOID=Tract) 
+
+Convocations <- left_join(Convocations, df2, by="GEOID")
+
+# Tract_geoms <- Census %>% 
+#   select(Tract=GEOID)  
+
+Convocations <- Convocations %>% 
+  mutate(Name=stringr::str_remove(Name, " Convocation| Region")) %>% 
+  # left_join(., Tract_geoms, by="Tract") %>% 
+  st_as_sf()
+
+# df2 %>%
+#   mutate(Fact5=count_floodfactor5/count_property*100) %>% 
+#   # mutate(count_floodfactor10=pmin(count_floodfactor10, 100)) %>% 
+#   ggplot() + 
+#   geom_histogram(aes(x=Fact5))
+
+df3 <- Convocations %>% 
   mutate(Fact5=count_floodfactor5/count_property*100)  
   
 
@@ -61,5 +81,65 @@ tmap::tm_shape(df3) +
 
 
 ```
+
+
+##        Make maps of flood factor 3, 5, and 8 colored by percent houses affected for the diocese
+
+
+
+```{r whole diocese}
+
+foo <- Convocations %>% 
+  mutate(Fact3=count_floodfactor3/count_property*100) %>%  
+  mutate(Fact5=count_floodfactor5/count_property*100) %>% 
+  mutate(Fact8=count_floodfactor8/count_property*100)  
+
+  box <- foo %>%
+    sf::st_bbox() 
+  
+  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+  quant <- quantile(foo$Fact3, c(0, 0.3, 0.7, 0.8, 1 ), na.rm=TRUE)
+    
+    
+    foo %>% 
+      # filter(Name==Convo) %>% 
+      ggplot() +
+      Base_basemapR +
+      geom_sf(aes(fill=Fact3) ,alpha=0.9, size=0.1) +
+      scale_fill_gradientn(colours = terrain.colors(5),
+                           values=quant,
+                           breaks=quant) +
+      # scale_fill_gradientn(na.value = "transparent", 
+      #                     colors=c("white", "cyan", "deepskyblue", "royalblue1"), 
+      #                     values=c(0, 5, 10, 50),
+      #                     breaks=c(0, 5, 10, 50)
+      #                     ) +
+      # geom_sf(data=Convo_parishes, show.legend=FALSE) +
+      # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+      #                                size=2, max.overlaps=20, force=80) +
+      # labs(title=paste("FEMA", Control[i,]$Freq_label,"Frequency", Convo, "Convocation "),
+      #      subtitle=paste("Number of expected", Control[i,]$Freq_units, "per census tract")) +
+      annotate("text", label="
+             Data sourced from FEMA, National Risk Index, March 2023 
+             Map a product of Alan Jackson", 
+             x=-Inf, 
+             y=-Inf,
+             hjust="inward", vjust="inward", size = 2)
+    
+      # ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_", 
+      #               paste(Convo, sep="_"), "_.jpg"))
+
+  
+
+
+
+```
+
+
+
+
+
+
 
 
