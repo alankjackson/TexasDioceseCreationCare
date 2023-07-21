@@ -65,10 +65,9 @@ expand_box <- function(bbox, pct=0.2){
 Basemap_attribution <- 'attribution: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 ```
 
-##        Read in the grids
+## Read in the grids
 
 Note that values of 99 in the grids designate areas inside of levees, so will be eliminated
-
 
 ```{r Read in grids}
 
