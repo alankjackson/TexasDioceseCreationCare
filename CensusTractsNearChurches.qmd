@@ -12,7 +12,7 @@ a 1 mile radius
 
 Also pull likely useful census data per tract
 
-Everything in google CRS
+Everything in google CRS 
 
 ```{r setup}
 
