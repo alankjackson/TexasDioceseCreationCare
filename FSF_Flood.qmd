@@ -5,12 +5,9 @@ format: html
 editor: visual
 ---
 
-##        Read in and analyze the First Street Foundation flood data
+## Read in and analyze the First Street Foundation flood data
 
-Data acquired from FSF through a request on an AWS server
-After access granted, copied to a bucket on my AWS account
-Then downloaded (one at a time) the files to my PC
-
+Data acquired from FSF through a request on an AWS server After access granted, copied to a bucket on my AWS account Then downloaded (one at a time) the files to my PC
 
 ```{r setup}
 
@@ -26,7 +23,7 @@ Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
 
 ```
 
-##        Read the data in by census tract and filter out diocese
+## Read the data in by census tract and filter out diocese
 
 ```{r}
 
@@ -55,7 +52,7 @@ Convocations <- left_join(Convocations, df2, by="GEOID")
 Convocations <- Convocations %>% 
   mutate(Name=stringr::str_remove(Name, " Convocation| Region")) %>% 
   # left_join(., Tract_geoms, by="Tract") %>% 
-  st_as_sf()
+  sf::st_as_sf()
 
 # df2 %>%
 #   mutate(Fact5=count_floodfactor5/count_property*100) %>% 
@@ -82,44 +79,47 @@ tmap::tm_shape(df3) +
 
 ```
 
-
-##        Make maps of flood factor 3, 5, and 8 colored by percent houses affected for the diocese
-
-
+## Make maps of flood factor 3, 5, and 8 colored by percent houses affected for the diocese
 
 ```{r whole diocese}
 
 foo <- Convocations %>% 
+  arrange(GEOID) %>% 
+  filter(!duplicated(GEOID)) %>% 
   mutate(Fact3=count_floodfactor3/count_property*100) %>%  
   mutate(Fact5=count_floodfactor5/count_property*100) %>% 
   mutate(Fact8=count_floodfactor8/count_property*100)  
+
+foo %>% ggplot(aes(x=Fact3)) +
+  geom_histogram()
+
+foo <- foo %>% 
+  mutate(Fact3_grp = cut(Fact3,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE))
 
   box <- foo %>%
     sf::st_bbox() 
   
   Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
   
-  quant <- quantile(foo$Fact3, c(0, 0.3, 0.7, 0.8, 1 ), na.rm=TRUE)
-    
+ #Colour Palette
+pal <- c(
+  "40%-100%" = "red",
+  "20%-40%" = "orange", 
+  "10%-20%" = "yellow", 
+  "5%-10%" = "lightgreen",
+  "0%-5%" = "white" 
+)                          
     
     foo %>% 
-      # filter(Name==Convo) %>% 
       ggplot() +
       Base_basemapR +
-      geom_sf(aes(fill=Fact3) ,alpha=0.9, size=0.1) +
-      scale_fill_gradientn(colours = terrain.colors(5),
-                           values=quant,
-                           breaks=quant) +
-      # scale_fill_gradientn(na.value = "transparent", 
-      #                     colors=c("white", "cyan", "deepskyblue", "royalblue1"), 
-      #                     values=c(0, 5, 10, 50),
-      #                     breaks=c(0, 5, 10, 50)
-      #                     ) +
-      # geom_sf(data=Convo_parishes, show.legend=FALSE) +
-      # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
-      #                                size=2, max.overlaps=20, force=80) +
-      # labs(title=paste("FEMA", Control[i,]$Freq_label,"Frequency", Convo, "Convocation "),
-      #      subtitle=paste("Number of expected", Control[i,]$Freq_units, "per census tract")) +
+      geom_sf(aes(fill=Fact3_grp) ,alpha=0.6, lwd=0.0) +
+      scale_fill_manual( values=pal,
+                         limits=names(pal),
+                         name="Area Flooded") +
       annotate("text", label="
              Data sourced from FEMA, National Risk Index, March 2023 
              Map a product of Alan Jackson", 
@@ -135,11 +135,3 @@ foo <- Convocations %>%
 
 
 ```
-
-
-
-
-
-
-
-
