@@ -14,12 +14,14 @@ Data acquired from FSF through a request on an AWS server After access granted, 
 library(tidyverse)
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreetFlood/"
 
 #   Some useful data
 
 Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
 ```
 
@@ -97,6 +99,14 @@ foo <- foo %>%
   mutate(Fact3_grp = cut(Fact3,
                      breaks=c(0,5,10,20,40,100),
                      labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE)) %>% 
+  mutate(Fact5_grp = cut(Fact5,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE)) %>% 
+  mutate(Fact8_grp = cut(Fact8,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
                      include.lowest = TRUE))
 
   box <- foo %>%
@@ -112,26 +122,149 @@ pal <- c(
   "5%-10%" = "lightgreen",
   "0%-5%" = "white" 
 )                          
+
+Flood_factor <- png::readPNG('flood-factor-matrix-2.png')
     
-    foo %>% 
+for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
+  Plot_label <- case_when(
+    map_var == "Fact3_grp" ~ "10% chance\nof 6\" flood",
+    map_var == "Fact5_grp" ~ "10% chance\nof 20\" flood",
+    map_var == "Fact8_grp" ~ "35% chance\nof 20\" flood"
+  )
+  Plot_title <- case_when(
+    map_var == "Fact3_grp" ~ "Flood Factor 3 Flooding",
+    map_var == "Fact5_grp" ~ "Flood Factor 5 Flooding",
+    map_var == "Fact8_grp" ~ "Flood Factor 8 Flooding"
+  )
+  map_var <- ensym(map_var)
+    # p <- 
+      foo %>% 
       ggplot() +
       Base_basemapR +
-      geom_sf(aes(fill=Fact3_grp) ,alpha=0.6, lwd=0.0) +
+      geom_sf(aes(fill=!!map_var) ,alpha=0.6, lwd=0.0) +
       scale_fill_manual( values=pal,
                          limits=names(pal),
-                         name="Area Flooded") +
+                         name=paste0("% homes flooded\n",
+                                     Plot_label)) +
       annotate("text", label="
-             Data sourced from FEMA, National Risk Index, March 2023 
+             Data sourced from First Street flood Model, June 2020 
              Map a product of Alan Jackson", 
              x=-Inf, 
              y=-Inf,
-             hjust="inward", vjust="inward", size = 2)
+             hjust="inward", vjust="inward", size = 2)+
+      labs(title=Plot_title) 
+        # ggimage::geom_image(aes(image=Flood_factor), size=0.2)
+      # annotation_raster(Flood_factor, ymin=32.2, ymax=Inf, xmin=-96.2, xmax=Inf)
+      # annotation_raster(Flood_factor, ymin=32.5, ymax=34.5, xmin=-96.5, xmax=-93.5)
     
-      # ggsave(paste0(output_path, "FEMA_Risk_",Control[i,]$Freq_var, "_", 
-      #               paste(Convo, sep="_"), "_.jpg"))
-
+      ggsave(paste0(output_path, "FirstStreet_Diocese_",
+                    paste(Plot_title, sep="_"),
+                    ".jpg"))
+}
   
-
-
-
 ```
+
+
+## Make maps of flood factor 3, 5, and 8 colored by percent houses affected for the convocations
+
+```{r convocations}
+
+foo <- Convocations %>% 
+  # arrange(GEOID) %>% 
+  # filter(!duplicated(GEOID)) %>% 
+  mutate(Fact3=count_floodfactor3/count_property*100) %>%  
+  mutate(Fact5=count_floodfactor5/count_property*100) %>% 
+  mutate(Fact8=count_floodfactor8/count_property*100)  
+
+foo <- foo %>% 
+  mutate(Fact3_grp = cut(Fact3,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE)) %>% 
+  mutate(Fact5_grp = cut(Fact5,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE)) %>% 
+  mutate(Fact8_grp = cut(Fact8,
+                     breaks=c(0,5,10,20,40,100),
+                     labels=c("0%-5%", "5%-10%", "10%-20%", "20%-40%", "40%-100%"),
+                     include.lowest = TRUE))
+
+ #Colour Palette
+pal <- c(
+  "40%-100%" = "red",
+  "20%-40%" = "orange", 
+  "10%-20%" = "yellow", 
+  "5%-10%" = "lightgreen",
+  "0%-5%" = "white" 
+)                     
+
+Convo_names <- Convocations$Label %>% unique()
+
+  box <- foo %>%
+    sf::st_bbox() 
+  
+  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+for (Convo in Convo_names) {
+  
+  foobar <- foo %>% 
+    filter(Label == Convo)
+  
+  box <- foobar %>%
+    sf::st_bbox() 
+  
+  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+  Convo_parishes <- Parishes %>% 
+    mutate(Convocation=stringr::str_remove(Convocation, " Convocation| Region")) %>% 
+    filter(stringr::str_equal(Convocation, Convo))
+  
+  for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
+    Plot_label <- case_when(
+      map_var == "Fact3_grp" ~ "10% chance\nof 6\" flood",
+      map_var == "Fact5_grp" ~ "10% chance\nof 20\" flood",
+      map_var == "Fact8_grp" ~ "35% chance\nof 20\" flood"
+    )
+    Plot_title <- case_when(
+      map_var == "Fact3_grp" ~ "Flood Factor 3 Flooding",
+      map_var == "Fact5_grp" ~ "Flood Factor 5 Flooding",
+      map_var == "Fact8_grp" ~ "Flood Factor 8 Flooding"
+    )
+    map_var <- ensym(map_var)
+       
+        foobar %>% 
+        ggplot() +
+        Base_basemapR +
+        geom_sf(aes(fill=!!map_var) ,alpha=0.6, lwd=0.0) +
+        scale_fill_manual( values=pal,
+                           limits=names(pal),
+                           name=paste0("% homes flooded\n",
+                                       Plot_label)) +
+        geom_sf(data=Convo_parishes, show.legend=FALSE) +
+        ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+                                       size=2, max.overlaps=20, force=80) +
+        annotate("text", label="
+               Data sourced from First Street flood Model, June 2020 
+               Map a product of Alan Jackson", 
+               x=-Inf, 
+               y=-Inf,
+               hjust="inward", vjust="inward", size = 2)+
+        labs(title=Plot_title,
+             subtitle=Convo) 
+      
+        ggsave(paste0(output_path, "FirstStreet_Convo_",
+                      paste(Plot_title, Convo, sep="_"),
+                      ".jpg"))
+  }
+}
+  
+```
+
+
+
+
+
+
+
+
