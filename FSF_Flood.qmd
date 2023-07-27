@@ -25,6 +25,72 @@ Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
 ```
 
+## Make little graphs of flood factor for plot insets
+
+```{r factor insets}
+
+FF3 <- tribble(~Depth, ~Risk,
+               12.,     0.01,
+               7.5,     0.05,
+               4.5,     0.08,
+               2.0,     0.12)
+
+FF5 <- tribble(~Depth, ~Risk,
+               30.0,   0.03,
+               18.0,   0.09,
+               8.0,    0.20,
+               5.0,    0.30,
+               2.0,    0.40 )
+
+FF8 <- tribble(~Depth, ~Risk,
+               30.0,   0.30,
+               18.0,   0.40,
+               10.0,   0.70,
+               4.0,    0.98
+              )
+
+pFF3 <- FF3 %>% ggplot(aes(x=Risk, y=Depth)) +
+  geom_point(size=0.5) +
+  geom_smooth(se=FALSE, span=1, size=0.5) +
+  theme(plot.title = element_text(size = 4),
+        axis.text.x = element_text(size = 4),
+        axis.text.y = element_text(size = 4),
+        axis.title.x = element_text(size = 4),
+        axis.title.y = element_text(size = 4))+
+  labs(title="Flood Factor 3",
+       x="30-Year Cumulative Risk",
+       y="Flood Depth (in)") +
+  scale_x_continuous(labels = scales::percent)
+
+pFF5 <- FF5 %>% ggplot(aes(x=Risk, y=Depth)) +
+  geom_point(size=0.5) +
+  geom_smooth(se=FALSE, span=1, size=0.5) +
+  theme(plot.title = element_text(size = 4),
+        axis.text.x = element_text(size = 4),
+        axis.text.y = element_text(size = 4),
+        axis.title.x = element_text(size = 4),
+        axis.title.y = element_text(size = 4))+
+  labs(title="Flood Factor 5",
+       x="30-Year Cumulative Risk",
+       y="Flood Depth (in)") +
+  scale_x_continuous(labels = scales::percent)
+
+pFF8 <- FF8 %>% ggplot(aes(x=Risk, y=Depth)) +
+  geom_point(size=0.5) +
+  geom_smooth(se=FALSE, span=1, size=0.5) +
+  theme(plot.title = element_text(size = 4),
+        axis.text.x = element_text(size = 4),
+        axis.text.y = element_text(size = 4),
+        axis.title.x = element_text(size = 4),
+        axis.title.y = element_text(size = 4))+
+  labs(title="Flood Factor 8",
+       x="30-Year Cumulative Risk",
+       y="Flood Depth (in)") +
+  scale_x_continuous(labels = scales::percent)
+
+```
+
+
 ## Read the data in by census tract and filter out diocese
 
 ```{r}
@@ -123,43 +189,44 @@ pal <- c(
   "0%-5%" = "white" 
 )                          
 
-Flood_factor <- png::readPNG('flood-factor-matrix-2.png')
-    
 for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
-  Plot_label <- case_when(
-    map_var == "Fact3_grp" ~ "10% chance\nof 6\" flood",
-    map_var == "Fact5_grp" ~ "10% chance\nof 20\" flood",
-    map_var == "Fact8_grp" ~ "35% chance\nof 20\" flood"
-  )
+  
+  if (map_var == "Fact3_grp") {Plot_inset <- pFF3}
+  if (map_var == "Fact5_grp") {Plot_inset <- pFF5}
+  if (map_var == "Fact8_grp") {Plot_inset <- pFF8}
+  
+  
   Plot_title <- case_when(
-    map_var == "Fact3_grp" ~ "Flood Factor 3 Flooding",
-    map_var == "Fact5_grp" ~ "Flood Factor 5 Flooding",
-    map_var == "Fact8_grp" ~ "Flood Factor 8 Flooding"
+    map_var == "Fact3_grp" ~ "Flood Factor 3 by Census Tract",
+    map_var == "Fact5_grp" ~ "Flood Factor 5 by Census Tract",
+    map_var == "Fact8_grp" ~ "Flood Factor 8 by Census Tract"
   )
   map_var <- ensym(map_var)
-    # p <- 
+  
+     p <- 
       foo %>% 
       ggplot() +
       Base_basemapR +
       geom_sf(aes(fill=!!map_var) ,alpha=0.6, lwd=0.0) +
       scale_fill_manual( values=pal,
                          limits=names(pal),
-                         name=paste0("% homes flooded\n",
-                                     Plot_label)) +
+                         name="Homes flooded") +
       annotate("text", label="
              Data sourced from First Street flood Model, June 2020 
              Map a product of Alan Jackson", 
              x=-Inf, 
              y=-Inf,
-             hjust="inward", vjust="inward", size = 2)+
-      labs(title=Plot_title) 
-        # ggimage::geom_image(aes(image=Flood_factor), size=0.2)
-      # annotation_raster(Flood_factor, ymin=32.2, ymax=Inf, xmin=-96.2, xmax=Inf)
-      # annotation_raster(Flood_factor, ymin=32.5, ymax=34.5, xmin=-96.5, xmax=-93.5)
+             hjust="inward", vjust="inward", size = 1.5)+
+      labs(title=Plot_title) +
+      annotation_custom(
+            grob = ggplotGrob(Plot_inset),
+            xmin = -96.5, xmax = -93.8, ymin = 33, ymax = 34.5
+    ) 
     
       ggsave(paste0(output_path, "FirstStreet_Diocese_",
                     paste(Plot_title, sep="_"),
                     ".jpg"))
+     # print(p)
 }
   
 ```
@@ -169,9 +236,20 @@ for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
 
 ```{r convocations}
 
+Inset_position <- tribble(~Convo, ~xmin, ~xmax, ~ymin, ~ymax,
+                          "Austin",  -97.3, -96.3, 30.9, 31.7,
+                          "Central", -96.2, -95.5, 31.0, 31.6,
+                          "East Harris", -95.0, -94.7, 29.9, 30.1,
+                          "Galveston",   -94.7, -94.4, 29.5, 29.8,
+                          "Northeast",   -94.3, -93.5, 30.7, 31.25,
+                          "North",       -96.8, -95.6, 33.5, 34.5,
+                          "Northwest",   -98.5, -97.75, 31.4, 32.0,
+                          "San Jacinto", -94.9, -94.2, 30.6, 31.2,
+                          "Southeast",   -95.1, -94.5, 30.75, 31.25,
+                          "Southwest",   -96.75, -96.25, 28.9, 29.4,
+                          "West Harris", -96.1, -95.85, 29.85, 30.05)
+
 foo <- Convocations %>% 
-  # arrange(GEOID) %>% 
-  # filter(!duplicated(GEOID)) %>% 
   mutate(Fact3=count_floodfactor3/count_property*100) %>%  
   mutate(Fact5=count_floodfactor5/count_property*100) %>% 
   mutate(Fact8=count_floodfactor8/count_property*100)  
@@ -208,6 +286,8 @@ Convo_names <- Convocations$Label %>% unique()
   
 for (Convo in Convo_names) {
   
+  Inset <- Inset_position[Inset_position$Convo==Convo,]
+  
   foobar <- foo %>% 
     filter(Label == Convo)
   
@@ -221,26 +301,35 @@ for (Convo in Convo_names) {
     filter(stringr::str_equal(Convocation, Convo))
   
   for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
+    
+    if (map_var == "Fact3_grp") {Plot_inset <- pFF3}
+    if (map_var == "Fact5_grp") {Plot_inset <- pFF5}
+    if (map_var == "Fact8_grp") {Plot_inset <- pFF8}
+  
     Plot_label <- case_when(
       map_var == "Fact3_grp" ~ "10% chance\nof 6\" flood",
       map_var == "Fact5_grp" ~ "10% chance\nof 20\" flood",
       map_var == "Fact8_grp" ~ "35% chance\nof 20\" flood"
     )
     Plot_title <- case_when(
-      map_var == "Fact3_grp" ~ "Flood Factor 3 Flooding",
-      map_var == "Fact5_grp" ~ "Flood Factor 5 Flooding",
-      map_var == "Fact8_grp" ~ "Flood Factor 8 Flooding"
+      map_var == "Fact3_grp" ~ "Flood Factor 3 by Census Tract",
+      map_var == "Fact5_grp" ~ "Flood Factor 5 by Census Tract",
+      map_var == "Fact8_grp" ~ "Flood Factor 8 by Census Tract"
     )
     map_var <- ensym(map_var)
        
+    # p <- 
         foobar %>% 
         ggplot() +
         Base_basemapR +
+        annotation_custom(
+              grob = ggplotGrob(Plot_inset),
+              xmin = Inset$xmin, xmax = Inset$xmax, ymin = Inset$ymin, ymax = Inset$ymax
+      ) +
         geom_sf(aes(fill=!!map_var) ,alpha=0.6, lwd=0.0) +
         scale_fill_manual( values=pal,
                            limits=names(pal),
-                           name=paste0("% homes flooded\n",
-                                       Plot_label)) +
+                           name="Homes flooded") +
         geom_sf(data=Convo_parishes, show.legend=FALSE) +
         ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
                                        size=2, max.overlaps=20, force=80) +
@@ -249,13 +338,14 @@ for (Convo in Convo_names) {
                Map a product of Alan Jackson", 
                x=-Inf, 
                y=-Inf,
-               hjust="inward", vjust="inward", size = 2)+
+               hjust="inward", vjust="inward", size = 1.5)+
         labs(title=Plot_title,
              subtitle=Convo) 
       
         ggsave(paste0(output_path, "FirstStreet_Convo_",
                       paste(Plot_title, Convo, sep="_"),
                       ".jpg"))
+        # print(p)
   }
 }
   
