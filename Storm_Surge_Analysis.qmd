@@ -140,6 +140,8 @@ for (i in 1:5){
     )
     
   gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.png"))
+  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.docx"))
+  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.html"))
 }
 
 ```
