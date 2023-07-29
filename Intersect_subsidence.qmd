@@ -134,6 +134,7 @@ subsidetable <- Krigged_locs %>%
   )
   
 gtsave(subsidetable, paste0(path, "Subsidence_table.png"))
+gtsave(subsidetable, paste0(path, "Subsidence_table.docx"))
 
 subsidetable
 
