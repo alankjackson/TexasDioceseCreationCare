@@ -1,0 +1,106 @@
+---
+title: "Read Evacuation Zones"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Read Hurricane Evacuation Zones
+
+Eric Boulet, Sr. GIS Analyst for the Houston-Galveston Area Council was nice
+enough to email me a zip file containing the shapefile for the evacuation zones.
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Evacuation/"
+
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+
+Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
+
+
+```
+
+##        Read and plot shapes
+
+```{r read}
+
+Evac <- sf::st_read(paste0(path, "Evacuation_zones/Hurricane_Zipzones_LL.shp"))
+
+Evac <- sf::st_make_valid(Evac)
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Evac) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "Zone", title = "Evacuation Zones", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) 
+
+
+
+```
+
+##        Which parishes are within which zones?
+
+```{r zone intersect}
+
+#   Find intersecting Zone
+
+a <- sf::st_intersects(Parishes, Evac, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 163))
+
+temp <- Evac
+temp[163,] <- temp[162,]
+temp$Zone[163] <- "None"
+
+Parish2 <- Parishes
+Parish2$Evac <- temp$Zone[unlist(a)]
+
+table <- Parish2 %>% 
+  sf::st_drop_geometry() %>% 
+  filter(!Evac=="None") %>% 
+  arrange(Evac) %>% 
+  select(Label, City, Evac) %>% 
+  mutate(Evac=stringr::str_remove(Evac, "Zip-")) %>% 
+  mutate(Evac=stringr::str_replace(Evac, "Zone Coastal", "Coastal")) %>% 
+  gt(groupname_col="Evac", rowname_col = "Label") %>% 
+      tab_header(
+      title = md(paste0("**HGAC Evacuation Zones**")),
+    ) %>% 
+    cols_label(Label = "Parish",
+               City = "City",
+               Evac = "Evacuation Zone") %>%
+    tab_stubhead(label="Parish") %>% 
+    row_group_order(groups = c("Coastal", "Zone A", "Zone B", "Zone C")) %>%
+    tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_row_groups()
+  ) %>%
+  tab_stub_indent(rows=everything(),
+                  indent=0
+                  ) %>% 
+    tab_source_note(
+      source_note="Source: https://www.gis.hctx.net/evacuationmap/,
+      and Houston-Galveston Area Council (https://www.h-gac.com/hurricane-evacuation-planning)") %>% 
+  tab_options(column_labels.hidden = TRUE) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold',
+      row_group.as_column = TRUE
+    )
+
+gtsave(table, paste0(output_path, "HGAC_Evacuation_zones.docx"))
+
+
+```
+
+
+
+
