@@ -5,14 +5,13 @@ format: html
 editor: visual
 ---
 
-##  Find the census tracts near the churches
+## Find the census tracts near the churches
 
-Create a data frame with census tracts that each church lives in, plus a list of tracts within
-a 1 mile radius
+Create a data frame with census tracts that each church lives in, plus a list of tracts within a 1 mile radius
 
 Also pull likely useful census data per tract
 
-Everything in google CRS 
+Everything in google CRS
 
 ```{r setup}
 
@@ -67,8 +66,7 @@ Counties <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_C
 
 ```
 
-
-##    Start with one county to see what it looks like
+## Start with one county to see what it looks like
 
 ```{r harris county}
 
@@ -140,7 +138,7 @@ for (i in 1:nrow(Parish2)) {
 
 ```
 
-##        Now do for all churches
+## Now do for all churches
 
 ```{r everyone}
 
@@ -228,12 +226,3 @@ saveRDS(Parish2, paste0(path, "Parishes_plus_Census_tracts.rds"))
 saveRDS(Census, paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 ```
-
-
-
-
-
-
-
-
-
