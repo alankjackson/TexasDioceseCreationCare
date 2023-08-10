@@ -80,18 +80,18 @@ Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 layers <- sf::st_layers(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"))
 
-foo1 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
-                                 layer = "TX_North2_low_5ft")
-foo1 <- sf::st_make_valid(foo1)
-
-foo1b <- rmapshaper::ms_simplify(foo1)
-foo1b <- sf::st_make_valid(foo1b)
-
-foo2 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
-                                 layer = "TX_North2_slr_5ft")
-foo2 <- sf::st_make_valid(foo2)
-foo2b <- rmapshaper::ms_simplify(foo2)
-foo2b <- sf::st_make_valid(foo2b)
+# foo1 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+#                                  layer = "TX_North2_low_5ft")
+# foo1 <- sf::st_make_valid(foo1)
+# 
+# foo1b <- rmapshaper::ms_simplify(foo1)
+# foo1b <- sf::st_make_valid(foo1b)
+# 
+# foo2 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+#                                  layer = "TX_North2_slr_5ft")
+# foo2 <- sf::st_make_valid(foo2)
+# foo2b <- rmapshaper::ms_simplify(foo2)
+# foo2b <- sf::st_make_valid(foo2b)
 
 OneFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
                                  layer = "TX_North2_slr_1ft")
