@@ -82,9 +82,59 @@ layers <- sf::st_layers(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.g
 
 foo1 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
                                  layer = "TX_North2_low_5ft")
+foo1 <- sf::st_make_valid(foo1)
+
+foo1b <- rmapshaper::ms_simplify(foo1)
+foo1b <- sf::st_make_valid(foo1b)
 
 foo2 <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
                                  layer = "TX_North2_slr_5ft")
+foo2 <- sf::st_make_valid(foo2)
+foo2b <- rmapshaper::ms_simplify(foo2)
+foo2b <- sf::st_make_valid(foo2b)
+
+OneFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+                                 layer = "TX_North2_slr_1ft")
+OneFoot <- sf::st_make_valid(OneFoot)
+OneFoot <- rmapshaper::ms_simplify(OneFoot)
+OneFoot <- sf::st_make_valid(OneFoot)
+saveRDS(OneFoot, paste0(path, "sea_level/OneFoot_Tx_North2.rds"))
+
+TwoFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+                                 layer = "TX_North2_slr_2ft")
+TwoFoot <- sf::st_make_valid(TwoFoot)
+TwoFoot <- rmapshaper::ms_simplify(TwoFoot)
+TwoFoot <- sf::st_make_valid(TwoFoot)
+saveRDS(TwoFoot, paste0(path, "sea_level/TwoFeet_Tx_North2.rds"))
+
+FiveFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+                                 layer = "TX_North2_slr_5ft")
+FiveFoot <- sf::st_make_valid(FiveFoot)
+FiveFoot <- rmapshaper::ms_simplify(FiveFoot)
+FiveFoot <- sf::st_make_valid(FiveFoot)
+saveRDS(FiveFoot, paste0(path, "sea_level/FiveFeet_Tx_North2.rds"))
+
+TenFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+                                 layer = "TX_North2_slr_10ft")
+TenFoot <- sf::st_make_valid(TenFoot)
+TenFoot <- rmapshaper::ms_simplify(TenFoot)
+TenFoot <- sf::st_make_valid(TenFoot)
+saveRDS(TenFoot, paste0(path, "sea_level/TenFeet_Tx_North2.rds"))
+
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(TwoFoot) + 
+  tmap::tm_fill(col="red", title = "2 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(OneFoot) + 
+  tmap::tm_fill(col="green", title = "1 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) 
+  
 
 
 
