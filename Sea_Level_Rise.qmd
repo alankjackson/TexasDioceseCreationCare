@@ -121,6 +121,87 @@ TenFoot <- rmapshaper::ms_simplify(TenFoot)
 TenFoot <- sf::st_make_valid(TenFoot)
 saveRDS(TenFoot, paste0(path, "sea_level/TenFeet_Tx_North2.rds"))
 
+ZeroFoot <- sf::st_read(dsn = paste0(path, "sea_level/TX_North2_slr_final_dist.gdb"),
+                                 layer = "TX_North2_slr_0ft")
+ZeroFoot <- sf::st_make_valid(ZeroFoot)
+ZeroFoot <- rmapshaper::ms_simplify(ZeroFoot)
+ZeroFoot <- sf::st_make_valid(ZeroFoot)
+saveRDS(ZeroFoot, paste0(path, "sea_level/ZeroFeet_Tx_North2.rds"))
+
+# -----------   East Texas
+
+OneFoote <- sf::st_read(dsn = paste0(path, "sea_level/TX_North1_slr_final_dist.gdb"),
+                                 layer = "TX_North1_slr_1ft")
+OneFoote <- sf::st_make_valid(OneFoote)
+OneFoote <- rmapshaper::ms_simplify(OneFoote)
+OneFoote <- sf::st_make_valid(OneFoote)
+saveRDS(OneFoote, paste0(path, "sea_level/OneFoot_Tx_North1.rds"))
+
+TwoFoote <- sf::st_read(dsn = paste0(path, "sea_level/TX_North1_slr_final_dist.gdb"),
+                                 layer = "TX_North1_slr_2ft")
+TwoFoote <- sf::st_make_valid(TwoFoote)
+TwoFoote <- rmapshaper::ms_simplify(TwoFoote)
+TwoFoote <- sf::st_make_valid(TwoFoote)
+saveRDS(TwoFoote, paste0(path, "sea_level/TwoFeet_Tx_North1.rds"))
+
+FiveFoote <- sf::st_read(dsn = paste0(path, "sea_level/TX_North1_slr_final_dist.gdb"),
+                                 layer = "TX_North1_slr_5ft")
+FiveFoote <- sf::st_make_valid(FiveFoote)
+FiveFoote <- rmapshaper::ms_simplify(FiveFoote)
+FiveFoote <- sf::st_make_valid(FiveFoote)
+saveRDS(FiveFoote, paste0(path, "sea_level/FiveFeet_Tx_North1.rds"))
+
+TenFoote <- sf::st_read(dsn = paste0(path, "sea_level/TX_North1_slr_final_dist.gdb"),
+                                 layer = "TX_North1_slr_10ft")
+TenFoote <- sf::st_make_valid(TenFoote)
+TenFoote <- rmapshaper::ms_simplify(TenFoote)
+TenFoote <- sf::st_make_valid(TenFoote)
+saveRDS(TenFoote, paste0(path, "sea_level/TenFeet_Tx_North1.rds"))
+
+ZeroFoote <- sf::st_read(dsn = paste0(path, "sea_level/TX_North1_slr_final_dist.gdb"),
+                                 layer = "TX_North1_slr_0ft")
+ZeroFoote <- sf::st_make_valid(ZeroFoote)
+ZeroFoote <- rmapshaper::ms_simplify(ZeroFoote)
+ZeroFoote <- sf::st_make_valid(ZeroFoote)
+saveRDS(ZeroFoote, paste0(path, "sea_level/ZeroFeet_Tx_North1.rds"))
+
+# -----------   Central Texas
+sf::st_layers(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"))
+                
+OneFoots <- sf::st_read(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"),
+                                 layer = "TX_Central_slr_1ft_Levee")
+OneFoots <- sf::st_make_valid(OneFoots)
+OneFoots <- rmapshaper::ms_simplify(OneFoots)
+OneFoots <- sf::st_make_valid(OneFoots)
+saveRDS(OneFoots, paste0(path, "sea_level/OneFoot_Tx_Central.rds"))
+
+TwoFoots <- sf::st_read(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"),
+                                 layer = "TX_Central_slr_2ft_Levee")
+TwoFoots <- sf::st_make_valid(TwoFoots)
+TwoFoots <- rmapshaper::ms_simplify(TwoFoots)
+TwoFoots <- sf::st_make_valid(TwoFoots)
+saveRDS(TwoFoots, paste0(path, "sea_level/TwoFeet_Tx_Central.rds"))
+
+FiveFoots <- sf::st_read(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"),
+                                 layer = "TX_Central_slr_5ft_Levee")
+FiveFoots <- sf::st_make_valid(FiveFoots)
+FiveFoots <- rmapshaper::ms_simplify(FiveFoots)
+FiveFoots <- sf::st_make_valid(FiveFoots)
+saveRDS(FiveFoots, paste0(path, "sea_level/FiveFeet_Tx_Central.rds"))
+
+TenFoots <- sf::st_read(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"),
+                                 layer = "TX_Central_slr_10ft_Levee")
+TenFoots <- sf::st_make_valid(TenFoots)
+TenFoots <- rmapshaper::ms_simplify(TenFoots)
+TenFoots <- sf::st_make_valid(TenFoots)
+saveRDS(TenFoots, paste0(path, "sea_level/TenFeet_Tx_Central.rds"))
+
+ZeroFoots <- sf::st_read(dsn = paste0(path, "sea_level/TX_Central_slr_final_dist.gdb"),
+                                 layer = "TX_Central_slr_0ft_Levee")
+ZeroFoots <- sf::st_make_valid(ZeroFoots)
+ZeroFoots <- rmapshaper::ms_simplify(ZeroFoots)
+ZeroFoots <- sf::st_make_valid(ZeroFoots)
+saveRDS(ZeroFoots, paste0(path, "sea_level/ZeroFeet_Tx_Central.rds"))
 
 #   make a diagnostic map
 
@@ -128,11 +209,32 @@ tmap::tmap_options(basemaps="OpenStreetMap")
 
 tmap::tmap_mode("view") # set mode to interactive plots
 
-tmap::tm_shape(TwoFoot) + 
-  tmap::tm_fill(col="red", title = "2 ft slr", alpha=0.3, style="pretty")+
+tmap::tm_shape(FiveFoot) + 
+  tmap::tm_fill(col="red", title = "5 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(FiveFoote) + 
+  tmap::tm_fill(col="red", title = "5 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(FiveFoots) + 
+  tmap::tm_fill(col="red", title = "5 ft slr", alpha=0.3, style="pretty")+
   tmap::tm_borders(lwd=0.5) +
 tmap::tm_shape(OneFoot) + 
   tmap::tm_fill(col="green", title = "1 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(OneFoote) + 
+  tmap::tm_fill(col="green", title = "1 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(OneFoots) + 
+  tmap::tm_fill(col="green", title = "1 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(ZeroFoot) + 
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(ZeroFoote) + 
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(ZeroFoots) + 
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
   tmap::tm_borders(lwd=0.5) 
   
 
