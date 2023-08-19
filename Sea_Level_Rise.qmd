@@ -228,14 +228,16 @@ tmap::tm_shape(OneFoots) +
   tmap::tm_fill(col="green", title = "1 ft slr", alpha=0.3, style="pretty")+
   tmap::tm_borders(lwd=0.5) +
 tmap::tm_shape(ZeroFoot) + 
-  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.9, style="pretty")+
   tmap::tm_borders(lwd=0.5) +
 tmap::tm_shape(ZeroFoote) + 
-  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.9, style="pretty")+
   tmap::tm_borders(lwd=0.5) +
 tmap::tm_shape(ZeroFoots) + 
-  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.3, style="pretty")+
-  tmap::tm_borders(lwd=0.5) 
+  tmap::tm_fill(col="lightblue", title = "0 ft slr", alpha=0.9, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
   
 
 
