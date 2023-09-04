@@ -47,7 +47,7 @@ req <- gargle::request_build(
     location.latitude = "29.69938",
     location.longitude = "-95.6566855",
     requiredQuality = "HIGH",
-    key = "AIzaSyCh1BnxeyvbIqokI-T0UjvJorknlF4M6Eg"
+    key = googlekey
   ),
   base_url = "https://solar.googleapis.com"
 )
@@ -76,7 +76,7 @@ for (i in 48:nrow(Parishes)) {
       location.latitude = as.character(Parishes[i,]$lat),
       location.longitude = as.character(Parishes[i,]$long),
       requiredQuality = "HIGH",
-      key = "AIzaSyCh1BnxeyvbIqokI-T0UjvJorknlF4M6Eg"
+      key = googlekey
     ),
     base_url = "https://solar.googleapis.com"
   )
@@ -156,4 +156,15 @@ for (i in 144:nrow(Parishes)) {
 saveRDS(BigHairyFile2, paste0(path, "BigHairyFile2.rds"))
 
 ```
+
+##    Look at new lat longs
+
+Compare old and new lat long values and flag large differences
+
+```{r compare}
+
+```
+
+
+
 
