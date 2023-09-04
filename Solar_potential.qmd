@@ -1,0 +1,157 @@
+---
+title: "Solar Potential"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+##      Use google solar api to get solar potential
+
+# https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=37.4450&location.longitude=-122.1390&requiredQuality=HIGH&key=YOUR_API_KEY
+
+```{r setup}
+
+library(tidyverse)
+
+googlekey <- readRDS("~/Dropbox/CrimeStats/apikey.rds")
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/solar/"
+
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+
+Parishes <- Parishes %>%
+    mutate(long = unlist(map(Parishes$geometry,1)),
+           lat = unlist(map(Parishes$geometry,2)))
+
+#token <- gargle::token_fetch()
+
+```
+
+
+##    Do a query
+
+```{r a query}
+
+urlreq <- "https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=29.7593&location.longitude=-95.35997&requiredQuality=HIGH&key=AIzaSyCh1BnxeyvbIqokI-T0UjvJorknlF4M6Eg"
+# 29.759266944468134, -95.35997075905406
+# result <- httr::GET(urlreq,
+                    # httr::user_agent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0"))
+
+req <- gargle::request_build(
+  method = "GET",
+  path = "v1/buildingInsights:findClosest",
+  params = list(
+    location.latitude = "29.69938",
+    location.longitude = "-95.6566855",
+    requiredQuality = "HIGH",
+    key = "AIzaSyCh1BnxeyvbIqokI-T0UjvJorknlF4M6Eg"
+  ),
+  base_url = "https://solar.googleapis.com"
+)
+# 29.699380402577543, -95.65668553384977
+result <- gargle::request_make(req)
+parse_result <- gargle::response_process(result)
+parse_result_json <- gargle::response_as_json(result)
+
+```
+
+##  Query everyone
+
+```{r all query}
+
+BigHairyFile <- NULL
+
+#   17 20 37 38 40 43 47 48 51 52 53 55 57 66 75 77,78,79,80,81,83,85-91,95,96,98,
+#   105-107,112,113,115,116,118-120,126,129-131,133,135,137,138,141,144-146,148,149,
+#   151,156-158
+
+for (i in 48:nrow(Parishes)) {
+  req <- gargle::request_build(
+    method = "GET",
+    path = "v1/buildingInsights:findClosest",
+    params = list(
+      location.latitude = as.character(Parishes[i,]$lat),
+      location.longitude = as.character(Parishes[i,]$long),
+      requiredQuality = "HIGH",
+      key = "AIzaSyCh1BnxeyvbIqokI-T0UjvJorknlF4M6Eg"
+    ),
+    base_url = "https://solar.googleapis.com"
+  )
+  
+  result <- gargle::request_make(req)
+  
+  if (result[[2]] == "404") {next}
+  
+  parse_result <- gargle::response_process(result)
+  
+  foo <- tribble(~Label, ~City, ~Stuff,
+                 Parishes[i,]$Label,
+                 Parishes[i,]$City,
+                 parse_result)
+  
+  BigHairyFile <- rbind(BigHairyFile, foo)
+  
+  Sys.sleep(15)
+  print(i)
+}
+
+saveRDS(BigHairyFile, paste0(path, "BigHairyFile.rds"))
+
+
+```
+
+##        Misses
+
+Lat longs are off for several churches. Will need to update them based on address.
+
+```{r update addresses}
+
+# https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY
+
+BigHairyFile2 <- NULL
+
+#   17 20 37 38 40 43 47 48 51 52 53 55 57 66 75 77,78,79,80,81,83,85-91,95,96,98,
+#   105-107,112,113,115,116,118-120,126,129-131,133,135,137,138,141,144-146,148,149,
+#   151,156-158
+
+for (i in 1:nrow(Parishes)) {
+ # Christ Church Cathedral<br>1117 Texas Avenue<br>Houston, TX 77002-3113<br>(713) 222-2593<br>christchurchcathedral.org (http://christchurchcathedral.org)
+ 
+  Address <-  stringr::str_split(Parishes[i,]$Description, "<br>")[[1]][1:2]
+  Address <- stringr::str_replace_all(stringr::str_flatten(Address, ","), " ", "+")
+  
+  req <- gargle::request_build(
+    method = "GET",
+    path = "maps/api/geocode/json",
+    params = list(
+      address = Address,
+      key = googlekey
+    ),
+    base_url = "https://maps.googleapis.com"
+  )
+  
+  result <- gargle::request_make(req)
+  
+  if (result[[2]] == "404") {print(paste("---", i))
+                                   next}
+  
+  parse_result <- gargle::response_process(result)
+  
+  foo <- tribble(~ID, ~Label, ~City, ~Lat, ~Long,
+                 Parishes[i,]$ID,
+                 Parishes[i,]$Label,
+                 Parishes[i,]$City,
+                 parse_result[["results"]][[1]][["geometry"]][["location"]][["lat"]],
+                 parse_result[["results"]][[1]][["geometry"]][["location"]][["lng"]] )
+  
+  BigHairyFile2 <- rbind(BigHairyFile2, foo)
+  
+  Sys.sleep(5)
+  print(i)
+}
+
+saveRDS(BigHairyFile2, paste0(path, "BigHairyFile2.rds"))
+
+```
+
