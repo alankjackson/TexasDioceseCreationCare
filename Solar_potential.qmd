@@ -24,6 +24,8 @@ Parishes <- Parishes %>%
     mutate(long = unlist(map(Parishes$geometry,1)),
            lat = unlist(map(Parishes$geometry,2)))
 
+Parishes[85,]$Description <- "204 Dooley St<br> Prairie View, TX 77446"
+
 #token <- gargle::token_fetch()
 
 ```
@@ -115,7 +117,7 @@ BigHairyFile2 <- NULL
 #   105-107,112,113,115,116,118-120,126,129-131,133,135,137,138,141,144-146,148,149,
 #   151,156-158
 
-for (i in 1:nrow(Parishes)) {
+for (i in 144:nrow(Parishes)) {
  # Christ Church Cathedral<br>1117 Texas Avenue<br>Houston, TX 77002-3113<br>(713) 222-2593<br>christchurchcathedral.org (http://christchurchcathedral.org)
  
   Address <-  stringr::str_split(Parishes[i,]$Description, "<br>")[[1]][1:2]
@@ -133,10 +135,10 @@ for (i in 1:nrow(Parishes)) {
   
   result <- gargle::request_make(req)
   
-  if (result[[2]] == "404") {print(paste("---", i))
-                                   next}
-  
   parse_result <- gargle::response_process(result)
+  
+  if (parse_result$status == "ZERO_RESULTS") {print(paste("---", i))
+                                   next}
   
   foo <- tribble(~ID, ~Label, ~City, ~Lat, ~Long,
                  Parishes[i,]$ID,
