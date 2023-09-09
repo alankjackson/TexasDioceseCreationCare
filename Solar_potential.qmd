@@ -163,6 +163,41 @@ Compare old and new lat long values and flag large differences
 
 ```{r compare}
 
+foo <- left_join(BigHairyFile2, Parishes, by="ID")
+
+#   Use 70 miles per degree latitude, 60 miles per degree longitude
+
+foo <- foo %>% 
+  mutate(distance = signif(sqrt(((lat-Lat)*70)**2 + ((long-Long)*60)**2)*5280, 3))
+
+#   Clean up and create new Parishes file
+
+foo <- foo %>% 
+  filter(!Convocation=="North Region") %>% 
+  select(ID, Label=Label.x, City=City.x, Lat=Lat, Long=Long, Name, Description, Convocation, County, geometry)
+
+foo2 <- Parishes %>% 
+  filter(Convocation=="North Region") %>% 
+  select(ID, Label, City, Lat=lat, Long=long, Name, Description, Convocation, County, geometry)
+
+foo3 <- Parishes %>% 
+  filter(City=="Leigh") %>% 
+  select(ID, Label, City, Lat=lat, Long=long, Name, Description, Convocation, County, geometry) %>% 
+  mutate(Lat = 32.603995696702974, Long = -94.13940369484152)
+  
+NewParishes <- bind_rows(foo, foo2, foo3) %>% 
+  arrange(Convocation)
+
+#   Need to redo geometry, and then redo intersection with census data
+
+NewParishes <- NewParishes %>% 
+  sf::st_drop_geometry() %>% 
+  sf::st_as_sf(coords=c("Long", "Lat"), crs=googlecrs, agr="identity")
+
+#   Save the data
+
+saveRDS(NewParishes, paste0(path, "Parishes.rds"))
+
 ```
 
 
