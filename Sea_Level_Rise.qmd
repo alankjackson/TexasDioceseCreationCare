@@ -11,54 +11,19 @@ Data downloaded from https://coast.noaa.gov/slrdata/
 
 Metadata:
 
-These data were created as part of the National Oceanic and Atmospheric
-Administration Office for Coastal Management's efforts to create an online
-mapping viewer depicting potential sea level rise and its associated impacts on
-the nation's coastal areas. The purpose of the mapping viewer is to provide
-coastal managers and scientists with a preliminary look at sea level rise (slr)
-and coastal flooding impacts. The viewer is a screening-level tool that uses
-nationally consistent data sets and analyses. Data and maps provided can be used
-at several scales to help gauge trends and prioritize actions for different
-scenarios. The Sea Level Rise and Coastal Flooding Impacts Viewer may be
-accessed at:
+These data were created as part of the National Oceanic and Atmospheric Administration Office for Coastal Management's efforts to create an online mapping viewer depicting potential sea level rise and its associated impacts on the nation's coastal areas. The purpose of the mapping viewer is to provide coastal managers and scientists with a preliminary look at sea level rise (slr) and coastal flooding impacts. The viewer is a screening-level tool that uses nationally consistent data sets and analyses. Data and maps provided can be used at several scales to help gauge trends and prioritize actions for different scenarios. The Sea Level Rise and Coastal Flooding Impacts Viewer may be accessed at:
 
 https://www.coast.noaa.gov/slr
 
-These data depict the potential inundation of coastal areas resulting from
-current Mean Higher High Water (MHHW) conditions. The process used to produce
-the data can be described as a modified bathtub approach that attempts to
-account for both local/regional tidal variability as well as hydrological
-connectivity. The process uses two source datasets to derive the final
-inundation rasters and polygons and accompanying low-lying polygons: the Digital
-Elevation Model (DEM) of the area and a tidal surface model that represents
-spatial tidal variability. The tidal model is created using the NOAA National
-Geodetic Survey's VDATUM datum transformation software (http://vdatum.noaa.gov)
-in conjunction with spatial interpolation/extrapolation methods and represents
-the MHHW tidal datum in orthometric values (North American Vertical Datum of
-1988).
+These data depict the potential inundation of coastal areas resulting from current Mean Higher High Water (MHHW) conditions. The process used to produce the data can be described as a modified bathtub approach that attempts to account for both local/regional tidal variability as well as hydrological connectivity. The process uses two source datasets to derive the final inundation rasters and polygons and accompanying low-lying polygons: the Digital Elevation Model (DEM) of the area and a tidal surface model that represents spatial tidal variability. The tidal model is created using the NOAA National Geodetic Survey's VDATUM datum transformation software (http://vdatum.noaa.gov) in conjunction with spatial interpolation/extrapolation methods and represents the MHHW tidal datum in orthometric values (North American Vertical Datum of 1988).
 
-The model used to produce these data does not account for erosion, subsidence,
-or any future changes in an area's hydrodynamics. It is simply a method to
-derive data in order to visualize the potential scale, not exact location, of
-inundation from sea level rise.
+The model used to produce these data does not account for erosion, subsidence, or any future changes in an area's hydrodynamics. It is simply a method to derive data in order to visualize the potential scale, not exact location, of inundation from sea level rise.
 
-The purpose of these data is to show potential inundation from current Mean
-Higher High Water (MHHW) for the area.
+The purpose of these data is to show potential inundation from current Mean Higher High Water (MHHW) for the area.
 
-A detailed methodology for producing these data can be found via the following url:
-https://coast.noaa.gov/data/digitalcoast/pdf/slr-inundation-methods.pdf
+A detailed methodology for producing these data can be found via the following url: https://coast.noaa.gov/data/digitalcoast/pdf/slr-inundation-methods.pdf
 
-These data illustrate the scale of potential flooding, not the exact location,
-and do not account for erosion, subsidence, or future construction. Inundation
-is shown as it would appear during the highest high tides (excludes wind driven
-tides) with the sea level rise amount. These data should be used only as a
-screening-level tool for management decisions. As with all remotely sensed data,
-all features should be verified with a site visit. The dataset is provided "as
-is," without warranty to its performance, merchantable state, or fitness for any
-particular purpose. The entire risk associated with the results and performance
-of this dataset is assumed by the user. This dataset should be used strictly as
-a planning reference and not for navigation, permitting, or other legal
-purposes.
+These data illustrate the scale of potential flooding, not the exact location, and do not account for erosion, subsidence, or future construction. Inundation is shown as it would appear during the highest high tides (excludes wind driven tides) with the sea level rise amount. These data should be used only as a screening-level tool for management decisions. As with all remotely sensed data, all features should be verified with a site visit. The dataset is provided "as is," without warranty to its performance, merchantable state, or fitness for any particular purpose. The entire risk associated with the results and performance of this dataset is assumed by the user. This dataset should be used strictly as a planning reference and not for navigation, permitting, or other legal purposes.
 
 ```{r setup}
 
@@ -74,7 +39,7 @@ Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 ```
 
-##    Read in sea level files
+## Read in sea level files
 
 ```{r read}
 
@@ -244,15 +209,3 @@ tmap::tm_shape(Parishes) +
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
