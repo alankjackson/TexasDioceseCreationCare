@@ -194,6 +194,19 @@ NewParishes <- NewParishes %>%
   sf::st_drop_geometry() %>% 
   sf::st_as_sf(coords=c("Long", "Lat"), crs=googlecrs, agr="identity")
 
+#   Individual fix (All Saint's Austin)
+
+TempParish <- NewParishes %>%
+    mutate(long = unlist(map(NewParishes$geometry,1)),
+           lat = unlist(map(NewParishes$geometry,2)))
+
+TempParish[1,]$long <- -97.73974474010639
+TempParish[1,]$lat  <- 30.291669709186706
+
+NewParishes <- TempParish %>% 
+  sf::st_drop_geometry() %>% 
+  sf::st_as_sf(coords=c("long", "lat"), crs=googlecrs, agr="identity")
+
 #   Save the data
 
 saveRDS(NewParishes, paste0(path, "Parishes.rds"))
@@ -249,6 +262,60 @@ saveRDS(BigHairyFile, paste0(path, "BigHairyFile.rds"))
 
 
 ```
+
+##       What do I want from the file?
+
+```{r pick stuff from file}
+
+foo <- BigHairyFile[1,]$Stuff
+
+foo[[1]][["solarPotential"]][["maxArrayPanelsCount"]]
+foo[[1]][["solarPotential"]][["maxSunshineHoursPerYear"]]
+foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[1]][["panelsCount"]]
+foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[1]][["yearlyEnergyDcKwh"]]
+foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[2]][["panelsCount"]]
+foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[2]][["yearlyEnergyDcKwh"]]
+foo[[1]][["solarPotential"]][["financialAnalyses"]][[1]][["cashPurchaseSavings"]][["outOfPocketCost"]][["units"]]
+foo[[1]][["solarPotential"]][["financialAnalyses"]][[1]][["cashPurchaseSavings"]][["savings"]][["savingsLifetime"]][["units"]]
+foo[[1]][["solarPotential"]][["financialAnalyses"]][[1]][["cashPurchaseSavings"]][["savings"]][["savingsLifetime"]][["units"]]
+
+length(foo[[1]][["solarPotential"]][["financialAnalyses"]])
+
+foobar <- tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear)
+for (i in 1:length(foo[[1]][["solarPotential"]][["financialAnalyses"]])) {
+  Finance <- foo[[1]][["solarPotential"]][["financialAnalyses"]][[i]]
+  Cost <- Finance[["cashPurchaseSavings"]][["outOfPocketCost"]][["units"]]
+  Savings <- Finance[["cashPurchaseSavings"]][["savings"]][["savingsLifetime"]][["units"]]
+  InitialKwhPerYear <- Finance[["financialDetails"]][["initialAcKwhPerYear"]]
+  Index <- Finance[["panelConfigIndex"]]
+  print(paste(Index, Cost, Savings, InitialKwhPerYear))
+  foobar <- bind_rows(foobar, tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, 
+                                       Index, Cost, Savings, InitialKwhPerYear))
+}
+
+foobar2 <- tribble(~Index, ~PanelCount, ~YearlyDcKwh) 
+for (i in 1:length(foo[[1]][["solarPotential"]][["solarPanelConfigs"]])) {
+  Config <- foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[i]]
+  PanelCount <- Config[["panelsCount"]]
+  YearlyDcKwh <- Config[["yearlyEnergyDcKwh"]]
+  print(paste(i, PanelCount, YearlyDcKwh))
+  foobar2 <- bind_rows(foobar2, tribble(~Index, ~PanelCount, ~YearlyDcKwh, 
+                                       i-1, PanelCount, YearlyDcKwh))
+}
+
+#   Combine financials with number of panels
+
+
+
+```
+
+
+
+
+
+
+
+
 
 
 
