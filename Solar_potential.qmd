@@ -281,16 +281,17 @@ foo[[1]][["solarPotential"]][["financialAnalyses"]][[1]][["cashPurchaseSavings"]
 
 length(foo[[1]][["solarPotential"]][["financialAnalyses"]])
 
-foobar <- tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear)
+foobar <- tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, ~PaybackYrs)
 for (i in 1:length(foo[[1]][["solarPotential"]][["financialAnalyses"]])) {
   Finance <- foo[[1]][["solarPotential"]][["financialAnalyses"]][[i]]
   Cost <- Finance[["cashPurchaseSavings"]][["outOfPocketCost"]][["units"]]
+  PaybackYrs <- Finance[["cashPurchaseSavings"]][["paybackYears"]]
   Savings <- Finance[["cashPurchaseSavings"]][["savings"]][["savingsLifetime"]][["units"]]
   InitialKwhPerYear <- Finance[["financialDetails"]][["initialAcKwhPerYear"]]
   Index <- Finance[["panelConfigIndex"]]
-  print(paste(Index, Cost, Savings, InitialKwhPerYear))
-  foobar <- bind_rows(foobar, tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, 
-                                       Index, Cost, Savings, InitialKwhPerYear))
+  print(paste(Index, Cost, Savings, InitialKwhPerYear, PaybackYrs))
+  foobar <- bind_rows(foobar, tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, ~PaybackYrs, 
+                                       Index, Cost, Savings, InitialKwhPerYear, PaybackYrs))
 }
 
 foobar2 <- tribble(~Index, ~PanelCount, ~YearlyDcKwh) 
@@ -305,9 +306,47 @@ for (i in 1:length(foo[[1]][["solarPotential"]][["solarPanelConfigs"]])) {
 
 #   Combine financials with number of panels
 
+foobar <- left_join(foobar, foobar2, by="Index")
 
+#   Get a few more numbers
+
+MaxArray <- foo[[1]][["solarPotential"]][["maxArrayPanelsCount"]]
+MaxSunHoursPerYear <- foo[[1]][["solarPotential"]][["maxSunshineHoursPerYear"]]
+
+foobar %>% 
+  ggplot(aes(x=PanelCount, y=YearlyDcKwh)) +
+  geom_point() +
+  geom_smooth()
+
+foobar %>% 
+  select(PanelCount, Cost, Savings) %>% 
+  mutate(Cost=as.numeric(Cost), Savings=as.numeric(Savings)) %>% 
+  pivot_longer(!PanelCount, names_to="Financials", values_to = "Dollars") %>%  
+  ggplot(aes(x=PanelCount, y=Dollars, color=Financials)) +
+  geom_point() +
+  geom_smooth() 
+
+foobar %>% 
+  select(PanelCount, Cost, Savings) %>% 
+  mutate(Cost=as.numeric(Cost), Savings=as.numeric(Savings)) %>% 
+  mutate(PctSavings=Savings/Cost) %>% 
+  #pivot_longer(!PanelCount, names_to="Financials", values_to = "Dollars") %>%  
+  ggplot(aes(x=PanelCount, y=PctSavings)) +
+  geom_point() +
+  geom_smooth() 
+
+foobar %>% 
+  filter(PaybackYrs>0) %>% 
+  select(PanelCount, PaybackYrs) %>% 
+  ggplot(aes(x=PanelCount, y=PaybackYrs)) +
+  geom_point() +
+  geom_smooth() 
 
 ```
+
+##        Make a big dataframe with all the stuff I want
+
+
 
 
 
