@@ -200,6 +200,55 @@ saveRDS(NewParishes, paste0(path, "Parishes.rds"))
 
 ```
 
+##  Query everyone again
+
+```{r all query}
+
+BigHairyFile <- NULL
+
+TempParish <- NewParishes %>%
+    mutate(long = unlist(map(NewParishes$geometry,1)),
+           lat = unlist(map(NewParishes$geometry,2)))
+
+#   It appears that these areas have not been processed by Google yet
+
+#   3,4,6,9,14,15,20,21,24,26,27,28,30,32-38,68,73,74,75,78,80,81,83,87,88,91,94,95,
+#   97-100,106,109,110,118,120,121,127,129-131,134,135,139,140,142,144,157
+
+for (i in 1:nrow(TempParish)) {
+  req <- gargle::request_build(
+    method = "GET",
+    path = "v1/buildingInsights:findClosest",
+    params = list(
+      location.latitude = as.character(TempParish[i,]$lat),
+      location.longitude = as.character(TempParish[i,]$long),
+      requiredQuality = "HIGH",
+      key = googlekey
+    ),
+    base_url = "https://solar.googleapis.com"
+  )
+  
+  result <- gargle::request_make(req)
+  
+  if (result[[2]] == "404") {next}
+  
+  parse_result <- gargle::response_process(result)
+  
+  foo <- tribble(~Label, ~City, ~Stuff,
+                 TempParish[i,]$Label,
+                 TempParish[i,]$City,
+                 parse_result)
+  
+  BigHairyFile <- rbind(BigHairyFile, foo)
+  
+  Sys.sleep(5)
+  print(i)
+}
+
+saveRDS(BigHairyFile, paste0(path, "BigHairyFile.rds"))
+
+
+```
 
 
 
