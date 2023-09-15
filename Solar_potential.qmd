@@ -330,7 +330,6 @@ foobar %>%
   select(PanelCount, Cost, Savings) %>% 
   mutate(Cost=as.numeric(Cost), Savings=as.numeric(Savings)) %>% 
   mutate(PctSavings=Savings/Cost) %>% 
-  #pivot_longer(!PanelCount, names_to="Financials", values_to = "Dollars") %>%  
   ggplot(aes(x=PanelCount, y=PctSavings)) +
   geom_point() +
   geom_smooth() 
@@ -346,6 +345,73 @@ foobar %>%
 
 ##        Make a big dataframe with all the stuff I want
 
+```{r now all churches}
+
+Final <- tribble(~Label, ~City, ~MaxArray, ~MaxSunHoursPerYear, ~Panels, ~Cost, ~Savings,
+                 ~InitialKwhPerYear, ~YearlyDcKwh) 
+
+for (j in 1:length(BigHairyFile[[1]])) {
+  print(paste("-", j, "-"))
+  foo <- BigHairyFile[j,]$Stuff
+  Label <- BigHairyFile[j,]$Label
+  City <- BigHairyFile[j,]$City
+  
+  foobar <- tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, ~PaybackYrs)
+  for (i in 1:length(foo[[1]][["solarPotential"]][["financialAnalyses"]])) {
+    print(paste("=", i, "="))
+    Finance <- foo[[1]][["solarPotential"]][["financialAnalyses"]][[i]]
+    if (length(Finance)<6) {next}
+    Cost <- Finance[["cashPurchaseSavings"]][["outOfPocketCost"]][["units"]]
+    PaybackYrs <- Finance[["cashPurchaseSavings"]][["paybackYears"]]
+    Savings <- Finance[["cashPurchaseSavings"]][["savings"]][["savingsLifetime"]][["units"]]
+    InitialKwhPerYear <- Finance[["financialDetails"]][["initialAcKwhPerYear"]]
+    Index <- Finance[["panelConfigIndex"]]
+    foobar <- bind_rows(foobar, tribble(~Index, ~Cost, ~Savings, ~InitialKwhPerYear, ~PaybackYrs, 
+                                         Index, Cost, Savings, InitialKwhPerYear, PaybackYrs))
+  }
+  
+  print("2")
+  foobar2 <- tribble(~Index, ~PanelCount, ~YearlyDcKwh) 
+  for (i in 1:length(foo[[1]][["solarPotential"]][["solarPanelConfigs"]])) {
+    Config <- foo[[1]][["solarPotential"]][["solarPanelConfigs"]][[i]]
+    PanelCount <- Config[["panelsCount"]]
+    YearlyDcKwh <- Config[["yearlyEnergyDcKwh"]]
+    foobar2 <- bind_rows(foobar2, tribble(~Index, ~PanelCount, ~YearlyDcKwh, 
+                                         i-1, PanelCount, YearlyDcKwh))
+  }
+  
+  print("3")
+  #   Combine financials with number of panels
+  
+  foobar <- left_join(foobar, foobar2, by="Index")
+  
+  #   Get a few more numbers
+  
+  MaxArray <- foo[[1]][["solarPotential"]][["maxArrayPanelsCount"]]
+  MaxSunHoursPerYear <- foo[[1]][["solarPotential"]][["maxSunshineHoursPerYear"]]
+  
+  # Get # panels at maximum savings
+  
+  print("4")
+  foobar3 <- foobar %>% 
+    select(PanelCount, Cost, Savings, InitialKwhPerYear, YearlyDcKwh) %>% 
+    mutate(Cost=as.numeric(Cost), Savings=as.numeric(Savings)) %>% 
+    mutate(PctSavings=Savings/Cost)  
+  
+  MaxIndex <- which.max(foobar3$PctSavings)
+  
+  print("5")
+  Final <- bind_rows(Final, 
+                     tribble(~Label, ~City, ~MaxArray, ~MaxSunHoursPerYear, ~Panels, ~Cost, 
+                             ~Savings, ~InitialKwhPerYear, ~YearlyDcKwh,
+                             Label, City, MaxArray, MaxSunHoursPerYear, foobar3[MaxIndex,]$PanelCount,
+                             foobar3[MaxIndex,]$Cost, foobar3[MaxIndex,]$Savings,
+                             foobar3[MaxIndex,]$InitialKwhPerYear, foobar3[MaxIndex,]$YearlyDcKwh))
+
+}
+
+
+```
 
 
 
