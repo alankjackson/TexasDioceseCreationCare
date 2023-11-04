@@ -1,0 +1,84 @@
+---
+title: "Water_Regions"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Flood Planning Regions and Water Planning Areas
+
+```{r read in relevant data}
+
+library(tidyverse)
+library(gt)
+
+data_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/"
+
+Water_plan <- readRDS(paste0(data_path, "WaterPlanningAreas/Water_Planning_Areas.Rds"))
+Flood_plan <- readRDS(paste0(data_path, "FloodPlanningRegions/Regional_Flood_Planning_Groups.Rds"))
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Water_Planning/"
+
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+
+
+
+```
+
+
+## Which parishes are within which Flood Region?
+
+```{r zone intersect}
+
+#   Find intersecting Zone
+
+a <- sf::st_intersects(Parishes, Flood_plan, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 163))
+
+temp <- Flood_plan
+temp[163,] <- temp[162,]
+temp$RFPG[163] <- "None"
+
+Parish2 <- Parishes
+Parish2$Flood <- temp$RFPG[unlist(a)]
+
+table <- Parish2 %>% 
+  sf::st_drop_geometry() %>% 
+  filter(!Flood=="None") %>% 
+  arrange(Flood) %>% 
+  select(Label, City, Flood) %>% 
+  gt(groupname_col="Flood", rowname_col = "Label") %>% 
+      tab_header(
+      title = md(paste0("**Flood Planning Region**")),
+    ) %>% 
+    cols_label(Label = "Parish",
+               City = "City",
+               Flood = "Planning Region") %>%
+    tab_stubhead(label="Parish") %>% 
+    # row_group_order(groups = c("Coastal", "Zone A", "Zone B", "Zone C")) %>%
+    tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_row_groups()
+  ) %>%
+  tab_stub_indent(rows=everything(),
+                  indent=0
+                  ) %>% 
+    tab_source_note(
+      source_note="Source: https://www.arcgis.com/home/item.html?id=177ba83b8e1a405692ba8886110df08f,
+       Texas Water Development Board") %>% 
+  tab_options(column_labels.hidden = TRUE) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold',
+      row_group.as_column = TRUE
+    )
+
+table
+
+gtsave(table, paste0(output_path, "Flood_Regions.docx"))
+gtsave(table, paste0(output_path, "Flood_Regions.pdf"))
+
+
+```
+
+
