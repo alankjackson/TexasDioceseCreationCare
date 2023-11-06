@@ -87,4 +87,63 @@ Parish2 %>%
 
 ```
 
+## Which parishes are within which Water Planning Area?
+
+```{r area intersect}
+
+#   Find intersecting Zone
+
+a <- sf::st_intersects(Parishes, Water_plan, sparse=TRUE)
+a <- unlist(replace(a, !sapply(a, length), 163))
+
+temp <- Water_plan
+temp[163,] <- temp[162,]
+temp$REG_NAME[163] <- "None"
+
+Parish3 <- Parishes
+Parish3$Water_Area <- temp$REG_NAME[unlist(a)]
+
+table <- Parish3 %>% 
+  sf::st_drop_geometry() %>% 
+  filter(!Water_Area=="None") %>% 
+  arrange(Water_Area) %>% 
+  select(Label, City, Water_Area) %>% 
+  gt(groupname_col="Water_Area", rowname_col = "Label") %>% 
+      tab_header(
+      title = md(paste0("**Water Planning Areas**")),
+    ) %>% 
+    cols_label(Label = "Parish",
+               City = "City",
+               Water_Area = "Water Planning Area") %>%
+    tab_stubhead(label="Parish") %>% 
+    # row_group_order(groups = c("Coastal", "Zone A", "Zone B", "Zone C")) %>%
+    tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_row_groups()
+  ) %>%
+  tab_stub_indent(rows=everything(),
+                  indent=0
+                  ) %>% 
+    tab_source_note(
+      source_note="Source: https://www.arcgis.com/home/item.html?id=177ba83b8e1a405692ba8886110df08f,
+       Texas Water Development Board") %>% 
+  tab_options(column_labels.hidden = TRUE) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold',
+      row_group.as_column = TRUE
+    )
+
+table
+
+gtsave(table, paste0(output_path, "Water_Areas.docx"))
+gtsave(table, paste0(output_path, "Water_Areas.pdf"))
+
+Parish3 %>% 
+  select(Parish=Label, City, Convocation, Water_Area) %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(Water_Area) %>% 
+  write_xlsx(paste0(output_path, "Water_Areas.xlsx"))
+
+```
+
 
