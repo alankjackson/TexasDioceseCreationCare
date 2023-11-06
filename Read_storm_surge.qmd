@@ -13,13 +13,7 @@ Zachry, B. C., W. J. Booth, J. R. Rhome, and T. M. Sharon, 2015: A National View
 
 -   Data comes in NAD83
 
-Each dataset contains an ESRI World File (.tfw) and metadata .xml file. These
-GeoTIFFs are 8-bit unsigned integer raster datasets that correspond to 1 ft
-inundation bins (e.g., Class Value 1 corresponds to the 0-1 ft inundation bin,
-Class Value 2 corresponds to the 1-2 ft inundation bin, and so on). The maximum
-Class Value is 21, and inundation in excess of 20 ft is assigned a Class Value
-of 21. A Class Value of 99 is assigned to leveed areas. A more detailed
-description of the data can be found in the associated metadata.
+Each dataset contains an ESRI World File (.tfw) and metadata .xml file. These GeoTIFFs are 8-bit unsigned integer raster datasets that correspond to 1 ft inundation bins (e.g., Class Value 1 corresponds to the 0-1 ft inundation bin, Class Value 2 corresponds to the 1-2 ft inundation bin, and so on). The maximum Class Value is 21, and inundation in excess of 20 ft is assigned a Class Value of 21. A Class Value of 99 is assigned to leveed areas. A more detailed description of the data can be found in the associated metadata.
 
 ```{r setup}
 
@@ -176,7 +170,7 @@ ggplot() +
 
 ```
 
-##        Levee polygons
+## Levee polygons
 
 ```{r levees}
 
@@ -209,7 +203,7 @@ tmap::tm_shape(Levees) +
 saveRDS(Levees, paste0(path, "StormSurge_Levee_Polygons.rds"))
 ```
 
-##        Which churches are behind levees?
+## Which churches are behind levees?
 
 ```{r levee protected}
 Protected <- st_join(sf::st_transform(Parishes, crs=inputcrs), Levees, join=st_within) %>%
@@ -229,7 +223,6 @@ tmap::tm_shape(Protected) +
   tmap::tm_dots() +
   tmap::tm_text("Label", just = "left", xmod = 0.1)
 ```
-
 
 ```{r levee protected 2}
 #| warning: FALSE
@@ -265,14 +258,3 @@ for (Levee in c("Port Arthur", "Texas City", "Freeport", "Matagorda")){
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
