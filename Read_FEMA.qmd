@@ -9,10 +9,7 @@ editor: visual
 
 FEMA data by census tract in a csv file
 
-https://hazards.fema.gov/nri/
-https://hazards.fema.gov/nri/data-resources#csvDownload
-
-
+https://hazards.fema.gov/nri/ https://hazards.fema.gov/nri/data-resources#csvDownload
 
 ```{r setup}
 
@@ -27,7 +24,7 @@ Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
 ```
 
-##        Read tract level data
+## Read tract level data
 
 ```{r read csv file}
 
@@ -56,7 +53,7 @@ saveRDS(df, paste0(path, "NRI_Table.rds"))
 
 ```
 
-##        Read county level data
+## Read county level data
 
 ```{r read csv file}
 
@@ -84,7 +81,3 @@ df <- read_csv(paste0(path, "NRI_Table_Counties_Texas.csv"),
 saveRDS(df, paste0(path, "NRI_Table_Counties.rds"))
 
 ```
-
-
-
-
