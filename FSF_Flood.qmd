@@ -90,7 +90,6 @@ pFF8 <- FF8 %>% ggplot(aes(x=Risk, y=Depth)) +
 
 ```
 
-
 ## Read the data in by census tract and filter out diocese
 
 ```{r}
@@ -231,7 +230,6 @@ for (map_var in c("Fact3_grp", "Fact5_grp", "Fact8_grp")){
   
 ```
 
-
 ## Make maps of flood factor 3, 5, and 8 colored by percent houses affected for the convocations
 
 ```{r convocations}
@@ -350,11 +348,3 @@ for (Convo in Convo_names) {
 }
   
 ```
-
-
-
-
-
-
-
-
