@@ -11,6 +11,7 @@ editor: visual
 
 library(tidyverse)
 library(gt)
+library(writexl)
 
 data_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/"
 
@@ -78,6 +79,11 @@ table
 gtsave(table, paste0(output_path, "Flood_Regions.docx"))
 gtsave(table, paste0(output_path, "Flood_Regions.pdf"))
 
+Parish2 %>% 
+  select(Parish=Label, City, Convocation, Flood_Region=Flood) %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(Flood_Region) %>% 
+  write_xlsx(paste0(output_path, "Flood_Regions.xlsx"))
 
 ```
 
