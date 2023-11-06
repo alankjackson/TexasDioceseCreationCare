@@ -7,8 +7,7 @@ editor: visual
 
 ## Read Hurricane Evacuation Zones
 
-Eric Boulet, Sr. GIS Analyst for the Houston-Galveston Area Council was nice
-enough to email me a zip file containing the shapefile for the evacuation zones.
+Eric Boulet, Sr. GIS Analyst for the Houston-Galveston Area Council was nice enough to email me a zip file containing the shapefile for the evacuation zones.
 
 ```{r setup}
 
@@ -25,7 +24,7 @@ Census <- readRDS(paste0(path, "Census_data_for_Texas_by_tract.rds"))
 
 ```
 
-##        Read and plot shapes
+## Read and plot shapes
 
 ```{r read}
 
@@ -48,7 +47,7 @@ tmap::tm_shape(Evac) +
 
 ```
 
-##        Which parishes are within which zones?
+## Which parishes are within which zones?
 
 ```{r zone intersect}
 
@@ -100,7 +99,3 @@ gtsave(table, paste0(output_path, "HGAC_Evacuation_zones.docx"))
 
 
 ```
-
-
-
-
