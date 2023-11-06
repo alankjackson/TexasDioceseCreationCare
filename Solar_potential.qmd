@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-##      Use google solar api to get solar potential
+## Use google solar api to get solar potential
 
 # https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=37.4450&location.longitude=-122.1390&requiredQuality=HIGH&key=YOUR_API_KEY
 
@@ -30,8 +30,7 @@ Parishes[85,]$Description <- "204 Dooley St<br> Prairie View, TX 77446"
 
 ```
 
-
-##    Do a query
+## Do a query
 
 ```{r a query}
 
@@ -58,7 +57,7 @@ parse_result_json <- gargle::response_as_json(result)
 
 ```
 
-##  Query everyone
+## Query everyone
 
 ```{r all query}
 
@@ -103,7 +102,7 @@ saveRDS(BigHairyFile, paste0(path, "BigHairyFile.rds"))
 
 ```
 
-##        Misses
+## Misses
 
 Lat longs are off for several churches. Will need to update them based on address.
 
@@ -157,7 +156,7 @@ saveRDS(BigHairyFile2, paste0(path, "BigHairyFile2.rds"))
 
 ```
 
-##    Look at new lat longs
+## Look at new lat longs
 
 Compare old and new lat long values and flag large differences
 
@@ -213,7 +212,7 @@ saveRDS(NewParishes, paste0(path, "Parishes.rds"))
 
 ```
 
-##  Query everyone again
+## Query everyone again
 
 ```{r all query}
 
@@ -263,7 +262,7 @@ saveRDS(BigHairyFile, paste0(path, "BigHairyFile.rds"))
 
 ```
 
-##       What do I want from the file?
+## What do I want from the file?
 
 ```{r pick stuff from file}
 
@@ -343,7 +342,7 @@ foobar %>%
 
 ```
 
-##        Make a big dataframe with all the stuff I want
+## Make a big dataframe with all the stuff I want
 
 ```{r now all churches}
 
@@ -412,15 +411,3 @@ for (j in 1:length(BigHairyFile[[1]])) {
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
