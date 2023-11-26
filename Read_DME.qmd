@@ -1,0 +1,16 @@
+---
+title: "Read Durable Medical Equipment data"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+##    Read DME data by zipcode from spreadsheet
+
+```{r setup}
+
+library(tidyverse)
+
+inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+```
