@@ -11,6 +11,25 @@ editor: visual
 
 library(tidyverse)
 
-inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Medicare/"
 
 ```
+
+###   Read in the proper sheet
+
+```{r read}
+
+df <- readxl::read_excel(paste0(inpath, "2023_HHSemPOWERMapHistoricalDataset.xlsx"),
+                         sheet="Zip Code")
+
+# Extract Texas only and January only
+
+df <- df %>% 
+  filter(stringr::str_detect(FIPS_Code, "^48.*")) %>% 
+  select(Zip_Code, County_FIPS_Code, County, 
+         Beneficiaries=January_2023_Medicare_Benes,
+         DME=January_2023_Power_Dependent_Devices_DME)
+
+
+```
+
