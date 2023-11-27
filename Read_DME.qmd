@@ -12,6 +12,10 @@ editor: visual
 library(tidyverse)
 
 inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Medicare/"
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Medicare/"
+
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
 ```
 
@@ -26,10 +30,38 @@ df <- readxl::read_excel(paste0(inpath, "2023_HHSemPOWERMapHistoricalDataset.xls
 
 df <- df %>% 
   filter(stringr::str_detect(FIPS_Code, "^48.*")) %>% 
-  select(Zip_Code, County_FIPS_Code, County, 
+  select(Zip_Code, FIPS_Code, County_FIPS_Code, County, 
          Beneficiaries=January_2023_Medicare_Benes,
          DME=January_2023_Power_Dependent_Devices_DME)
 
 
 ```
+
+###   Make a map
+
+```{r map}
+
+Counties <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/County_Outlines.rds")
+ZCTA <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Zipcodes/ZCTA_polygons_2020.rds")
+
+df2 <- left_join(df, ZCTA, by=c('Zip_Code'='ZCTA5CE20')) %>% 
+  sf::st_as_sf() %>% 
+  sf::st_make_valid()
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+# map <- 
+  tmap::tm_shape(df2) + 
+  tmap::tm_fill(col = "DME", title = "Power Dependent Devices", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+  # tmap::tm_shape(Water_plan) + 
+  # tmap::tm_fill(col = "Label_2", title = "Water Planning Regions", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+
+```
+
 
