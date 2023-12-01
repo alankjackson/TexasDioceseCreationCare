@@ -146,4 +146,40 @@ Parish3 %>%
 
 ```
 
+##        Map parishes onto regions
+
+
+```{r maps}
+
+map <- leaflet(Flood_plan) %>% 
+  leaflet::setView(lng = -95.3103, lat = 29.7752, zoom = 8 ) %>%   
+  addTiles() %>% 
+  addPolygons(weight=1) %>% 
+  addStaticLabels(label=temp$RFPG,
+                  style = list("color" = "red", "font-weight" = "bold"))
+
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+map <- tmap::tm_shape(Flood_plan) + 
+  tmap::tm_fill(col = "RFPG", title = "Flood Planning Regions", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+  tmap::tm_shape(Water_plan) + 
+  tmap::tm_fill(col = "Label_2", title = "Water Planning Regions", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+
+tmap::tmap_save(map, paste0(output_path, "Flood.html"), selfcontained = TRUE)
+
+
+
+# htmlwidgets::saveWidget(map, paste0(output_path, "Flood.html"), selfcontained = TRUE)
+# htmlwidgets::saveWidget(map, paste0(output_path, "Water.html"), selfcontained = TRUE)
+
+
+```
+
 
