@@ -258,7 +258,7 @@ for (i in 1:15) {
 
 ## Maps of Diocese by county
 
-Maps of each hazard over the whole diocese
+Maps of each hazard over the whole diocese by convocation
 
 ```{r diocese by county}
 
