@@ -17,13 +17,57 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/LOCA_cli
 
 ###   Read in the data
 
-```{r}
+https://cirrus.ucsd.edu/~pierce/LOCA2/CONUS_regions_split/NorESM2-LM/south/0p0625deg/r1i1p1f1/ssp245/pr/
+
+Precip is in kg/m2/s which can be multiplied by 86400 (24*60*60) to get mm/day.
+Use 86400*days in month/25.4 to get inches per month.
+Grid is 6 km grid.
+
+Values are an average for each month from Jan 2015 to Dec 2044
+
+```{r monthly}
 
 foo <- stars::read_ncdf(paste0(path, "pr.NorESM2-LM.ssp245.r1i1p1f1.2015-2044.LOCA_16thdeg_v20220519.monthly.south.nc"))
 
 prec_slice = slice(foo, index = 17, along = "time")
 plot(prec_slice, border = NA, reset = FALSE)
 
+
+```
+
+
+### And here is the daily data
+
+```{r daily}
+
+foo2 <- stars::read_ncdf(paste0(path, "pr.NorESM2-LM.ssp245.r1i1p1f1.2015-2044.LOCA_16thdeg_v20220519.south.nc"))
+
+prec_slice = slice(foo2, index = 17, along = "time")
+plot(prec_slice, border = NA, reset = FALSE)
+```
+
+### intersect foo2 with Harris county and find min and max precip and temp days
+
+```{r harris}
+
+Harris_poly <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/County_Outlines.rds") %>% 
+  filter(FID==20) %>% 
+  sf::st_make_valid()
+
+bb <- sf::st_bbox(Harris_poly)
+
+foo3 <- foo2[bb]
+
+# Harris <- sf::st_intersects(foo3, Harris_poly, sparse=FALSE, as_points=TRUE)
+ 
+foo4 <- aggregate(foo3, by=sf::st_geometry(Harris_poly), FUN=mean, na.rm=TRUE)
+
+foo5 <- as.vector(units::drop_units(foo4[["pr"]]))*86400/25.4
+
+as.data.frame(foo5) %>% 
+  mutate(n=row_number()) %>% 
+  ggplot(aes(x=n, y=foo5)) +
+  geom_point()
 
 ```
 
