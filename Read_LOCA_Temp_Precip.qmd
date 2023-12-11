@@ -12,6 +12,7 @@ library(tidyverse)
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/LOCA_climate+models/"
 
+Start_date <- lubridate::dmy("01012015")
 
 ```
 
@@ -57,17 +58,25 @@ Harris_poly <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texa
 bb <- sf::st_bbox(Harris_poly)
 
 foo3 <- foo2[bb]
-
-# Harris <- sf::st_intersects(foo3, Harris_poly, sparse=FALSE, as_points=TRUE)
  
 foo4 <- aggregate(foo3, by=sf::st_geometry(Harris_poly), FUN=mean, na.rm=TRUE)
-
+  
 foo5 <- as.vector(units::drop_units(foo4[["pr"]]))*86400/25.4
 
-as.data.frame(foo5) %>% 
+foo4 <- aggregate(foo3, by=sf::st_geometry(Harris_poly), FUN=max, na.rm=TRUE)
+foo4b <- aggregate(foo3, by=sf::st_geometry(Harris_poly), FUN=min, na.rm=TRUE)
+
+tmp <- tibble(MeanP=foo5, 
+              MaxP=as.vector(units::drop_units(foo4[["pr"]]))*86400/25.4,
+              MinP=as.vector(units::drop_units(foo4b[["pr"]]))*86400/25.4)
+
+tmp %>% 
   mutate(n=row_number()) %>% 
-  ggplot(aes(x=n, y=foo5)) +
-  geom_point()
+  mutate(Date=Start_date + lubridate::days(n-1)) %>% 
+  ggplot(aes(x=Date, y=MeanP)) +
+  geom_point() +
+  geom_point(aes(y=MaxP), color="red")+
+  geom_point(aes(y=MinP), color="blue")
 
 ```
 
