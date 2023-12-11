@@ -1,0 +1,57 @@
+---
+title: "Create better convocations"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Create a better convocation map from a county list
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+data_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+Counties <- readRDS(paste0(data_path, "County_Outlines.rds"))
+
+```
+
+
+###   Read in counties and create dataframe
+
+```{r}
+
+New_convo <- NULL
+
+add_convo <- function(New_convo, foo) {
+  as_tibble(foo[2:length(foo)]) %>% 
+  rename(County=value) %>% 
+  mutate(Convocation=foo[1]) %>% 
+  select(Convocation, County) %>% 
+  bind_rows(New_convo, .)
+}
+
+New_convo <- add_convo(New_convo, c("North", "Wichita", "Clay", "Montague", "Cooke", "Archer", "Young", "Jack", "Wise", "Stephens", "Palo Pinto", "Parker", "Tarrant", "Eastland", "Erath", "Hood", "Johnson", "Somerville", "Comanche", "Bosque", "Hill", "Hamilton", "Mills", "Brown"))
+New_convo <- add_convo(New_convo, c("Austin", "Lampasas", "Burnet", "Williamson", "Travis", "Bastrop", "Lee"))
+New_convo <- add_convo(New_convo, c("Northwest", "Coryell", "McLennan", "Limestone", "Freestone", "Bell", "Falls", "Milam"))
+New_convo <- add_convo(New_convo, c("Northeast", "Marion", "Smith", "Gregg", "Harrison", "Anderson", "Cherokee", "Rusk", "Panola", "Houston", "Trinity", "Angelina", "Nacogdoches", "Shelby", "San Augustine", "Sabine"))
+New_convo <- add_convo(New_convo, c("Central", "Robertson", "Leon", "Burleson", "Brazos", "Madison", "Grimes", "Fayette", "Washington", "Austin", "Waller"))
+New_convo <- add_convo(New_convo, c("San Jacinto", "Walker", "San Jacinto", "Polk", "Montgomery", "Liberty"))
+New_convo <- add_convo(New_convo, c("Southeast", "Tyler", "Jasper", "Newton", "Hardin", "Orange", "Jefferson", "Chambers"))
+New_convo <- add_convo(New_convo, c("Galveston", "Galveston", "Brazoria"))
+New_convo <- add_convo(New_convo, c("Southwest", "Colorado", "Wharton", "Matagorda", "Fort Bend"))
+New_convo <- add_convo(New_convo, c("Harris", "Harris"))
+
+```
+
+###   Combine with county coordinates
+
+```{r}
+
+
+
+
+```
+
