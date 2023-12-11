@@ -1,0 +1,103 @@
+---
+title: "Create Shapefiles"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+## Create shapefiles
+
+Read in diocesan and convocation boundaries and export as shapefiles
+
+```{r setup}
+
+library(tidyverse)
+
+Arc_CRS <- "EPSG:4735"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+
+Convocations <- readRDS(paste0(path,"Convocations.rds")) %>% 
+  select(Name) %>% 
+  mutate(Label=stringr::str_remove(Name, " Convocation| Region")) %>% 
+  sf::st_as_sf()
+
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds")) %>% 
+  sf::st_transform(googlecrs)
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
+
+###  create a shapefile of parish locations
+
+```{r}
+
+  sf::st_write(Parishes %>% sf::st_transform(Arc_CRS), paste0(path, "Parishes"),
+               driver = "ESRI Shapefile",
+               delete_layer = TRUE)  # create to a shapefile
+
+```
+
+
+
+###   Make a map of counties and diocesan convocations
+
+```{r}
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Convocations) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(title = "Convocations", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=3, col="red") +
+tmap::tm_shape(Counties) + 
+  # tmap::tm_fill(title = "Convocations", alpha=0.3, style="pretty")+
+  tmap::tm_borders() 
+
+
+
+
+```
+
+
+```{r}
+
+for (i in 1:11) {
+  Convo <- Convocations[i,] %>% sf::st_make_valid() %>% 
+    mutate(Name=stringr::str_replace_all(Label, " ", ""))
+  Name <- stringr::str_replace_all(Convo$Label, " ", "_")
+  # sf::write_sf_shp_zip(Convo,
+  #                      paste0(path, Name, ".zip"),
+  #                             overwrite=TRUE)
+  # sf::st_write(Convo, paste0(path, Name, ".shp"),
+  sf::st_write(Convo, paste0(path, Name),
+               driver = "ESRI Shapefile",
+               delete_layer = TRUE)  # create to a shapefile
+}
+
+```
+
+##        Can I read Fire output
+
+
+```{r}
+
+sf::st_layers(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"))
+fire <- sf::st_read(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"),
+                    layer = "Threat_UP_i")
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(fire) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster()
+  # tmap::tm_borders(lwd=3, col="red") 
+```
+
