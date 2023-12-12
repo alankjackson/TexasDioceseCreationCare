@@ -18,4 +18,47 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
+Convocations <- read_rds(paste0(path,"Convocations.rds"))
+
+location <- c(30.67340956114849, -96.37480798648748)
+
 ```
+
+###   Replace lat long and save
+
+```{r}
+
+# What is it now?
+sf::st_geometry(Parishes[Parishes$ID == 82, ])
+
+# Change it
+sf::st_geometry(Parishes[Parishes$ID == 82, ]) <-  
+  sf::st_sfc(sf::st_point(c(location[2], location[1])),
+             crs=sf::st_crs(Parishes))
+
+#   Check again
+sf::st_geometry(Parishes[Parishes$ID == 82, ])
+
+#   Output revised file
+
+write_rds(Parishes, paste0(path,"Parishes.rds"))
+ 
+#   View on map 
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+# map <- 
+  tmap::tm_shape(Conv2) + 
+  tmap::tm_fill(col = "Convocation", title = "Convocation", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+  
+  
+  
+```
+
+
+
