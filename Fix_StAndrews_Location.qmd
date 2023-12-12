@@ -1,0 +1,21 @@
+---
+title: "Fix St Andrews location"
+author: "Alan Jackson"
+format: html
+editor: visual
+---
+
+##        Fix one wonky parish location
+
+
+```{r setup}
+
+library(tidyverse)
+
+googlekey <- readRDS("~/Dropbox/CrimeStats/apikey.rds")
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
