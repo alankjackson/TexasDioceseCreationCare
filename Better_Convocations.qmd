@@ -16,6 +16,11 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 data_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
 Counties <- readRDS(paste0(data_path, "County_Outlines.rds"))
 
+Old_Convo <- readRDS(paste0(path,"Convocations.rds")) %>% 
+  select(Name) %>%
+  mutate(Label=stringr::str_remove(Name, " Convocation| Region")) %>%
+  sf::st_as_sf()
+
 ```
 
 
@@ -50,8 +55,80 @@ New_convo <- add_convo(New_convo, c("Harris", "Harris"))
 
 ```{r}
 
+Better_convo <- inner_join(New_convo, Counties, by=c("County"="CNTY_NM")) %>% 
+  sf::st_as_sf() %>% 
+  select(Convocation, County) 
 
+#   Export to shapefile so I can manually split harris county
+
+  sf::st_write(Better_convo, paste0(path, "Better_Convo"),
+               driver = "ESRI Shapefile",
+               delete_layer = TRUE)  # create to a shapefile
 
 
 ```
+
+###   After hand-editing in Qgis to split Harris county, read back in
+
+```{r}
+
+Better_convocation <- sf::st_read(paste0(path, "Better_Convo/Better_Convos.shp"))
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+# map <- 
+  tmap::tm_shape(Better_convocation) + 
+  tmap::tm_fill(col = "Convctn", title = "Convocation", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+```
+
+
+###   Add Somervell county and combine Harris and San Jacinto Convocations
+
+```{r}
+
+#   Add Somervell county
+Conv1 <- Counties %>% 
+  filter(CNTY_NM=="Somervell") %>% 
+  select(CNTY_NM) %>%
+  mutate(Convctn="North") %>% 
+  rename(County=CNTY_NM) %>% 
+  # sf::st_join(Better_convocation, ., by=c("County"="CNTY_NM")) %>% 
+  rbind(Better_convocation, .) %>% 
+  sf::st_as_sf() %>% 
+  select(Convocation=Convctn, County) 
+
+#   Combine Harris and San Jacinto Convos
+
+Conv2 <- Conv1 %>% 
+  mutate(Convocation=ifelse(Convocation=="Harris", "San Jacinto", Convocation))
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+# map <- 
+  tmap::tm_shape(Conv2) + 
+  tmap::tm_fill(col = "Convocation", title = "Convocation", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+  
+#   Overwrite old file  
+  
+Conv2 %>% 
+  rename(Label=Convocation) %>% 
+  write_rds(paste0(path,"Convocations.rds"))
+
+```
+
+
+
+
+
+
 
