@@ -35,7 +35,7 @@ Parishes <- readRDS(paste0(path, "Parishes.rds")) %>%
 
 ```
 
-###  create a shapefile of parish locations
+### create a shapefile of parish locations
 
 ```{r}
 
@@ -45,9 +45,7 @@ Parishes <- readRDS(paste0(path, "Parishes.rds")) %>%
 
 ```
 
-
-
-###   Make a map of counties and diocesan convocations
+### Make a map of counties and diocesan convocations
 
 ```{r}
 
@@ -68,17 +66,43 @@ tmap::tm_shape(Counties) +
 
 ```
 
-
 ```{r}
 
-for (i in 1:11) {
-  Convo <- Convocations[i,] %>% sf::st_make_valid() %>% 
+Convocations %>% 
+  mutate(area=units::drop_units(sf::st_area(geometry))/4046.86) %>% 
+  group_by(Label) %>% 
+  summarize(area = sum(area)/10000000)
+
+#   Split North convocation in four
+
+Convocations[1:6,]$Label <- "NorthA"
+Convocations[7:11,]$Label <- "NorthB"
+Convocations[12:17,]$Label <- "NorthC"
+Convocations[18:22,]$Label <- "NorthD"
+Convocations[82,]$Label <- "NorthD"
+
+#   Combine counties to get just the big polygons
+
+Convo_only <- Convocations %>% 
+  group_by(Label) %>% 
+  summarize(geometry = sf::st_union(geometry)) %>% 
+  sf::st_make_valid()
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Convo_only) + 
+  tmap::tm_fill(title = "Convocations", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=3, col="red") +
+tmap::tm_shape(Counties) + 
+  tmap::tm_borders() 
+
+
+for (i in 1:14) {
+  Convo <- Convo_only[i,] %>% sf::st_make_valid() %>% 
     mutate(Name=stringr::str_replace_all(Label, " ", ""))
   Name <- stringr::str_replace_all(Convo$Label, " ", "_")
-  # sf::write_sf_shp_zip(Convo,
-  #                      paste0(path, Name, ".zip"),
-  #                             overwrite=TRUE)
-  # sf::st_write(Convo, paste0(path, Name, ".shp"),
   sf::st_write(Convo, paste0(path, Name),
                driver = "ESRI Shapefile",
                delete_layer = TRUE)  # create to a shapefile
@@ -86,14 +110,15 @@ for (i in 1:11) {
 
 ```
 
-##        Can I read Fire output
-
+## Can I read Fire output
 
 ```{r}
 
-sf::st_layers(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"))
-fire <- sf::st_read(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"),
-                    layer = "Threat_UP_i")
+# sf::st_layers(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"))
+# fire <- sf::st_read(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"),
+#                     layer = "Threat_UP_i")
+
+fire <- terra::rast(paste0(path, "Fire/Threat_UP.geotiff"))
 
 tmap::tmap_options(basemaps="OpenStreetMap")
 
@@ -101,8 +126,7 @@ tmap::tmap_mode("view") # set mode to interactive plots
 
 tmap::tm_shape(fire) + 
     #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
-  tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
-  tmap::tm_raster()
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.3)
   # tmap::tm_borders(lwd=3, col="red") 
 ```
-
