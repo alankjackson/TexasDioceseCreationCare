@@ -1,0 +1,34 @@
+---
+title: "Wildfire Analysis"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    Do many things for wildfire analysis
+
+```{r setup}
+
+library(tidyverse)
+
+Arc_CRS <- "EPSG:4735"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+
+Convocations <- readRDS(paste0(path,"Convocations.rds")) %>% 
+  select(Name) %>% 
+  mutate(Label=stringr::str_remove(Name, " Convocation| Region")) %>% 
+  sf::st_as_sf()
+
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds")) %>% 
+  sf::st_transform(googlecrs)
+
+Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
+  select(Label, City) %>% 
+  mutate(Name=stringr::str_remove_all(Label, "[^a-zA-Z ]")) %>% 
+  mutate(Name=stringr::str_remove(Name, "The Episcopal Church of t?h?e? ?")) %>% 
+  mutate(Name=paste(Name, City)) %>% 
+  mutate(Name=stringr::str_remove(Name, " \\(temp\\)")) 
+
+```
