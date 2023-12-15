@@ -23,8 +23,7 @@ Old_Convo <- readRDS(paste0(path,"Convocations.rds")) %>%
 
 ```
 
-
-###   Read in counties and create dataframe
+### Read in counties and create dataframe
 
 ```{r}
 
@@ -51,7 +50,7 @@ New_convo <- add_convo(New_convo, c("Harris", "Harris"))
 
 ```
 
-###   Combine with county coordinates
+### Combine with county coordinates
 
 ```{r}
 
@@ -68,7 +67,7 @@ Better_convo <- inner_join(New_convo, Counties, by=c("County"="CNTY_NM")) %>%
 
 ```
 
-###   After hand-editing in Qgis to split Harris county, read back in
+### After hand-editing in Qgis to split Harris county, read back in
 
 ```{r}
 
@@ -86,8 +85,7 @@ tmap::tmap_mode("view") # set mode to interactive plots
   tmap::tm_dots()
 ```
 
-
-###   Add Somervell county and combine Harris and San Jacinto Convocations
+### Add Somervell county and combine Harris and San Jacinto Convocations
 
 ```{r}
 
@@ -125,10 +123,3 @@ Conv2 %>%
   write_rds(paste0(path,"Convocations.rds"))
 
 ```
-
-
-
-
-
-
-
