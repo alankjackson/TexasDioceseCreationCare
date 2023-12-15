@@ -2,7 +2,7 @@
 title: "Analyze FEMA data"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Combine FEMA and church data to analyze

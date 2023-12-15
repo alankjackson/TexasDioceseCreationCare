@@ -2,10 +2,10 @@
 title: "Read Durable Medical Equipment data"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
-##    Read DME data by zipcode from spreadsheet
+## Read DME data by zipcode from spreadsheet
 
 ```{r setup}
 
@@ -19,7 +19,7 @@ Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
 ```
 
-###   Read in the proper sheet
+### Read in the proper sheet
 
 ```{r read}
 
@@ -37,7 +37,7 @@ df <- df %>%
 
 ```
 
-###   Make a map
+### Make a map
 
 ```{r map}
 
@@ -73,7 +73,7 @@ tmap::tmap_mode("view") # set mode to interactive plots
 
 Maps of each hazard over the whole diocese by convocation
 
-```{r diocese by county} 
+```{r diocese by county}
 
 Convocations <- readRDS(paste0(path,"Convocations.rds")) %>% 
   select(Name) %>% 
@@ -129,4 +129,3 @@ for (i in 1:11) {
 
 
 ```
-

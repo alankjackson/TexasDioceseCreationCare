@@ -2,7 +2,7 @@
 title: "Read Storm Surge data"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Setup

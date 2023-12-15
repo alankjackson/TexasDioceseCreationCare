@@ -2,7 +2,7 @@
 title: "Create Shapefiles"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Create shapefiles

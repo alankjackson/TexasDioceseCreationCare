@@ -1,7 +1,7 @@
 ---
 title: "Read_Temp_and_Precip_data"
 format: html
-editor: visual
+editor: source
 ---
 
 ##  read in grids of precip and temperature data

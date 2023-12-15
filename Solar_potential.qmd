@@ -2,7 +2,7 @@
 title: "Solar Potential"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Use google solar api to get solar potential
