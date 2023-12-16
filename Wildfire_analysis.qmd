@@ -16,19 +16,80 @@ Arc_CRS <- "EPSG:4735"
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
 
-Convocations <- readRDS(paste0(path,"Convocations.rds")) %>% 
-  select(Name) %>% 
-  mutate(Label=stringr::str_remove(Name, " Convocation| Region")) %>% 
-  sf::st_as_sf()
-
-Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds")) %>% 
-  sf::st_transform(googlecrs)
+Convocations <- readRDS(paste0(path,"Convocations.rds"))  
 
 Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
-  select(Label, City) %>% 
-  mutate(Name=stringr::str_remove_all(Label, "[^a-zA-Z ]")) %>% 
-  mutate(Name=stringr::str_remove(Name, "The Episcopal Church of t?h?e? ?")) %>% 
-  mutate(Name=paste(Name, City)) %>% 
-  mutate(Name=stringr::str_remove(Name, " \\(temp\\)")) 
+  mutate(City=stringr::str_trim(City) ) %>% 
+  mutate(Label=stringr::str_trim(Label) )
 
 ```
+
+###   Read in risk spreadsheet and join to Parish data
+
+```{r}
+
+Risks <- readxl::read_excel(paste0(path, "Fire/Fire risks.xlsx")) %>% 
+  select(Label, City, Name, Risk, Notes)
+
+Risk_combine <- right_join(Risks, Parishes, by=c('Label', 'City')) %>% 
+  select(-Name.x) %>% 
+  rename(Name=Name.y) %>% 
+  # mutate(Risk=forcats::as_factor(Risk)) %>% 
+  mutate(Risk=factor(Risk, levels=c('minimal', 'very low', 'very low/low',
+                                            'low', 'low/moderate',
+                                            'moderate', 'moderate/high', 'high',
+                                            'high/very high'))) %>% 
+  sf::st_as_sf()
+
+#   Make a ggplot bubbleplot
+
+bbox <- sf::st_bbox(Risk_combine)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+#   All points
+
+Risk_combine %>% 
+  ggplot(aes(size=Risk, fill=Risk), alpha=0.5) +
+  Base_basemapR +
+  geom_sf(color="black", shape=1 ) +
+  geom_sf(alpha=0.5, shape=21 ) +
+  scale_color_gradientn(colors=RColorBrewer::brewer.pal(9, "YlOrRd"),
+                         name="Fire Risk",
+                         na.value = "grey100") +
+  labs(title=paste("Fire Risk for Churches in the Diocese"),
+       x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from Texas A&M Forest Service 
+           Wildfire Risk Explorer
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+  
+#  moderate and above
+
+Risk_combine %>% 
+  filter(as.integer(Risk)>5) %>% 
+  ggplot(aes(size=Risk, fill=Risk), alpha=0.5) +
+  Base_basemapR +
+  geom_sf(color="black", shape=1 ) +
+  geom_sf(alpha=0.5, shape=21 ) +
+  scale_color_gradientn(colors=RColorBrewer::brewer.pal(4, "YlOrRd"),
+                         name="Fire Risk",
+                         na.value = "grey100")  +
+   labs(title=paste("Fire Risk of Moderate and Above"),
+       x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from Texas A&M Forest Service 
+           Wildfire Risk Explorer
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+```
+
