@@ -15,6 +15,7 @@ Arc_CRS <- "EPSG:4735"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Fire/"
 
 Convocations <- readRDS(paste0(path,"Convocations.rds"))  
 
@@ -68,6 +69,8 @@ Risk_combine %>%
            y=-Inf,
            hjust="inward", vjust="inward", size = 2) +
   coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Fire_Risk_All_Churches.jpg"))
   
 #  moderate and above
 
@@ -91,5 +94,34 @@ Risk_combine %>%
            y=-Inf,
            hjust="inward", vjust="inward", size = 2) +
   coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Fire_Risk_Moderate_and_Above.jpg"))
+  
+  #  make low/moderate into moderate
+
+Risk_combine %>% 
+  filter(as.integer(Risk)>4) %>% 
+  ggplot(aes(size=Risk, fill=Risk), alpha=0.5) +
+  Base_basemapR +
+  geom_sf(color="black", shape=1 ) +
+  geom_sf(alpha=0.5, shape=21 ) +
+  scale_color_gradientn(colors=RColorBrewer::brewer.pal(4, "YlOrRd"),
+                         name="Fire Risk",
+                         na.value = "grey100")  +
+   labs(title=paste("Fire Risk of Low/Moderate and Above"),
+       x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from Texas A&M Forest Service 
+           Wildfire Risk Explorer
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Fire_Risk_LowModerate_and_Above.jpg"))
+  
+  
 ```
 
