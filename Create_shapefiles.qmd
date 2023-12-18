@@ -112,6 +112,9 @@ for (i in 1:14) {
 
 ## Can I read Fire output
 
+Using code from https://github.com/r-barnes/ArcRasterRescue to extract the raster 
+from teh gdb file as a geotiff
+
 ```{r}
 
 # sf::st_layers(paste0(path, "Fire/TxPortal_Export_TestNorth_20231208_193925.gdb"))
