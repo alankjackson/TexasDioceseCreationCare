@@ -1,0 +1,135 @@
+---
+title: "Read and Analyze earthquakes"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##  Read in and analyze earthquake data
+
+Read in
+
+Trim to diocese
+
+Find nearest parishes to each epicenter
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Earthquake/"
+
+googlecrs <- "EPSG:4326"
+
+Convocations <- readRDS(paste0(path,"Convocations.rds"))  
+
+Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
+  mutate(City=stringr::str_trim(City) ) %>% 
+  mutate(Label=stringr::str_trim(Label) )
+
+```
+
+### Read in data and trim
+
+```{r}
+
+Quakes <- read_csv(paste0(path, "Earthquake/texnet_events.csv")) %>% 
+  select(Date='Origin Date',
+         Magnitude='Local Magnitude',
+         Depth='Depth of Hypocenter (Km. Rel to Ground Surface)',
+         Lat='Latitude (WGS84)',
+         Lon='Longitude (WGS84)') %>% 
+         sf::st_as_sf(coords=c("Lon", "Lat"), crs=googlecrs)
+
+#   Combine the polygons into one
+
+Diocese <- Convocations %>% 
+  mutate(Label="None") %>% 
+  select(-County) %>% 
+  sf::st_union() %>% 
+  sf::st_make_valid()
+
+plot(Diocese)
+
+a <- sf::st_intersects(Convocations, Quakes, sparse = TRUE)
+a <- unlist(replace(a, !sapply(a, length), 209))
+a <- a[a<209]
+
+Quakes_2 <- Quakes[a, ]
+
+
+```
+
+###       Nearest churches
+
+The intensity decreases as the square of the distance from the quake at depth,
+so if we say that dropping the intensity by one order of magnitude (so a mag 4
+becomes like a mag 3) then the distance on the earth will be 3 times the depth. 
+
+Or better, use the depth and the reduction by the square of the distance law 
+determine how far from the epicenter intensity drops to mag 3.
+
+$radius = depth*\sqrt{10^{(mag-3)}-1}$
+
+
+```{r}
+
+Quakes_2 <- Quakes_2 %>% 
+  mutate(Radius=1000*Depth*sqrt(10**(Magnitude-3)-1)) %>% 
+  select(Date, Magnitude, Depth, Radius, geometry) %>% 
+  sf::st_as_sf()
+
+#   Define some Radius polygons around each epicenter
+# Quake_polys <- Quakes_2 %>% 
+#   sf::st_buffer(Radius) %>% 
+#   sf::st_as_sf() # Units are meters
+
+Quake_polys <- sf::st_buffer(Quakes_2, Quakes_2$Radius)
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+# map <- 
+  tmap::tm_shape(Quake_polys) + 
+  tmap::tm_fill(col = "red", title = "Quake influences", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+
+#   Make map showing effect radius and magnitude
+
+bbox <- sf::st_bbox(Quake_polys)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+Quake_polys %>% 
+  ggplot(aes(fill="red", alpha=0.3)) +
+  Base_basemapR +
+  geom_sf(color="black", shape=1 ) +
+  geom_sf(alpha=0.5, shape=21 ) +
+  geom_sf(data=Parishes) +
+  # scale_color_gradientn(colors=RColorBrewer::brewer.pal(9, "YlOrRd"),
+  #                        name="Fire Risk",
+  #                        na.value = "grey100") +
+  labs(title=paste("Historical earthquakes and affected areas"),
+       x="Longitude",
+       y="Latitude") +
+  theme(legend.position="none") +
+  annotate("text", label=
+           "Data sourced from Texnet Earthquake Catalog
+           Texas Bureau of Economic Geology
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Earthquakes.jpg"))
+
+```
+
+
+
+
