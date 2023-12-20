@@ -15,7 +15,29 @@ inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Medica
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Medicare/"
 
-Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+Parishes[68,]$Description <- "905 South Church Street<br>Decatur, TX 76234" 
+Parishes[68,]$City <- "Decatur" 
+Parishes[72,]$Description <- "3401 BELLAIRE DRIVE SOUTH<br>FORT WORTH, TX 76109" 
+Parishes[72,]$City <- "Fort Worth" 
+Parishes[73,]$Description <- "4530 Acton Hwy<br>Granbury, TX 76049" 
+Parishes[73,]$City <- "Granbury" 
+Parishes[74,]$Description <- "1101 South Rice Street<br>Hamilton, TX 76531" 
+Parishes[74,]$City <- "Hamilton" 
+Parishes[77,]$Description <- "223. S. Pearson Lane<br>Keller, TX 76248" 
+Parishes[77,]$City <- "Keller" 
+Parishes[78,]$Description <- "595 N. McIlhaney St.<br>Stephenville, TX 76401" 
+Parishes[78,]$City <- "Stephenville" 
+Parishes[75,]$Description <- "301 S. Waco Street<br>Hillsboro, TX 76645" 
+Parishes[75,]$City <- "Hillsboro" 
+
+Parishes <- Parishes %>% 
+  mutate(Zip=stringr::str_extract(Description, "(TX|Texas) \\d{5}")) %>%
+  mutate(Zip=stringr::str_remove(Zip, "TX ")) %>% 
+  mutate(Zip=stringr::str_remove(Zip, "Texas "))
+
+Parishes[6,]$Zip <- "78626"
 
 ```
 
@@ -125,7 +147,19 @@ for (i in 1:11) {
     ggsave(paste0(output_path, "HHS_DME_",Filename, ".jpg"))
 }
 
+```
 
+###   Make a table of # devices in local zipcode
+
+```{r}
+
+inner_join(Parishes, df, by=c("Zip"="Zip_Code")) %>%
+  sf::st_drop_geometry() %>% 
+  select(Label, City, Convocation, DME)
 
 
 ```
+
+
+
+
