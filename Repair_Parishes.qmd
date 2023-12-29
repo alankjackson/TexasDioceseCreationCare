@@ -1,0 +1,43 @@
+---
+title: "Repair Parishes"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    Update addresses and locations and names
+
+```{r}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+Parishes[Parishes$ID==151,]$Description <- "905 South Church Street<br>Decatur, TX 76234" 
+Parishes[Parishes$ID==151,]$City <- "Decatur" 
+Parishes[Parishes$ID==155,]$Description <- "3401 Bellaire Drive South<br>Fort Worth, TX 76109" 
+Parishes[Parishes$ID==155,]$City <- "Fort Worth" 
+Parishes[Parishes$ID==156,]$Description <- "4530 Acton Hwy<br>Granbury, TX 76049" 
+Parishes[Parishes$ID==156,]$City <- "Granbury" 
+Parishes[Parishes$ID==157,]$Description <- "1101 South Rice Street<br>Hamilton, TX 76531" 
+Parishes[Parishes$ID==157,]$City <- "Hamilton" 
+Parishes[Parishes$ID==160,]$Description <- "223. S. Pearson Lane<br>Keller, TX 76248" 
+Parishes[Parishes$ID==160,]$City <- "Keller" 
+Parishes[Parishes$ID==161,]$Description <- "595 N. McIlhaney St.<br>Stephenville, TX 76401" 
+Parishes[Parishes$ID==161,]$City <- "Stephenville" 
+Parishes[Parishes$ID==158,]$Description <- "301 S. Waco Street<br>Hillsboro, TX 76645" 
+Parishes[Parishes$ID==158,]$City <- "Hillsboro" 
+
+Parishes <- Parishes %>% 
+  mutate(Zip=stringr::str_extract(Description, "(TX|Texas) \\d{5}")) %>%
+  mutate(Zip=stringr::str_remove(Zip, "TX ")) %>% 
+  mutate(Zip=stringr::str_remove(Zip, "Texas "))
+
+Parishes[Parishes$ID==98,]$Zip <- "78626"
+
+saveRDS(Parishes, paste0(path, "Parishes.rds"))
+
+```
+
