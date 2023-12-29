@@ -156,6 +156,9 @@ for (i in 1:11) {
 inner_join(Parishes, df, by=c("Zip"="Zip_Code")) %>%
   sf::st_drop_geometry() %>% 
   select(Label, City, Convocation, DME)
+###############   build a real gt table here
+
+# do I want to normalize by population? Yes, add that column.
 
 
 ```
