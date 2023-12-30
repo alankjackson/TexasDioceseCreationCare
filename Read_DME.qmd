@@ -151,8 +151,8 @@ inner_join(Parishes, df, by=c("Zip"="Zip_Code")) %>%
   select(Label, City, Convocation, DME, PerCap) %>% 
   mutate(PerCap=signif(PerCap, 2)) %>% 
   arrange(-PerCap) %>% 
-  gt() %>% 
-  cols_label(
+  gt::gt() %>% 
+  gt::cols_label(
     Label="Church",
     City="City",
     Convocation="Convocation",
