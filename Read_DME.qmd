@@ -14,30 +14,13 @@ library(tidyverse)
 inpath <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Medicare/"
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Medicare/"
+Zip_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/ZipPop/"
+
+Pop_by_zip <- readRDS(paste0(Zip_path, "Zipcode_Pop_2022.rds"))
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))  
 
-Parishes[68,]$Description <- "905 South Church Street<br>Decatur, TX 76234" 
-Parishes[68,]$City <- "Decatur" 
-Parishes[72,]$Description <- "3401 BELLAIRE DRIVE SOUTH<br>FORT WORTH, TX 76109" 
-Parishes[72,]$City <- "Fort Worth" 
-Parishes[73,]$Description <- "4530 Acton Hwy<br>Granbury, TX 76049" 
-Parishes[73,]$City <- "Granbury" 
-Parishes[74,]$Description <- "1101 South Rice Street<br>Hamilton, TX 76531" 
-Parishes[74,]$City <- "Hamilton" 
-Parishes[77,]$Description <- "223. S. Pearson Lane<br>Keller, TX 76248" 
-Parishes[77,]$City <- "Keller" 
-Parishes[78,]$Description <- "595 N. McIlhaney St.<br>Stephenville, TX 76401" 
-Parishes[78,]$City <- "Stephenville" 
-Parishes[75,]$Description <- "301 S. Waco Street<br>Hillsboro, TX 76645" 
-Parishes[75,]$City <- "Hillsboro" 
-
-Parishes <- Parishes %>% 
-  mutate(Zip=stringr::str_extract(Description, "(TX|Texas) \\d{5}")) %>%
-  mutate(Zip=stringr::str_remove(Zip, "TX ")) %>% 
-  mutate(Zip=stringr::str_remove(Zip, "Texas "))
-
-Parishes[6,]$Zip <- "78626"
+Convocations <- readRDS(paste0(path,"Convocations.rds"))  
 
 ```
 
@@ -54,8 +37,17 @@ df <- df %>%
   filter(stringr::str_detect(FIPS_Code, "^48.*")) %>% 
   select(Zip_Code, FIPS_Code, County_FIPS_Code, County, 
          Beneficiaries=January_2023_Medicare_Benes,
-         DME=January_2023_Power_Dependent_Devices_DME)
+         DME=January_2023_Power_Dependent_Devices_DME) %>% 
+  mutate(County=stringr::str_replace(County, "Mcculloch", "McCulloch")) %>% 
+  mutate(County=stringr::str_replace(County, "Mclennan", "McLennan")) %>% 
+  mutate(County=stringr::str_replace(County, "Mcmullen", "McMullen"))  
 
+#   Add population by zip and calculate per capita
+
+df <- df %>% 
+  inner_join(., Pop_by_zip, by=c("Zip_Code"="Zip")) %>% 
+  mutate(PerCap=1000*DME/Pop) %>% 
+  filter(County %in% Convocations$County)
 
 ```
 
@@ -66,10 +58,11 @@ df <- df %>%
 Counties <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/County_Outlines.rds")
 ZCTA <- readRDS("/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Zipcodes/ZCTA_polygons_2020.rds") %>% 
   filter(stringr::str_detect(ZCTA5CE20, "73301")|
-         stringr::str_detect(ZCTA5CE20, "^7[56789].*"))
+         stringr::str_detect(ZCTA5CE20, "^7[56789].*"))  
 
 df2 <- inner_join(df, ZCTA, by=c('Zip_Code'='ZCTA5CE20')) %>% 
-  mutate(Ratio=DME/Beneficiaries) %>% 
+  mutate(Ratio=DME/Beneficiaries) %>%
+  filter(Pop>500) %>% 
   sf::st_as_sf() %>% 
   sf::st_make_valid()
 df3=df2
@@ -83,7 +76,7 @@ tmap::tmap_mode("view") # set mode to interactive plots
   tmap::tm_fill(col = "DME", title = "Power Dependent Devices", alpha=0.5, style="pretty")+
   tmap::tm_borders(lwd=0.2) +
   tmap::tm_shape(df3) +
-  tmap::tm_fill(col = "Beneficiaries", title = "Beneficiaries", alpha=0.5, style="pretty")+
+  tmap::tm_fill(col = "PerCap", title = "Per 1000", alpha=0.5, style="pretty")+
   tmap::tm_borders(lwd=0.2) +
   tmap::tm_shape(Parishes) + 
   tmap::tm_dots()
@@ -155,7 +148,17 @@ for (i in 1:11) {
 
 inner_join(Parishes, df, by=c("Zip"="Zip_Code")) %>%
   sf::st_drop_geometry() %>% 
-  select(Label, City, Convocation, DME)
+  select(Label, City, Convocation, DME, PerCap) %>% 
+  mutate(PerCap=signif(PerCap, 2)) %>% 
+  arrange(-PerCap) %>% 
+  gt() %>% 
+  cols_label(
+    Label="Church",
+    City="City",
+    Convocation="Convocation",
+    DME="Num Med Dev",
+    PerCap="Devices per 1000"
+  )
 ###############   build a real gt table here
 
 # do I want to normalize by population? Yes, add that column.
