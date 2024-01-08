@@ -25,3 +25,33 @@ Parishes <- readRDS(paste0(path, "Parishes.rds")) %>%
 
 ```
 
+### convert gdb to geotiff
+
+Using code from https://github.com/r-barnes/ArcRasterRescue to extract the raster 
+from the gdb file as a geotiff
+
+Syntax A: arc_raster_rescue.exe <File Geodatabase> 
+
+Syntax B: arc_raster_rescue.exe <File Geodatabase> <Raster> <Output Name>
+
+Syntax A will list all of the rasters in the data set along with selection numbers for use with Syntax B.
+
+Syntax B, given an FGDB and raster selection number, will output the raster to the indicated output file.
+
+Syntax B also accepts raster names, as listed by Syntax A, as inputs for <Raster>
+
+
+NOTE: The geodatabase path must end with a slash!
+
+EXAMPLE: ./arc_raster_rescue.exe path/to/geodatabase.gdb/ dem03 /z/out.tif
+
+###    Read in geotiffs
+
+```{r}
+fire <- terra::rast(paste0(path, "Fire/Threat_UP.geotiff"))
+```
+
+
+
+
+
