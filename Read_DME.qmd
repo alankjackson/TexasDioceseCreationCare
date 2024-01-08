@@ -159,9 +159,6 @@ inner_join(Parishes, df, by=c("Zip"="Zip_Code")) %>%
     DME="Num Med Dev",
     PerCap="Devices per 1000"
   )
-###############   build a real gt table here
-
-# do I want to normalize by population? Yes, add that column.
 
 
 ```
