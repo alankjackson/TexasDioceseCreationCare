@@ -1,0 +1,27 @@
+---
+title: "Wildfire_grids.qmd"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## Read in the fire potential grids and analyze
+
+```{r setup}
+
+library(tidyverse)
+
+Arc_CRS <- "EPSG:4735"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Fire/"
+
+Convocations <- readRDS(paste0(path,"Convocations.rds"))  
+
+Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
+  mutate(City=stringr::str_trim(City) ) %>% 
+  mutate(Label=stringr::str_trim(Label) )
+
+```
+
