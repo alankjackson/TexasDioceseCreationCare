@@ -1,0 +1,18 @@
+---
+title: "Smoke"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## Look at smoke risks
+
+Smoke data from https://www.stanfordecholab.com/wildfire_smoke
+
+Paper is:
+Daily Local-Level Estimates of Ambient Wildfire Smoke PM2.5 for the Contiguous US
+
+by Marissa L. Childs*, Jessica Li, Jeffrey Wen, Sam Heft-Neal, Anne Driscoll, 
+Sherrie Wang, Carlos F. Gould, Minghao Qiu, Jennifer Burney, and Marshall Burke
+
+https://pubs.acs.org/doi/abs/10.1021/acs.est.2c02934
