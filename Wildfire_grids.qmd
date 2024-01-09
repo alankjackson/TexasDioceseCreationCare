@@ -14,14 +14,14 @@ library(tidyverse)
 Arc_CRS <- "EPSG:4735"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
-Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+#Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
 out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Fire/"
 
 Convocations <- readRDS(paste0(path,"Convocations.rds"))  
 
-Parishes <- readRDS(paste0(path, "Parishes.rds")) %>% 
-  mutate(City=stringr::str_trim(City) ) %>% 
-  mutate(Label=stringr::str_trim(Label) )
+Parishes <- readRDS(paste0(path, "Parishes.rds"))# %>% 
+  # mutate(City=stringr::str_trim(City) ) %>% 
+  # mutate(Label=stringr::str_trim(Label) )
 
 ```
 
@@ -40,15 +40,59 @@ Syntax B, given an FGDB and raster selection number, will output the raster to t
 
 Syntax B also accepts raster names, as listed by Syntax A, as inputs for <Raster>
 
-
 NOTE: The geodatabase path must end with a slash!
 
 EXAMPLE: ./arc_raster_rescue.exe path/to/geodatabase.gdb/ dem03 /z/out.tif
 
+Select layer 6 Threat_UP_i
+
 ###    Read in geotiffs
 
+Wildfire Threat
+Wildfire Threat is the likelihood of a wildfire occurring or burning into an area.
+
+Threat is derived by combining a number of landscape characteristics including surface and canopy fuels, resultant fire behavior, historical fire occurrence, percentile weather derived from historical weather observations, and terrain conditions. These inputs are combined using analysis techniques based on established fire science.
+
+The measure of wildfire threat used in the Texas Wildfire Risk Assessment (TWRA) is based on the Wildland Fire Susceptibility Index (WFSI). WFSI combines the probability of an acre igniting (Wildfire Ignition Density), and the expected final fire size based on rate of spread in four percentile weather categories. WFSI is defined as the likelihood of an acre burning.
+
+Since all areas in Texas have WFSI calculated consistently, it allows for comparison and ordination of areas across the entire state. For example, a high threat area in East Texas is equivalent to a high threat area in West Texas.
+
+The threat map is derived at a 30-meter resolution. This scale of data was chosen to be consistent with the accuracy of the primary surface fuels dataset used in the assessment. While not appropriate for site specific analysis, it is ideal for state and regional scale analysis.
+
 ```{r}
-fire <- terra::rast(paste0(path, "Fire/Threat_UP.geotiff"))
+
+files <- list.files(paste0(path, "Fire/" ),
+                    pattern=".*geotiff")
+
+fire <- terra::aggregate(terra::rast(paste0(path, "Fire/", files[1])), 
+                         fact=10, fun="max", na.rm=TRUE)
+# foo <- terra::aggregate(terra::rast(paste0(path, "Fire/", files[2])),
+#                          fact=10, fun="max", na.rm=TRUE)
+
+for (i in 2:length(files)-1){
+  print(paste("---", i, "---"))
+  foo <- terra::aggregate(terra::rast(paste0(path, "Fire/", files[i])),
+                         fact=10, fun="max", na.rm=TRUE)
+  fire <- terra::merge(fire, foo)
+}
+foo <- terra::aggregate(terra::rast(paste0(path, "Fire/", files[14])),
+                         fact=10, fun="max", na.rm=TRUE)
+foo <- terra::resample(foo, fire, method="near")
+fire <- terra::merge(fire, foo)
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(fire) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.3,
+                  title = "Wildfire Threat",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Parishes)+
+  tmap::tm_dots()
+  # tmap::tm_borders(lwd=3, col="red") 
 ```
 
 
