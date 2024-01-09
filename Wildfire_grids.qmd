@@ -12,6 +12,7 @@ editor: source
 library(tidyverse)
 
 Arc_CRS <- "EPSG:4735"
+google_CRS <- "EPSG:4326"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 #Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
@@ -93,6 +94,62 @@ tmap::tm_shape(fire) +
   tmap::tm_shape(Parishes)+
   tmap::tm_dots()
   # tmap::tm_borders(lwd=3, col="red") 
+```
+
+###   Let's use fire likelihood as a proxy for smoke
+
+```{r}
+
+#   Turn danger likelihood into a factor
+
+# fire2 <- fire %>% 
+# mutate(Risk=factor(Risk, levels=c('minimal', 'very low', 'very low/low',
+#                                             'low', 'low/moderate',
+#                                             'moderate', 'moderate/high', 'high',
+#                                             'high/very high'))) %>% 
+#   sf::st_as_sf()
+fire2 <- fire
+fire2 <- terra::focal(fire2, window=21, fun=max, na.policy="only", na.rm=TRUE)
+fire2 <- fire2 - 1
+levels(fire2) <- c('low', 'low/moderate',
+                   'moderate', 'moderate/high', 'high',
+                   'high/very high', 'very high')
+
+
+#   Make a ggplot 
+
+fire2 <- terra::project(fire2, google_CRS)
+bbox <- sf::st_bbox(fire2)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+#   All points
+
+Parishes %>% 
+  ggplot() +
+  Base_basemapR +
+  # geom_sf(color="black", shape=1 ) +
+  geom_sf(color="black") +
+  tidyterra::geom_spatraster(data=fire2, alpha=0.3) +
+  # scale_color_gradientn(colors=RColorBrewer::brewer.pal(7, "RdOrYl"),
+  scale_fill_brewer(palette="RdYlGn", direction=-1,
+  # scale_color_gradientn(colors=scales::brewer_pal(type="seq", palette="RdOrYl",
+  #                       direction=+1),
+                           name="Fire Likelihood",
+                           na.value = "grey100") +
+    labs(title=paste("Fire Likelihood for Churches in the Diocese"),
+         x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from Texas A&M Forest Service 
+           Wildfire Risk Explorer
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Fire_likelihood_All_Churches.jpg"))
 ```
 
 
