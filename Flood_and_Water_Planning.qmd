@@ -2,7 +2,7 @@
 title: "Water_Regions"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Flood Planning Regions and Water Planning Areas
@@ -26,7 +26,6 @@ Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
 
 
 ```
-
 
 ## Which parishes are within which Flood Region?
 
@@ -146,8 +145,7 @@ Parish3 %>%
 
 ```
 
-##        Map parishes onto regions
-
+## Map parishes onto regions
 
 ```{r maps}
 
@@ -181,5 +179,3 @@ tmap::tmap_save(map, paste0(output_path, "Flood.html"), selfcontained = TRUE)
 
 
 ```
-
-
