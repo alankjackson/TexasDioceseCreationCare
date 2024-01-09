@@ -117,7 +117,27 @@ Smoke_days %>%
   
 ```
 
+##        Table of worst parishes
 
+```{r}
+
+table <- 
+inner_join(Parishes %>% st_drop_geometry(), 
+           Smoke_days %>% st_drop_geometry(), 
+           by=c("County"="CNTY_NM")) %>%
+  select(Label, City, Convocation, Smoke_days) %>% 
+  mutate(Smoke_days=round(Smoke_days/17, 0)) %>% 
+  arrange(-Smoke_days) %>% 
+  gt::gt() %>% 
+  gt::cols_label(
+    Label="Church",
+    City="City",
+    Convocation="Convocation",
+    Smoke_days="Smoke Days per Year"
+  )
+
+gt::gtsave(table, paste0(out_path, "Smoke_days.docx"))
+```
 
 
 
