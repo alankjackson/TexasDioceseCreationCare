@@ -16,3 +16,54 @@ by Marissa L. Childs*, Jessica Li, Jeffrey Wen, Sam Heft-Neal, Anne Driscoll,
 Sherrie Wang, Carlos F. Gould, Minghao Qiu, Jennifer Burney, and Marshall Burke
 
 https://pubs.acs.org/doi/abs/10.1021/acs.est.2c02934
+
+```{r setup}
+
+library(tidyverse)
+
+Arc_CRS <- "EPSG:4735"
+google_CRS <- "EPSG:4326"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Smoke/"
+
+Convocations <- readRDS(paste0(path,"Convocations.rds"))  
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+Smoke <- readRDS(paste0(path, "Smoke/smokePM2pt5_predictions_daily_county_20060101-20201231.rds"))
+
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+
+```
+
+##    Trim data to just Texas and summarize by county
+
+```{r}
+
+Smoke <- inner_join(as_tibble(Counties), Smoke, by=c('FIPS_ST_CN'='GEOID')) %>%  
+  sf::st_as_sf()
+
+#   use duckdb to speed things up
+
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
+dbWriteTable(con, "Smoke", Smoke)
+Smoke_db <- tbl(con, "Smoke")
+
+Smoke_days_db <- Smoke_db %>% 
+  group_by(CNTY_NM) %>% 
+    summarize(Smoke_days=n())
+
+Smoke_days <- collect(Smoke_days_db)
+
+```
+
+
+
+
+
+
+
+
+
