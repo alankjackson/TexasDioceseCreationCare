@@ -71,9 +71,51 @@ Smoke_days <- collect(Smoke_days_db) %>%
 
 ```{r}
 
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Smoke_days) + 
+  tmap::tm_fill(col = "Smoke_days", title = "Days with smoke, 2006-2020", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
 ```
 
+##        Static map
 
+```{r}
+
+box <-sf::st_bbox(terrainr::add_bbox_buffer(Convocations, distance=5000)) # 5 kilometers
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+
+Smoke_days %>% 
+  mutate(Smoke_days=Smoke_days/17) %>% 
+  sf::st_crop(box) %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(fill=Smoke_days) ,alpha=0.5) +
+  scale_fill_gradient(name="Avg Days/Yr with Smoke", 
+                      na.value = "transparent", 
+                      low="yellow",
+                      high="brown",
+                      limits=c(300/17, 1300/17)) +
+  geom_sf(data=Parishes, show.legend=FALSE) +
+  # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+  #                                size=2, max.overlaps=25, force=80) +
+  labs(title="Average Smoke Days per Year",
+       subtitle=paste("from 2006 to 2020 by county")) +
+  annotate("text", label="
+         Data sourced from https://www.stanfordecholab.com/wildfire_smoke 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 2)
+
+  ggsave(paste0(out_path, "Smoke_history.jpg"))
+  
+```
 
 
 
