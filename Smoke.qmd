@@ -127,16 +127,56 @@ inner_join(Parishes %>% st_drop_geometry(),
            by=c("County"="CNTY_NM")) %>%
   select(Label, City, Convocation, Smoke_days) %>% 
   mutate(Smoke_days=round(Smoke_days/17, 0)) %>% 
+  filter(Smoke_days>60) %>% 
   arrange(-Smoke_days) %>% 
   gt::gt() %>% 
   gt::cols_label(
     Label="Church",
     City="City",
     Convocation="Convocation",
-    Smoke_days="Smoke Days per Year"
+    Smoke_days="Smoke Days per Year, Top Parishes"
   )
 
 gt::gtsave(table, paste0(out_path, "Smoke_days.docx"))
+```
+
+
+##        Plot up what time of year we see smoke - a monthly bar chart
+
+```{r}
+
+Smoke_month_db <- Smoke_db %>% 
+  mutate(Month=lubridate::month(date)) %>% 
+  group_by(CNTY_NM, Month) %>% 
+    summarize(Smoke_days=n()/17)
+
+Smoke_Months <- collect(Smoke_month_db) %>% 
+  inner_join(., Convocations, by=c("CNTY_NM"="County")) %>%  
+  sf::st_drop_geometry() 
+
+Smoke_Months %>% 
+  group_by(Month) %>% 
+    summarise(Smoke_days_avg=mean(Smoke_days),
+              Smoke_days_sd=2*sd(Smoke_days)) %>% 
+  ggplot(aes(x=Month, y=Smoke_days_avg)) +
+    geom_errorbar(aes(ymin=pmax(0, (Smoke_days_avg-Smoke_days_sd)), 
+                      ymax=Smoke_days_avg+Smoke_days_sd))+
+    geom_point() +
+    geom_line() +
+    scale_x_continuous(
+      breaks = seq_along(month.name), 
+      labels = month.abb
+    ) +
+    labs(title="Average Texas Smoke Days per Month per Year, and Range",
+         y="Smoke Days per Year") +
+  annotate("text", label="
+         Data sourced from https://www.stanfordecholab.com/wildfire_smoke 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 2)
+
+ggsave(paste0(out_path, "Smoke_days_per_month.jpg"))
 ```
 
 
