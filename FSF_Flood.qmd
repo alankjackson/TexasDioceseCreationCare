@@ -2,7 +2,7 @@
 title: "First Street Flood"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Read in and analyze the First Street Foundation flood data
