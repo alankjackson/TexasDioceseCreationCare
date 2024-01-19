@@ -1,0 +1,64 @@
+---
+title: "Flood data"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## Read in some flood data - don't know what I want yet
+
+https://msc.fema.gov/portal/advanceSearch#searchresultsanchor
+  Texas, county, Community, Flood Risk Products, Flood Risk Database
+
+```{r setup}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Flood/"
+
+
+```
+
+##        Read in some data
+
+```{r}
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Bastrop/PctAnnChance.tif")
+Pct_annual <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+#   Depth
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Bastrop/Depth_01plus.tif")
+Depth_01plus <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Pct_annual) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.6,
+                  title = "Annual Flood Probability",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Depth_01plus) + 
+  tmap::tm_raster(alpha=0.6,
+                  title = "1%+ Flood Depth",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Parishes)+
+  tmap::tm_dots()
+```
+
+
+
+
+
+
+
+
+
