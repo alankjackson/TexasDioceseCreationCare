@@ -21,7 +21,7 @@ path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Flood/"
 
 ##        Read in some data
 
-```{r}
+```{r Bastrop}
 
 infile <- paste0(path, "FRD_12070205_GeoTIFFs_Bastrop/PctAnnChance.tif")
 Pct_annual <- terra::aggregate(terra::rast(infile), 
@@ -53,6 +53,83 @@ tmap::tm_shape(Pct_annual) +
   tmap::tm_shape(Parishes)+
   tmap::tm_dots()
 ```
+
+
+
+##        Read in some data
+
+```{r Williamson}
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Williamson/PctAnnChance.tif")
+Pct_annual <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+#   Depth
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Williamson/Depth_01plus.tif")
+Depth_01plus <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Pct_annual) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.6,
+                  title = "Annual Flood Probability",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Depth_01plus) + 
+  tmap::tm_raster(alpha=0.6,
+                  title = "1%+ Flood Depth",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Parishes)+
+  tmap::tm_dots()
+```
+
+
+
+##        Read in some data
+
+```{r Travis}
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Travis/PctAnnChance.tif")
+Pct_annual <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+#   Depth
+
+infile <- paste0(path, "FRD_12070205_GeoTIFFs_Travis/Depth_01plus.tif")
+Depth_01plus <- terra::aggregate(terra::rast(infile), 
+                         fact=5, fun="max", na.rm=TRUE)
+
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Pct_annual) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.6,
+                  title = "Annual Flood Probability",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Depth_01plus) + 
+  tmap::tm_raster(alpha=0.6,
+                  title = "1%+ Flood Depth",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Parishes)+
+  tmap::tm_dots()
+```
+
+
+
 
 
 
