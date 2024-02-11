@@ -7,3 +7,61 @@ editor: source
 
 ## Create the risk tables for the final document
 
+```{r setup}
+
+library(tidyverse)
+library(gt)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Risk/"
+
+google_CRS <- "EPSG:4326"
+
+
+Churches <- read_rds(paste0(path, "Parishes.rds")) %>% 
+  sf::st_drop_geometry()
+
+```
+
+##    Create dataframe of risks
+
+Name
+----
+Likelihood          Severity
+Low, medium, high   minor, serious, extensive, catastrophic
+Coastal flooding
+Drought
+Hurricanes
+Ice storms
+River flooding
+tornado
+wildfire
+smoke
+
+```{r}
+
+#   Create a mostly empty dataframe and export as an excel file
+
+Risks <- Churches %>% 
+  mutate(Parish=paste0(Label, ", ", City)) %>% 
+  select(Parish) %>% 
+  mutate(Coast_Flood_Like="Unk", Coast_Flood_Severe="Unk",
+         Drought_Like="Unk", Drought_Severe="Unk",
+         Hurricane_Like="Unk", Hurricane_Severe="Unk",
+         IceStorm_Like="Unk", IceStorm_Severe="Unk",
+         Pluvial_Like="Unk", Pluvial_Severe="Unk",
+         Tornado_Like="Unk", Tornado_Severe="Unk",
+         WildFire_Like="Unk", WildFire_Severe="Unk",
+         Smoke_Like="Unk", Smoke_Severe="Unk"
+  )
+         
+         
+writexl::write_xlsx(Risks, paste0(out_path, "Risk_Matrix.xls"))
+
+```
+
+
+
+
+
+
