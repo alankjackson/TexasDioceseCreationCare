@@ -1,0 +1,118 @@
+---
+title: "Flood Hazard Maps"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    Have spreadsheet of flood hazard by parish
+
+```{r setup}
+
+library(tidyverse)
+library(gt)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Flood/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Flood/"
+
+google_CRS <- "EPSG:4326"
+
+
+Flood <- read_csv(paste0(path, "Parishes.csv")) %>% 
+  select(-geometry) %>% 
+  sf::st_as_sf(coords=c("long", "lat"),
+               crs=google_CRS) %>% 
+  mutate(Flooding=as_factor(Flooding))
+
+```
+
+##    Make a map
+
+```{r}
+
+#   Make a ggplot 
+
+bbox <- sf::st_bbox(Flood)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+# Close, levee, no, unknown, yes
+Col = c('yellow','blue','green','grey','red') #define data-group colours
+
+#   All points
+
+Flood %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(color=Flooding)) +
+  geom_sf(data = subset(Flood, Flooding == "Close", show.legend = "point"), color = "yellow", size = 2) +
+  geom_sf(data = subset(Flood, Flooding == "Levee", show.legend = "point"), color = "blue", size = 1) +
+  geom_sf(data = subset(Flood, Flooding == "No", show.legend = "point"), color = "green", size = 1) +
+  geom_sf(data = subset(Flood, Flooding == "Unknown", show.legend = "point"), color = "grey", size = 1) +
+  geom_sf(data = subset(Flood, Flooding == "Yes", show.legend = "point"), color = "red", size = 3) +
+    labs(title=paste("Flood Danger for Churches in the Diocese"),
+         x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from FEMA 
+   National Flood Hazard Layer
+   Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  scale_color_manual(name = "In Floodplain", values = Col) +
+  guides(color = guide_legend(override.aes = list(shape = c(16,16,16,16,16), 
+                                                  size = c(2,1,1,1,3), fill = Col), 
+                              #nrow = 2, byrow = TRUE, 
+                              legend.text = element_text(size=0.2)) ) + # size and shape NOT WORKING!? HELP..
+
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Floodplain_All_Churches.jpg"))
+```
+
+#       Maker a nice table
+
+```{r}
+
+Flood$Flooding <-  fct_relevel(Flood$Flooding, "Yes")
+
+table <- Flood %>% 
+  filter(Flooding!="No") %>% 
+  arrange(factor(Flooding)) %>%
+  sf::st_drop_geometry() %>% 
+  select(Label, City, Flooding) %>% 
+  mutate(Flooding=stringr::str_replace(Flooding, "Yes", "In the Floodplain")) %>% 
+  mutate(Flooding=stringr::str_replace(Flooding, "Close", "Less than 10 ft above Floodplain")) %>% 
+  mutate(Flooding=stringr::str_replace(Flooding, "Unknown", "Area Unmapped by FEMA")) %>% 
+  mutate(Flooding=stringr::str_replace(Flooding, "Levee", "Behind a Levee")) %>% 
+  group_by(Flooding) %>% 
+  gt(groupname_col = "Flooding",
+     rowname_col="Label") %>% 
+  tab_header(
+    title = "Flood Risks for the Diocese",
+    subtitle = "Based on current FEMA maps"
+  ) %>% 
+    tab_style(
+    style = cell_text(color = "black", weight = "bold", align = "left"),
+    locations = cells_title("title")
+  ) %>% 
+    cols_label(
+    Label = "Parish",
+    City = ""
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_fill("yellow"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_row_groups()
+  ) 
+
+gtsave(table, paste0(out_path, "Flood_Hazards.docx"))
+
+```
+
+
+
+
