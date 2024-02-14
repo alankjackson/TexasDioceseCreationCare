@@ -60,7 +60,46 @@ writexl::write_xlsx(Risks, paste0(out_path, "Risk_Matrix.xls"))
 
 ```
 
+##        Read in the excel sheet and turn into risk tables
 
+```{r}
+
+df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls"))
+
+df2 <- df %>% 
+  head(5) %>% 
+  pivot_longer(-Parish, 
+               names_to=c("Disaster", ".value"),
+               names_pattern="(.+)_(Like|Severe)") %>% 
+  rename(Likelihood=Like, Severity=Severe) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Coast_Flood", "Coastal Flooding")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
+  mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Pluvial", "River Flooding"))
+              
+foo <- df2 %>% head(8)
+
+maketable <- function(df){
+  Parish <- df$Parish[1]
+  # df %>% 
+    foo %>% 
+    select(-Parish) %>% 
+    mutate(Low="", Medium="", High="",
+           Minor="", Serious="", Extensive="", Catastrophic="") %>% 
+    mutate(Low=ifelse(Likelihood=="Low", "X", " "),
+           Medium=ifelse(Likelihood=="Medium", "X", " "),
+           High=ifelse(Likelihood=="High", "X", " "),
+           Minor=ifelse(Severity=="Minor", "X", " "),
+           Serious=ifelse(Severity=="Serious", "X", " "),
+           Extensive=ifelse(Severity=="Extensive", "X", " "),
+           Catastrophic=ifelse(Severity=="Catastrophic", "X", " ")
+           ) %>% 
+      select(-Likelihood, -Severity)
+}
+
+
+
+```
 
 
 
