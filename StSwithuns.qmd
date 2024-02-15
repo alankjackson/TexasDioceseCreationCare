@@ -47,6 +47,7 @@ Risks <- Churches %>%
   select(Parish) %>% 
   mutate(Coast_Flood_Like="Unk", Coast_Flood_Severe="Unk",
          Drought_Like="Unk", Drought_Severe="Unk",
+         Hail_Like="Unk", Hail_Severe="Unk",
          Hurricane_Like="Unk", Hurricane_Severe="Unk",
          IceStorm_Like="Unk", IceStorm_Severe="Unk",
          Pluvial_Like="Unk", Pluvial_Severe="Unk",
@@ -80,7 +81,7 @@ df2 <- df %>%
 foo <- df2 %>% head(8)
 
 maketable <- function(df){
-  Parish <- df$Parish[1]
+  Parish1 <- df$Parish[1]
   # df %>% 
     foo %>% 
     select(-Parish) %>% 
@@ -96,7 +97,7 @@ maketable <- function(df){
            ) %>% 
       select(-Likelihood, -Severity) %>% 
       gt(rowname_col = "Disaster") %>% 
-        tab_header(title=Parish1) %>% 
+        tab_header(title=paste(Parish1, "Risk Matrix")) %>% 
         tab_spanner(
           label="Likelihood",
           columns=c(Low, Medium, High)
