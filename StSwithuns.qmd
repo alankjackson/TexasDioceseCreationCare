@@ -94,7 +94,55 @@ maketable <- function(df){
            Extensive=ifelse(Severity=="Extensive", "X", " "),
            Catastrophic=ifelse(Severity=="Catastrophic", "X", " ")
            ) %>% 
-      select(-Likelihood, -Severity)
+      select(-Likelihood, -Severity) %>% 
+      gt(rowname_col = "Disaster") %>% 
+        tab_header(title=Parish1) %>% 
+        tab_spanner(
+          label="Likelihood",
+          columns=c(Low, Medium, High)
+        ) %>% 
+        tab_spanner(
+          label="Severity",
+          columns=c(Minor, Serious, Extensive, Catastrophic)
+        ) %>%   
+        tab_style(
+          style=list(
+            cell_borders(
+              sides = "all", 
+              color = "black", 
+              style = "solid"),
+            cell_fill(
+              color="yellow"
+            ) ,
+            cell_text(
+              weight="bold",
+              align="center"
+            )
+          ),
+          locations=cells_body(
+            columns=c(2,3,4),
+            rows=everything()
+          )
+         ) %>% 
+         tab_style(
+          style=list(
+            cell_borders(
+              sides = "all", 
+              color = "black", 
+              style = "solid"),
+            cell_fill(
+              color="pink"
+            ), 
+            cell_text(
+              weight="bold",
+              align="center"
+            )
+          ),
+          locations=cells_body(
+            columns=c(5,6,7,8),
+            rows=everything()
+          )
+        )       
 }
 
 
