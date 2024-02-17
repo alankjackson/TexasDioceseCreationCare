@@ -15,9 +15,46 @@ googlecrs <- "EPSG:4326"
 localUTM <- "EPSG:32615"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
-Hail <- readRDS(paste0(path, "NRI_Table_Counties.rds"))
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+
+Hail <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
+  select(COUNTY, COUNTYFIPS, AREA, 
+         HAIL_EXP_AREA, HAIL_EVNTS, HAIL_AFREQ, HAIL_EXPT) %>% 
+  mutate(EventsPerSqMi=HAIL_AFREQ/AREA) %>% 
+  mutate(COUNTY=stringr::str_replace(COUNTY, "DeWitt", "De Witt"))
 
 ```
+
+##        Map Hail events per year per sq mi per county
+
+```{r}
+
+Hail_exp <- Hail %>% 
+  left_join(., Counties, by=c("COUNTY" = "CNTY_NM")) %>%  
+  sf::st_as_sf()
+
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Hail_exp) + 
+  tmap::tm_fill(col = "HAIL_AFREQ", title = "Number of Hail events", alpha=0.5, style="pretty")+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+
+
+```
+
+
+
+
+
+
+
+
