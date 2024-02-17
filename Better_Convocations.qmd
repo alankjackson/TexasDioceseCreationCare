@@ -2,7 +2,7 @@
 title: "Create better convocations"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
 ## Create a better convocation map from a county list
