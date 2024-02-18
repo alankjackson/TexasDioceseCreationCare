@@ -16,15 +16,22 @@ localUTM <- "EPSG:32615"
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Hail/"
 
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
-Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds")) %>% 
+  sf::st_transform(google_CRS)
 
 Hail <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
   select(COUNTY, COUNTYFIPS, AREA, 
          HAIL_EXP_AREA, HAIL_EVNTS, HAIL_AFREQ, HAIL_EXPT) %>% 
-  mutate(EventsPerSqMi=HAIL_AFREQ/AREA) %>% 
+  mutate(EventsPerSqMi=100*HAIL_AFREQ/AREA) %>% 
+  mutate(PctAreaHit=100*HAIL_EVNTS*6/AREA) %>% 
+  mutate(Years50=pmin(log(1-0.5)/log(1-HAIL_AFREQ*6/AREA), 50)) %>% 
+  mutate(Years90=pmin(log(1-0.9)/log(1-HAIL_AFREQ*6/AREA), 50)) %>% 
+  mutate(RetPer=pmin(1/(HAIL_AFREQ*6/AREA), 50)) %>% 
+  mutate(Prob25=1-(1-HAIL_AFREQ*6/AREA)**25) %>% 
   mutate(COUNTY=stringr::str_replace(COUNTY, "DeWitt", "De Witt"))
 
 ```
@@ -43,7 +50,9 @@ tmap::tmap_options(basemaps="OpenStreetMap")
 tmap::tmap_mode("view") # set mode to interactive plots
 
 tmap::tm_shape(Hail_exp) + 
-  tmap::tm_fill(col = "HAIL_AFREQ", title = "Number of Hail events", alpha=0.5, style="pretty")+
+  tmap::tm_fill(col = "Prob25", title = "Prob of Hail in 25 years", alpha=0.5, style="pretty")+
+tmap::tm_shape(Hail_exp) + 
+  tmap::tm_fill(col="RetPer", title="Return Period in years", alpha=0.5, style="pretty") +
   tmap::tm_borders(lwd=0.2) +
   tmap::tm_shape(Parishes) + 
   tmap::tm_dots()
@@ -51,6 +60,41 @@ tmap::tm_shape(Hail_exp) +
 
 ```
 
+##    Map expected return period and 25 year probability
+
+```{r}
+
+bbox <- sf::st_bbox(Risk_combine)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+#   All points
+
+Risk_combine %>% 
+  ggplot(aes(size=Risk, fill=Risk), alpha=0.5) +
+  Base_basemapR +
+  geom_sf(color="black", shape=1 ) +
+  geom_sf(alpha=0.5, shape=21 ) +
+  scale_color_gradientn(colors=RColorBrewer::brewer.pal(9, "YlOrRd"),
+                         name="Fire Risk",
+                         na.value = "grey100") +
+  labs(title=paste("Fire Risk for Churches in the Diocese"),
+       x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from Texas A&M Forest Service 
+           Wildfire Risk Explorer
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+
+  ggsave(paste0(out_path, "Fire_Risk_All_Churches.jpg"))
+  
+
+
+```
 
 
 
