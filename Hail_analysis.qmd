@@ -64,39 +64,73 @@ tmap::tm_shape(Hail_exp) +
 
 ```{r}
 
-bbox <- sf::st_bbox(Risk_combine)
+bbox <- sf::st_bbox(Parishes)
 
 Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
 
 #   All points
 
-Risk_combine %>% 
-  ggplot(aes(size=Risk, fill=Risk), alpha=0.5) +
+Hail_exp %>% 
+  ggplot() +
   Base_basemapR +
-  geom_sf(color="black", shape=1 ) +
-  geom_sf(alpha=0.5, shape=21 ) +
-  scale_color_gradientn(colors=RColorBrewer::brewer.pal(9, "YlOrRd"),
-                         name="Fire Risk",
-                         na.value = "grey100") +
-  labs(title=paste("Fire Risk for Churches in the Diocese"),
+  geom_sf(aes(fill=RetPer) ,alpha=0.5) +
+  scale_fill_gradient(name="Hail Return Period in Years", 
+                      na.value = "transparent", 
+                      low="yellow",
+                      high="brown",
+                      breaks=c(5,15,25,35,45),
+                      labels=c('10', '20', '30', '40', '>50'),
+                      limits=c(3, 50)) +
+  geom_sf(data=Parishes, show.legend=FALSE) +
+  labs(title=paste("Hail Return Period for Churches in the Diocese"),
        x="Longitude",
        y="Latitude") +
   annotate("text", label=
-           "Data sourced from Texas A&M Forest Service 
-           Wildfire Risk Explorer
+           "Data sourced from FEMA 
            Map a product of Alan Jackson", 
            x=-Inf, 
            y=-Inf,
            hjust="inward", vjust="inward", size = 2) +
   coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
 
-  ggsave(paste0(out_path, "Fire_Risk_All_Churches.jpg"))
+  ggsave(paste0(out_path, "Hail_Return_Period_Map.jpg"))
   
+#   25 year probability
+  
+Hail_exp %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(fill=Prob25) ,alpha=0.5) +
+  scale_fill_gradient(name="Probability of Hail in 25 Years", 
+                      na.value = "transparent", 
+                      low="yellow",
+                      high="brown",
+                      # breaks=c(5,15,25,35,45),
+                      # labels=c('10', '20', '30', '40', '>50'),
+                      # limits=c(3, 50)
+                      ) +
+  geom_sf(data=Parishes, show.legend=FALSE) +
+  labs(title=paste("Probability of Hail over 25 Years for Churches in the Diocese"),
+       x="Longitude",
+       y="Latitude") +
+  annotate("text", label=
+           "Data sourced from FEMA 
+           Map a product of Alan Jackson", 
+           x=-Inf, 
+           y=-Inf,
+           hjust="inward", vjust="inward", size = 2) +
+  coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
 
+  ggsave(paste0(out_path, "Hail_Probability_Map.jpg"))
+  
 
 ```
 
+##        Tables
 
+```{r}
+
+```
 
 
 
