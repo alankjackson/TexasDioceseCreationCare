@@ -2,11 +2,10 @@
 title: "Fix St Andrews location"
 author: "Alan Jackson"
 format: html
-editor: visual
+editor: source
 ---
 
-##        Fix one wonky parish location
-
+## Fix one wonky parish location
 
 ```{r setup}
 
@@ -24,7 +23,7 @@ location <- c(30.67340956114849, -96.37480798648748)
 
 ```
 
-###   Replace lat long and save
+### Replace lat long and save
 
 ```{r}
 
@@ -34,7 +33,8 @@ sf::st_geometry(Parishes[Parishes$ID == 82, ])
 # Change it
 sf::st_geometry(Parishes[Parishes$ID == 82, ]) <-  
   sf::st_sfc(sf::st_point(c(location[2], location[1])),
-             crs=sf::st_crs(Parishes))
+             crs=sf::st_crs(Parishes),
+             recompute_bbox=TRUE)
 
 #   Check again
 sf::st_geometry(Parishes[Parishes$ID == 82, ])
@@ -50,8 +50,8 @@ tmap::tmap_options(basemaps="OpenStreetMap")
 tmap::tmap_mode("view") # set mode to interactive plots
 
 # map <- 
-  tmap::tm_shape(Conv2) + 
-  tmap::tm_fill(col = "Convocation", title = "Convocation", alpha=0.5, style="pretty")+
+  tmap::tm_shape(Convocations) + 
+  tmap::tm_fill(col = "Label", title = "Convocation", alpha=0.5, style="pretty")+
   tmap::tm_borders(lwd=0.2) +
   tmap::tm_shape(Parishes) + 
   tmap::tm_dots()
@@ -59,6 +59,3 @@ tmap::tmap_mode("view") # set mode to interactive plots
   
   
 ```
-
-
-
