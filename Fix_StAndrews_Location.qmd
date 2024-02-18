@@ -39,6 +39,10 @@ sf::st_geometry(Parishes[Parishes$ID == 82, ]) <-
 #   Check again
 sf::st_geometry(Parishes[Parishes$ID == 82, ])
 
+#   Fix bbox
+
+Parishes <- sf::st_transform(Parishes, google_CRS)
+
 #   Output revised file
 
 write_rds(Parishes, paste0(path,"Parishes.rds"))
