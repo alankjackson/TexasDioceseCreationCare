@@ -130,7 +130,7 @@ Hail_exp %>%
 
 ```{r}
 
-Hail_exp %>% 
+table <- Hail_exp %>% 
   inner_join(., Churches, by=c("COUNTY"="County")) %>% 
   select(Label, City, RetPer, Prob25) %>% 
   arrange(RetPer) %>% 
@@ -148,7 +148,7 @@ Hail_exp %>%
       Label="Church",
       City="City",
       RetPer=md("Return Period<br />(years)"),
-      Prob25=md("Probability over<br />25 Years")
+      Prob25=md("Damage Probability<br />over 25 Years")
   )
 
 gt::gtsave(table, paste0(out_path, "Hail_table.docx"))
