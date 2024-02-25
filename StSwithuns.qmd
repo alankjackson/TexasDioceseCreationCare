@@ -42,22 +42,22 @@ smoke
 
 #   Create a mostly empty dataframe and export as an excel file
 
-Risks <- Churches %>% 
-  mutate(Parish=paste0(Label, ", ", City)) %>% 
-  select(Parish) %>% 
-  mutate(Coast_Flood_Like="Unk", Coast_Flood_Severe="Unk",
-         Drought_Like="Unk", Drought_Severe="Unk",
-         Hail_Like="Unk", Hail_Severe="Unk",
-         Hurricane_Like="Unk", Hurricane_Severe="Unk",
-         IceStorm_Like="Unk", IceStorm_Severe="Unk",
-         Pluvial_Like="Unk", Pluvial_Severe="Unk",
-         Tornado_Like="Unk", Tornado_Severe="Unk",
-         WildFire_Like="Unk", WildFire_Severe="Unk",
-         Smoke_Like="Unk", Smoke_Severe="Unk"
-  )
-         
-         
-writexl::write_xlsx(Risks, paste0(out_path, "Risk_Matrix.xls"))
+# Risks <- Churches %>% 
+#   mutate(Parish=paste0(Label, ", ", City)) %>% 
+#   select(Parish) %>% 
+#   mutate(Coast_Flood_Like="Unk", Coast_Flood_Severe="Unk",
+#          Drought_Like="Unk", Drought_Severe="Unk",
+#          Hail_Like="Unk", Hail_Severe="Unk",
+#          Hurricane_Like="Unk", Hurricane_Severe="Unk",
+#          IceStorm_Like="Unk", IceStorm_Severe="Unk",
+#          Pluvial_Like="Unk", Pluvial_Severe="Unk",
+#          Tornado_Like="Unk", Tornado_Severe="Unk",
+#          WildFire_Like="Unk", WildFire_Severe="Unk",
+#          Smoke_Like="Unk", Smoke_Severe="Unk"
+#   )
+#          
+#          
+# writexl::write_xlsx(Risks, paste0(out_path, "Risk_Matrix.xls"))
 
 ```
 
@@ -86,12 +86,12 @@ maketable <- function(df){
     foo %>% 
     select(-Parish) %>% 
     mutate(Low="", Medium="", High="",
-           Minor="", Serious="", Extensive="", Catastrophic="") %>% 
+           Minor="", Major="", Extensive="", Catastrophic="") %>% 
     mutate(Low=ifelse(Likelihood=="Low", "X", " "),
            Medium=ifelse(Likelihood=="Medium", "X", " "),
            High=ifelse(Likelihood=="High", "X", " "),
            Minor=ifelse(Severity=="Minor", "X", " "),
-           Serious=ifelse(Severity=="Serious", "X", " "),
+           Major=ifelse(Severity=="Major", "X", " "),
            Extensive=ifelse(Severity=="Extensive", "X", " "),
            Catastrophic=ifelse(Severity=="Catastrophic", "X", " ")
            ) %>% 
@@ -104,7 +104,7 @@ maketable <- function(df){
         ) %>% 
         tab_spanner(
           label="Severity",
-          columns=c(Minor, Serious, Extensive, Catastrophic)
+          columns=c(Minor, Major, Extensive, Catastrophic)
         ) %>%   
         tab_style(
           style=list(
