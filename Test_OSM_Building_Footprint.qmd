@@ -1,0 +1,83 @@
+---
+title: "Test Building footprint from OSM"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## setup
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+
+google_crs <- "EPSG:4326" # lat long
+
+# bbox <- osmdata::getbb(place_name = "Houston")
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##        Look for stuff
+
+```{r}
+
+#   What features are available?
+osmdata::available_features()
+#   What tags are available?
+osmdata::available_tags("building") 
+osmdata::available_tags("boundary") 
+
+Parishes_new <- Parishes %>% mutate(area=0)
+for (i in 1:nrow(Parishes)){
+  print(paste("--->", i))
+  
+  Addr <- paste0(stringr::str_extract(Parishes[i,]$Description, "^[ \\w]*"),
+                 ", ", Parishes[i,]$City)
+  foo <- tmaptools::geocode_OSM(Addr)
+  
+  
+  lon <- sf::st_coordinates(Parishes[i,])[1]
+  lat <- sf::st_coordinates(Parishes[i,])[2]
+  
+  print(paste("lat long diff", lat-foo$coords["y"], lon-foo$coords["x"]))
+  
+  bbox <- matrix(c(sf::st_coordinates(Parishes[i,])-0.001,  
+                   sf::st_coordinates(Parishes[i,])+0.001), nrow=2)
+  rownames(bbox) <- c("x", "y")
+  colnames(bbox) <- c("min", "max")
+  
+  church_all <- 
+  bbox %>% 
+  osmdata::opq(timeout = 50) %>% # Build query
+  # osmdata::add_osm_feature(key = "amenity",
+  osmdata::add_osm_feature(key = "building",
+                           value = "church"
+                           # value = "place_of_worship"
+                            ) %>% 
+  osmdata::osmdata_sf(quiet=FALSE) # turn into an sf file
+  
+  church <- church_all$osm_polygons
+  area <- sf::st_area(church)
+  print(church$name) 
+  # church$'addr:street' 
+  # church$'addr:postcode' 
+  Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+    
+} 
+
+leaflet::leaflet() %>%
+  leaflet::addTiles() %>% # OpenStreetMap by default
+  leaflet::addPolygons(data=church_all$osm_polygons,
+                   opacity=0.4,
+                   fillOpacity = 0.4) #%>% 
+  leaflet::addPolygons(data=sf::st_transform(ACS,crs=google_crs),
+                       opacity=5,
+                       fillOpacity=0,
+                       color="red",
+                       weight=1)
+  
+
+```
+
