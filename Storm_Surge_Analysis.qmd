@@ -78,7 +78,9 @@ for (i in 1:5){
   #   Clip to AOI
   
   Slosh <- terra::crop(x, bbox)
+  # Slosh <- terra::app(Slosh, function(x) ifelse(is.na(x), 0, x))
   rm(x)
+  Slosh <- ifel(is.na(Slosh), 0, Slosh) # Convert NA to zero
   Slosh <- ifel(Slosh==99, NA, Slosh) # get rid of inter-levee data
   Slosh <- as.numeric(Slosh) # change to floating point
   
@@ -93,6 +95,9 @@ for (i in 1:5){
     inner_join(., Parishes, by="ID") %>% 
     sf::st_as_sf()
   
+  Church_values <- Church_values %>% 
+    filter(value>0.05)
+  
   saveRDS(Church_values, paste0(path, "Churches_Stormsurge_Cat", i, ".rds"))
   
   box <- Church_values %>%
@@ -101,6 +106,7 @@ for (i in 1:5){
   Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
   
   Church_values %>% 
+    filter(value>0.05) %>% 
     rename(Feet=value) %>% 
     ggplot() +
     Base_basemapR +
@@ -120,6 +126,7 @@ for (i in 1:5){
   #   Make a table
   
   table <- Church_values %>% 
+    filter(value>0.05) %>% 
     select(Label, City, value) %>% 
     rename(Parish=Label, Feet=value) %>% 
     sf::st_drop_geometry() %>% 
@@ -145,3 +152,75 @@ for (i in 1:5){
 }
 
 ```
+
+
+##      Read in results and add damage
+
+
+```{r}
+
+for (i in 1:5){
+  Church_values <- readRDS(paste0(path, "Churches_Stormsurge_Cat", i, ".rds")) %>% 
+    filter(value>0.05)
+  
+  
+    box <- Church_values %>%
+    sf::st_bbox() %>% expand_box(., 0.2)
+  
+  Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+  
+  Church_values %>% 
+    filter(value>0.05) %>% 
+    rename(Feet=value) %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_spatraster(data=Slosh, alpha=0.3) +
+    scale_fill_gradient("Surge in Feet", na.value = "transparent", low="white", high="blue") +
+    geom_sf(aes(
+      size=Feet), show.legend=TRUE) +
+    ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Feet,2), "ft")),
+                                    size=2, max.overlaps=20, force=100) +
+    labs(title=paste("SLOSH model from NOAA, Cat", i, "Hurricane Storm Surge in feet"),
+         x="Longitude",
+         y="Latitude") +
+    coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
+  
+  ggsave(paste0(output_path, "Cat_",i,"_slosh_model.jpg"))
+  
+  #   Make a table
+  
+  table <-
+    Church_values %>% 
+    select(Label, City, value) %>% 
+    mutate(DamagePct=0.01*(3.913*value + 13.04)) %>% 
+    rename(Parish=Label, Feet=value, Damage=DamagePct) %>% 
+    sf::st_drop_geometry() %>% 
+    arrange(-Feet) %>% 
+    gt() %>% 
+    tab_header(
+      title = md(paste("**Churches affected by Storm Surge from a Cat ",i, "Hurricane**")),
+      subtitle="Worst case NOAA SLOSH model, feet above ground level"
+    ) %>% 
+    tab_source_note(
+      source_note="Source: https://www.nhc.noaa.gov/nationalsurge/") %>% 
+    fmt_number(
+      columns = 3,
+      decimals = 1
+    ) %>% 
+    fmt_percent(
+        columns=4,
+        decimals=0
+    ) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold'
+    )
+    
+  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.png"))
+  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.docx"))
+  gtsave(table, paste0(output_path, "Cat_",i,"_slosh_model_table.html"))
+}
+
+
+
+```
+
