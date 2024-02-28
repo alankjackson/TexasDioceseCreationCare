@@ -57,8 +57,8 @@ saveRDS(df, paste0(path, "NRI_Table.rds"))
 
 ```{r read csv file}
 
-df <- read_csv(paste0(path, "NRI_Table_Counties_Texas.csv"),
-               col_types="ccccccccccciii?") %>% 
+df <- read_csv(paste0(path, "NRI_Table_Counties_Texas.csv")) %>% 
+               # col_types="ccccccccccciii?") %>% 
   select(NRI_ID, COUNTY, COUNTYFIPS, STCOFIPS, POPULATION, AREA, 
          SOVI_SCORE, RESL_SCORE, 
          CFLD_EVNTS, CFLD_AFREQ, CFLD_EXPT, CFLD_EXP_AREA,
