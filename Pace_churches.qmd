@@ -24,6 +24,72 @@ Parishes <- Parishes %>%
 
 saveRDS(Parishes, paste0(path, "Parishes.rds"))
 
+#   Create data frames to join
+
+Cities <- tribble(~City,
+                  "Cameron", "Freeport", "Henderson", "Houston", 
+                  "Rockdale", "Wharton" ) %>% 
+  mutate(Pace_city=TRUE)
+
+Counties <- tribble(~County,
+                    "Angelina", "Bastrop", "Bell", "Brazos", "Burnet", "Caldwell",
+                    "Comal", "Erath", "Fort Bend", "Galveston", "Grayson",
+                    "Guadalupe", "Hardin", "Harrison", "Hays", "Henderson",
+                    "Hopkins", "Jeff Davis", "Jefferson", "McLennan", "Milam",
+                    "Navarro", "Smith", "Tarrant", "Titus", "Travis", "Washington",
+                    "Wharton", "Williamson") %>% 
+  mutate(Pace_county=TRUE)
 
 ```
+
+##        Combine dataframes
+
+```{r}
+
+foo <- Parishes %>% 
+  left_join(Cities, by="City") %>% 
+  left_join(Counties, by="County")
+
+```
+
+
+##        Make map and spreadsheet
+
+```{r}
+
+box <- foo %>%
+  sf::st_bbox() %>% expand_box(., 0.2)
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+
+foo %>% 
+  mutate(Status=case_when(
+    Pace_city==TRUE ~"green",
+    Pace_county==TRUE ~ "green",
+    .default = "red"
+  )) %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_sf(aes(
+      color=Status), show.legend=FALSE) +
+  scale_color_manual(values=c("green","red")) +
+    labs(title=paste("Churches in Pace Areas in green"),
+         x="Longitude",
+         y="Latitude") +
+    coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
+  
+  ggsave(paste0(output_path, "Map_Pace_Potential.jpg"))
+  
+  #     Now make a spreadsheet
+  
+  foo %>% sf::st_drop_geometry() %>% 
+    select(Label, City, Pace_city, Pace_county) %>% 
+    arrange(Label) %>% 
+    writexl::write_xlsx(paste0(output_path, "Pace_churches.xlsx"))
+
+```
+
+
+
+
 
