@@ -13,6 +13,15 @@ library(tidyverse)
 
 google_crs <- "EPSG:4326" # lat long
 
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+out_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/Maps_and_tables/Risk/"
+
+Parishes <- read_rds(paste0(path, "Parishes.rds")) 
+
+Churches <-  Parishes %>% 
+  sf::st_drop_geometry()
+
+
 # bbox <- osmdata::getbb(place_name = "Houston")
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -48,24 +57,51 @@ for (i in 1:nrow(Parishes)){
   rownames(bbox) <- c("x", "y")
   colnames(bbox) <- c("min", "max")
   
-  church_all <- 
-  bbox %>% 
+  # polys <- opq_enclosing (lon, lat, key='building', value="yes") %>%
+  polys <- opq_enclosing (lon, lat) %>%
+    opq_string () %>%
+    osmdata_sf ()
+  
+  if (!is.null(polys$osm_polygons$building)) {
+    church <- polys$osm_polygons %>% filter(!is.na(building)) 
+    
+    area <- sf::st_area(church)
+    print(church$name) 
+    # church$'addr:street' 
+    # church$'addr:postcode' 
+    Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+  }
+  
+  
+  
+  #################################################
+  # church_all <-
+    foo <-
+  bbox %>%
   osmdata::opq(timeout = 50) %>% # Build query
   # osmdata::add_osm_feature(key = "amenity",
-  osmdata::add_osm_feature(key = "building",
-                           value = "church"
+  osmdata::add_osm_feature(key = "building"#,
+  #                          value = "church"
                            # value = "place_of_worship"
-                            ) %>% 
+                            ) %>%
   osmdata::osmdata_sf(quiet=FALSE) # turn into an sf file
+  # 
   
-  church <- church_all$osm_polygons
-  area <- sf::st_area(church)
-  print(church$name) 
-  # church$'addr:street' 
-  # church$'addr:postcode' 
-  Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+  
+  # polys <- opq_enclosing (lon, lat, 'building') %>%
+  #   opq_string () %>%
+  #   osmdata_sf ()
+  # 
+  # church <- church_all$osm_polygons
+  # area <- sf::st_area(church)
+  # print(church$name) 
+  # # church$'addr:street' 
+  # # church$'addr:postcode' 
+  # Parishes_new[i,]$area <- units::drop_units(area)*10.7639
     
 } 
+
+write_rds(Parishes_new, paste0(path, "Church_areas.rds"))
 
 leaflet::leaflet() %>%
   leaflet::addTiles() %>% # OpenStreetMap by default
@@ -79,5 +115,123 @@ leaflet::leaflet() %>%
                        weight=1)
   
 
+```
+##        Build a box
+
+```{r}
+
+keep <- Parishes_new
+
+for (i in 91:nrow(Parishes)){
+  if (Parishes_new[i,]$area>0) {next}
+  print(paste("--->", i))
+  
+  lon <- sf::st_coordinates(Parishes[i,])[1]
+  lat <- sf::st_coordinates(Parishes[i,])[2]
+  
+  bbox <- matrix(c(sf::st_coordinates(Parishes[i,])-0.0003,  
+                   sf::st_coordinates(Parishes[i,])+0.0003), nrow=2)
+  rownames(bbox) <- c("x", "y")
+  colnames(bbox) <- c("min", "max")
+  
+  #################################################
+  # church_all <-
+    foo1 <-
+  bbox %>%
+  osmdata::opq(timeout = 50) %>% # Build query
+  osmdata::add_osm_feature(key = "amenity",
+                           value = "place_of_worship"
+                            ) 
+    foo2 <-
+  bbox %>%
+  osmdata::opq(timeout = 50) %>% # Build query
+  osmdata::add_osm_feature(key = "building",
+                           value = "church"
+                          )  
+    ##  OR
+  foo <- c(
+  osmdata::osmdata_sf(foo1, quiet=FALSE), # turn into an sf file
+  osmdata::osmdata_sf(foo2, quiet=FALSE) # turn into an sf file
+  )
+  
+  if (!is.null(foo$osm_polygons$building)) {
+    church <- foo$osm_polygons %>% filter(!is.na(building))
+
+    area <- sf::st_area(church)
+    print(church$name)
+    # church$'addr:street'
+    # church$'addr:postcode'
+    Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+  }
+  # ##############################
+  
+  
+#   polys <- opq_enclosing (lon, lat, 'building') %>%
+#     opq_string () %>%
+#     osmdata_sf ()
+#   
+#   if (!is.null(polys$osm_multipolygons$building)) {
+#     church <- polys$osm_multipolygons %>% filter(!is.na(building)) 
+#     
+#     area <- sf::st_area(church)
+#     print(church$name) 
+#     # church$'addr:street' 
+#     # church$'addr:postcode' 
+#     Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+#   }
+#   # church <- church_all$osm_polygons
+#   # area <- sf::st_area(church)
+#   # print(church$name) 
+#   # # church$'addr:street' 
+#   # # church$'addr:postcode' 
+#   # Parishes_new[i,]$area <- units::drop_units(area)*10.7639
+#   
+# leaflet::leaflet() %>%
+#   leaflet::addTiles() %>% # OpenStreetMap by default
+#   leaflet::addPolygons(data=foo$osm_polygons,
+#                    opacity=0.4,
+#                    fillOpacity = 0.4) #%>%
+#   leaflet::addPolygons(data=sf::st_transform(ACS,crs=google_crs),
+#                        opacity=5,
+#                        fillOpacity=0,
+#                        color="red",
+#                        weight=1)
+      
+} 
+```
+
+
+##        reprex
+
+```{r}
+
+library(osmdata)
+
+  lon <- sf::st_coordinates(Parishes[8,])[1]
+  lat <- sf::st_coordinates(Parishes[8,])[2]
+  
+  bbox <- matrix(c( -97.80317, 
+                     30.19829,  
+                    -97.80117, 
+                     30.20029), nrow=2)
+  rownames(bbox) <- c("x", "y")
+  colnames(bbox) <- c("min", "max")
+  
+  bbox %>% 
+  osmdata::opq(timeout = 50) %>% # Build query
+  # osmdata::add_osm_feature(key = "amenity",
+  #                          value = "place_of_worship"
+  #                           ) %>% 
+  osmdata::add_osm_feature(key = "building",
+                           value = "yes"
+                            ) %>% 
+  osmdata::osmdata_sf(quiet=FALSE) 
+  
+  polys <- opq_enclosing (lon, lat, key='building', value="yes") %>%
+    opq_string () %>%
+    osmdata_sf ()
+  
+  polys$osm_polygons %>% filter(building=='yes')
+  
 ```
 
