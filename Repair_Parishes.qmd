@@ -110,9 +110,8 @@ Parishes <- read_rds(paste0(path, "Parishes.rds"))
 Updates <- tribble(~ID, ~Lat, ~Lon,
                     94, 30.11141678623458, -97.32030491525285,
                     95, 30.51117445839927, -97.88148531076389,
-                   101, 30.12981232575694, -97.79826755279615,
+                   100, 30.199272405408436, -97.80219075015661,
                    104, 30.300180272450817, -97.71546541954083,
-                   105, 30.282415467504066, -97.67347033539613,
                    106, 29.908103063889786, -96.87357095589623,
                    108, 30.385511214064007, -97.6954686623192,
                    115, 30.318714450045533, -97.82351436602461,
@@ -186,20 +185,71 @@ Updates <- tribble(~ID, ~Lat, ~Lon,
                     32, 29.68498822523036, -95.46435034780721
                    )
 
+Updates <- sf::st_as_sf(Updates, coords=c("Lon", "Lat"), crs=google_crs, agr = "identity")
+
+a <- Updates %>% 
+  mutate(lon=sf::st_coordinates(.)[,1],
+         lat = sf::st_coordinates(.)[,2]) %>% 
+  sf::st_drop_geometry()
+b <- Parishes %>% 
+  mutate(lon=sf::st_coordinates(.)[,1],
+         lat = sf::st_coordinates(.)[,2]) %>% 
+  sf::st_drop_geometry()
+
+foo2 <- inner_join(a, b, by="ID") %>% 
+  mutate(dlat=lat.x-lat.y, dlon=lon.x-lon.y)
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+tmap::tmap_mode("view") # set mode to interactive plots
+  tmap::tm_shape(foo) + 
+  tmap::tm_dots(size=0.05) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots(col="red")
+
+foo <- Parishes  
+for (i in 1:nrow(Parishes)){
+  ID <- Parishes[i,]$ID
+  if (ID %in% Updates$ID) {
+    Parishes[i,]$geometry <- Updates[Updates$ID==ID,]$geometry
+  } 
+}
+# foo <- Parishes %>%   
+#   mutate(geometry=if_else(ID %in% Updates$ID, Updates[Updates$ID==ID,]$geometry, geometry))
+
 Addresses <- tribble(~ID, ~Description,
                      80, "501 Gregg St, Calvert, TX 77837<br>(979) 364-3784",
                      35, "715 Carrell St, Tomball, TX 77375<br>(281) 351-1609<br>goodshepherdtomball.org (http://goodshepherdtomball.org)",
                      16, "2525 Seagler Road, Houston, TX 77042-3194<br>(713) 781-1330<br>ascensionepiscopalchurch.org (http://ascensionepiscopalchurch.org)"
-                     )
+)
+                     
+for (i in 1:nrow(Parishes)){
+  ID <- Parishes[i,]$ID
+  if (ID %in% Addresses$ID) {
+    Parishes[i,]$Description <- Addresses[Addresses$ID==ID,]$Description
+  } 
+}     
 
 #   Delete ID 157, St. Mary's, Hamilton
 
-sfc = sf::st_sfc(sf::st_point(c(-95.52906697527352, 29.67598071488963)))
+Parishes <- Parishes[!(Parishes$ID==157),]
+
+#   Add Camp Allen
+
+sfc = sf::st_sfc(sf::st_point(c(-95.96059226913523, 30.241488425607105)))
 sf::st_geometry(sfc)
 sf::st_crs(sfc) <- google_crs
 
-sf::st_geometry(Parishes[Parishes$ID==19,]) <- sfc
+CampAllen <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, ~County, 
+                     ~geometry, ~Zip,
+                     163, "Camp Allen", "Navasota", "Camp Allen", 
+                     "18800 FM 362, Navasota, TX 77868", "Central", "Grimes",
+                     NA, "77868")
 
-write_rds(Parishes, paste0(path, "Parishes.rds")) 
+sf::st_geometry(CampAllen[1,]) <- sfc
+CampAllen <- CampAllen %>% sf::st_as_sf()
+
+Parishes <- rbind(Parishes, CampAllen)
+
+write_rds(Parishes, paste0(path, "Parishes.rds"))
 ```
 
