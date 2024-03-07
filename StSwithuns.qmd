@@ -31,12 +31,15 @@ Likelihood          Severity
 Low, medium, high   minor, serious, extensive, catastrophic
 Coastal flooding
 Drought
-Hurricanes
+Hurricanes - cat 1
+Hurricanes - cat 2
+Hurricanes - cat 3
 Ice storms
 River flooding
 tornado
 wildfire
 smoke
+Hail
 
 ```{r}
 
@@ -48,7 +51,9 @@ smoke
 #   mutate(Coast_Flood_Like="Unk", Coast_Flood_Severe="Unk",
 #          Drought_Like="Unk", Drought_Severe="Unk",
 #          Hail_Like="Unk", Hail_Severe="Unk",
-#          Hurricane_Like="Unk", Hurricane_Severe="Unk",
+#          Hurricane1_Like="Unk", Hurricane1_Severe="Unk",
+#          Hurricane2_Like="Unk", Hurricane2_Severe="Unk",
+#          Hurricane3_Like="Unk", Hurricane3_Severe="Unk",
 #          IceStorm_Like="Unk", IceStorm_Severe="Unk",
 #          Pluvial_Like="Unk", Pluvial_Severe="Unk",
 #          Tornado_Like="Unk", Tornado_Severe="Unk",
