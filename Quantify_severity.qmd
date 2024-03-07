@@ -1,0 +1,101 @@
+---
+title: "Quantify Severity"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## setup
+
+```{r}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+google_crs <- "EPSG:4326" # lat long
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+```
+
+##    Storm Surge
+
+Just need to look at cat 4 and get the area of those buildings
+
+```{r}
+
+df <- readRDS(paste0(path, "Churches_Stormsurge_Cat4.rds")) %>% 
+  filter(value>0.05) %>% 
+  mutate(DamagePct=0.01*(3.913*value + 13.04)) %>% 
+  sf::st_transform(google_crs)
+
+####    Look for buildings
+
+df <- df %>% mutate(area=0)
+for (i in 1:nrow(df)){
+  if (df[i,]$area>0) {next}
+  print(paste("--->", i))
+  
+  lon <- sf::st_coordinates(df[i,])[1]
+  lat <- sf::st_coordinates(df[i,])[2]
+  
+  bbox <- matrix(c(sf::st_coordinates(df[i,])-0.0003,  
+                   sf::st_coordinates(df[i,])+0.0003), nrow=2)
+  rownames(bbox) <- c("x", "y")
+  colnames(bbox) <- c("min", "max")
+  
+  #################################################
+  # church_all <-
+    foo1 <-
+  bbox %>%
+  osmdata::opq(timeout = 50) %>% # Build query
+  osmdata::add_osm_feature(key = "amenity",
+                           value = "place_of_worship"
+                            ) 
+    foo2 <-
+  bbox %>%
+  osmdata::opq(timeout = 50) %>% # Build query
+  osmdata::add_osm_feature(key = "building",
+                           value = "church"
+                          )  
+    print("--1--")
+    ##  OR
+  foo <- c(
+  osmdata::osmdata_sf(foo1, quiet=FALSE), # turn into an sf file
+  osmdata::osmdata_sf(foo2, quiet=FALSE) # turn into an sf file
+  )
+  
+    print("--2--")
+  if (!is.null(foo$osm_polygons$building)) {
+    church <- foo$osm_polygons %>% filter(!is.na(building))
+
+    print("--3--")
+    area <- sum(sf::st_area(church))
+    print(paste(church$name, area))
+    # church$'addr:street'
+    # church$'addr:postcode'
+    df[i,]$area <- units::drop_units(area)*10.7639
+  }
+}
+
+df <- df %>% 
+  mutate(RepairCost=250*DamagePct*area)
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+tmap::tmap_mode("view") # set mode to interactive plots
+
+  tmap::tm_shape(df) + 
+  tmap::tm_dots() 
+  
+```
+
+
+
+
+
+
+
+
+
+
