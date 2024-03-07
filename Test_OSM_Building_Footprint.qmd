@@ -22,6 +22,8 @@ Churches <-  Parishes %>%
   sf::st_drop_geometry()
 
 
+
+
 # bbox <- osmdata::getbb(place_name = "Houston")
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -233,5 +235,53 @@ library(osmdata)
   
   polys$osm_polygons %>% filter(building=='yes')
   
+```
+
+## read in and process data from qgis
+
+```{r}
+
+Buildings <- sf::st_read(paste0(path, "Buildings/SelectedBuildings_3LL.shp"))
+
+Buildings <- sf::st_make_valid(Buildings)
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Buildings) + 
+  tmap::tmap_options(check.and.fix = TRUE) +
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "red", title = "Selected Buildings", alpha=0.3, style="pretty")+
+  tmap::tm_borders(lwd=0.5) +
+    tmap::tm_shape(Parishes) + 
+  tmap::tm_dots()
+
+#   Intersect with Parish locations to add that data
+
+
+
+
+
+```
+
+##        Calculate areas
+
+```{r}
+
+foo <- 
+Buildings %>% 
+  filter(!is.na(ID))  
+
+area <- units::drop_units(sf::st_area(foo))*10.7639 
+
+foo <- cbind(foo, area)
+
+foo <- foo %>% 
+  group_by(ID) %>% 
+  summarise(area=sum(area), Label=first(Label), City=first(City))
+
 ```
 
