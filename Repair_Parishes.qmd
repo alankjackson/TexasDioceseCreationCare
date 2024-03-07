@@ -98,6 +98,25 @@ write_rds(Parishes, paste0(path, "Parishes.rds"))
 
 ```
 
+##        Repair St James Austin
+
+```{r}
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+Parishes <- read_rds(paste0(path, "Parishes.rds")) 
+
+sfc = sf::st_sfc(sf::st_point(c(-97.6733253087612, 30.28238208657114)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+sf::st_geometry(Parishes[Parishes$ID==105,]) <- sfc
+
+write_rds(Parishes, paste0(path, "Parishes.rds")) 
+
+```
+
+
 
 ##        Major repositioning to get lat long into main church building
 
