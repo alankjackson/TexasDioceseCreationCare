@@ -70,15 +70,16 @@ Hail
 
 ```{r}
 
-df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls"))
+df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls")) %>% 
+  select(-26) %>% 
+  select(-Coast_Flood_Like, -Coast_Flood_Severe)
 
 df2 <- df %>% 
-  head(5) %>% 
+  # head(5) %>% 
   pivot_longer(-Parish, 
                names_to=c("Disaster", ".value"),
                names_pattern="(.+)_(Like|Severe)") %>% 
   rename(Likelihood=Like, Severity=Severe) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Coast_Flood", "Coastal Flooding")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
   mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Pluvial", "River Flooding"))
@@ -87,30 +88,36 @@ foo <- df2 %>% head(8)
 
 maketable <- function(df){
   Parish1 <- df$Parish[1]
-  # df %>% 
-    foo %>% 
+  df %>%
+    # df2 %>%
+      filter(!Likelihood=="None") %>% 
     select(-Parish) %>% 
     mutate(Low="", Medium="", High="",
            Minor="", Major="", Extensive="", Catastrophic="") %>% 
-    mutate(Low=ifelse(Likelihood=="Low", "X", " "),
-           Medium=ifelse(Likelihood=="Medium", "X", " "),
-           High=ifelse(Likelihood=="High", "X", " "),
-           Minor=ifelse(Severity=="Minor", "X", " "),
-           Major=ifelse(Severity=="Major", "X", " "),
-           Extensive=ifelse(Severity=="Extensive", "X", " "),
-           Catastrophic=ifelse(Severity=="Catastrophic", "X", " ")
+    mutate(
+           Low=ifelse(Likelihood=="Low", "X", ""),
+           Medium=ifelse(Likelihood=="Medium", "X", ""),
+           High=ifelse(Likelihood=="High", "X", ""),
+           Minor=ifelse(Severity=="Minor", "X", ""),
+           Major=ifelse(Severity=="Major", "X", ""),
+           Extensive=ifelse(Severity=="Extensive", "X", ""),
+           Catastrophic=ifelse(Severity=="Catastrophic", "X", "")
            ) %>% 
+      relocate(Worsen, .after=Catastrophic) %>% 
       select(-Likelihood, -Severity) %>% 
       gt(rowname_col = "Disaster") %>% 
         tab_header(title=paste(Parish1, "Risk Matrix")) %>% 
         tab_spanner(
-          label="Likelihood",
+          label=md("**Likelihood**"),
           columns=c(Low, Medium, High)
         ) %>% 
         tab_spanner(
-          label="Severity",
+          label=md("**Severity**"),
           columns=c(Minor, Major, Extensive, Catastrophic)
         ) %>%   
+        cols_label(
+           "Worsen" = md("**Worsen?**")
+        ) %>%
         tab_style(
           style=list(
             cell_borders(
@@ -148,13 +155,106 @@ maketable <- function(df){
             columns=c(5,6,7,8),
             rows=everything()
           )
-        )       
+        ) %>%        
+        tab_style(
+          style=list(
+            cell_borders(
+              sides = "all", 
+              color = "black", 
+              style = "solid"),
+            cell_fill(
+              color="lightskyblue"
+            ) ,
+            cell_text(
+              # weight="bold",
+              align="center"
+            )
+          ),
+          locations=cells_body(
+            columns=c(9),
+            rows=everything()
+          )
+         )  %>% 
+    tab_style(
+      style = cell_fill(color = 'red'),
+      locations = cells_body(
+      columns = c(High), 
+      rows = High=="X" 
+    ))
+      # data_color(
+      #   columns = High,
+      #   rows = matches("X"),
+      #   # method = "numeric",
+      #   palette = c("red", "yellow")
+      #   # domain = c(0, 50)
+      # )
 }
 
+Worsen <- tribble(~Worsen,
+                  'Yes', 'Unk', "Yes", "Yes", "Yes", "Yes", "Unk", "Yes",
+                  "No", "Yes", "Yes")
+
+for (i in 1:161){
+  df2 <- df[i,] %>% 
+  # head(5) %>% 
+  pivot_longer(-Parish, 
+               names_to=c("Disaster", ".value"),
+               names_pattern="(.+)_(Like|Severe)") %>% 
+  rename(Likelihood=Like, Severity=Severe) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge1", "Cat 1 Surge")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge2", "Cat 2 Surge")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge3", "Cat 3 Surge")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge4", "Cat 4 Surge")) %>% 
+  # mutate(Disaster=stringr::str_replace(Disaster, "Coast_Flood", "Coastal Flooding")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
+  mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Pluvial", "River Flooding"))
+  
+  df2 <- cbind(df2, Worsen)
+  
+  table <- maketable(df2)
+  gtsave(table, paste0(out_path, 
+                       stringr::str_replace_all(df[i,]$Parish, "[ \',\\.]", "_"),
+                       "_risk_table.png")) 
+  
+  if (df[i,]$Parish=="St. David's, Austin"){# St David's Austin
+    print(table)
+    }
+  if (df[i,]$Parish=="St. Luke's on the Lake, Austin"){# St Luke's on the Lake
+    print(table)
+    }
+  if (df[i,]$Parish=="Christ Church Cathedral, Houston"){# Cathedral
+    print(table)
+    }
+  if (df[i,]$Parish=="Trinity, Fort Worth"){# Fort Worth
+    print(table)
+    }
+  if (df[i,]$Parish=="Holy Trinity, Dickinson"){# Dickinson
+    print(table)
+    }
+}
 
 
 ```
 
 
+## reprex
+
+```{r}
+
+foobar <- tribble(~Col1, ~Col2, ~Col3,
+                  "A",    "B",   "C",
+                  "Blank row",  "",   "",
+                  "D",    "E",   "F",
+                  )
+
+foobar %>% 
+  gt() %>% 
+    cols_merge(
+      columns=c(2,3),
+      rows=2
+    ) 
+
+```
 
 
