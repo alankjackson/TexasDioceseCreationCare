@@ -80,7 +80,7 @@ for (i in 1:nrow(df)){
 }
 
 df <- df %>% 
-  mutate(RepairCost=250*DamagePct*area)
+  mutate(ReplaceCost=135*DamagePct*area)
 
 tmap::tmap_options(basemaps="OpenStreetMap")
 tmap::tmap_mode("view") # set mode to interactive plots
@@ -90,6 +90,11 @@ tmap::tmap_mode("view") # set mode to interactive plots
   
 ```
 
+##  Create tables for cat 1,2,3,4
+
+```{r}
+
+```
 
 
 
