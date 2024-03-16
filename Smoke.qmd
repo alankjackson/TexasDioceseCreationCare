@@ -121,6 +121,20 @@ Smoke_days %>%
 
 ```{r}
 
+All_Parishes_Smoke <- 
+inner_join(Parishes %>% st_drop_geometry(), 
+           Smoke_days %>% st_drop_geometry(), 
+           by=c("County"="CNTY_NM")) %>%
+  select(Label, City, Convocation, Smoke_days) %>% 
+  mutate(Smoke_days=round(Smoke_days/17, 0)) %>% 
+  arrange(-Smoke_days)
+
+# Histogram of above
+
+All_Parishes_Smoke %>% 
+  ggplot(aes(x=Smoke_days)) +
+  geom_histogram()
+
 table <- 
 inner_join(Parishes %>% st_drop_geometry(), 
            Smoke_days %>% st_drop_geometry(), 
