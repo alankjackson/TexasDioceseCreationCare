@@ -53,18 +53,46 @@ Smoke <- inner_join(as_tibble(Counties %>% sf::st_drop_geometry()),
 
 #   use duckdb to speed things up
 
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
-duckdb::dbWriteTable(con, "Smoke", Smoke)
-Smoke_db <- tbl(con, "Smoke")
+# con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
+# duckdb::dbWriteTable(con, "Smoke", Smoke)
+# Smoke_db <- tbl(con, "Smoke")
 
-Smoke_days_db <- Smoke_db %>% 
-  group_by(CNTY_NM) %>% 
+# Smoke_days_db <- Smoke_db %>% 
+Smoke_days <- Smoke %>% 
+  mutate(AQI = case_when(
+    smokePM_pred<=12 ~ "Good",
+    between(smokePM_pred, 12, 35.4) ~ "Moderate",
+    between(smokePM_pred, 35.5, 55.4) ~ "Unhealthy for Sensitive Grps",
+    between(smokePM_pred, 55.5, 150) ~ "Unhealthy",
+    between(smokePM_pred, 150, 250) ~ "Very Unhealthy",
+    smokePM_pred>250 ~ "Hazardous"
+  )) %>% 
+  group_by(CNTY_NM, AQI) %>% 
     summarize(Smoke_days=n())
 
-Smoke_days <- collect(Smoke_days_db) %>% 
+Smoke_notgood2 <- Smoke %>% 
+  mutate(AQI = case_when(
+    smokePM_pred<=12 ~ "Good",
+    between(smokePM_pred, 12, 35.4) ~ "Moderate",
+    between(smokePM_pred, 35.5, 55.4) ~ "Unhealthy for Sensitive Grps",
+    between(smokePM_pred, 55.5, 150) ~ "Unhealthy",
+    between(smokePM_pred, 150, 250) ~ "Very Unhealthy",
+    smokePM_pred>250 ~ "Hazardous"
+  )) %>% 
+  filter(smokePM_pred>12) %>% 
+  group_by(CNTY_NM, AQI) %>% 
+    summarize(Smoke_baddays=n())  
+
+# Smoke_days <- collect(Smoke_days_db) %>% 
+Smoke_days <- Smoke_days %>% 
+  mutate(Smoke_days=Smoke_days/17) %>% # annual average
   left_join(., Counties, by="CNTY_NM") %>%  
   st_as_sf()
 
+Smoke_notgood <- Smoke_notgood %>% 
+  mutate(Smoke_baddays=Smoke_baddays/17) %>% # annual average
+  left_join(., Counties, by="CNTY_NM") %>%  
+  st_as_sf()
 ```
 
 ##    Make a map
@@ -76,7 +104,7 @@ tmap::tmap_options(basemaps="OpenStreetMap")
 tmap::tmap_mode("view") # set mode to interactive plots
 
 tmap::tm_shape(Smoke_days) + 
-  tmap::tm_fill(col = "Smoke_days", title = "Days with smoke, 2006-2020", alpha=0.5, style="pretty")+
+  tmap::tm_fill(col = "Smoke_days", title = "Avg Days per Year with smoke, 2006-2020", alpha=0.5, style="pretty")+
   tmap::tm_borders(lwd=0.2) +
   tmap::tm_shape(Parishes) + 
   tmap::tm_dots()
@@ -90,21 +118,21 @@ box <-sf::st_bbox(terrainr::add_bbox_buffer(Convocations, distance=5000)) # 5 ki
 
 Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
 
-Smoke_days %>% 
-  mutate(Smoke_days=Smoke_days/17) %>% 
+Smoke_notgood %>% 
   sf::st_crop(box) %>% 
+  
   ggplot() +
   Base_basemapR +
-  geom_sf(aes(fill=Smoke_days) ,alpha=0.5) +
+  geom_sf(aes(fill=Smoke_baddays) ,alpha=0.5) +
   scale_fill_gradient(name="Avg Days/Yr with Smoke", 
                       na.value = "transparent", 
                       low="yellow",
                       high="brown",
-                      limits=c(300/17, 1300/17)) +
+                      limits=c(0, 4)) +
   geom_sf(data=Parishes, show.legend=FALSE) +
   # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
   #                                size=2, max.overlaps=25, force=80) +
-  labs(title="Average Smoke Days per Year",
+  labs(title="Average Bad Smoke Days per Year",
        subtitle=paste("from 2006 to 2020 by county")) +
   annotate("text", label="
          Data sourced from https://www.stanfordecholab.com/wildfire_smoke 
@@ -123,32 +151,32 @@ Smoke_days %>%
 
 All_Parishes_Smoke <- 
 inner_join(Parishes %>% st_drop_geometry(), 
-           Smoke_days %>% st_drop_geometry(), 
+           Smoke_notgood %>% st_drop_geometry(), 
            by=c("County"="CNTY_NM")) %>%
-  select(Label, City, Convocation, Smoke_days) %>% 
-  mutate(Smoke_days=round(Smoke_days/17, 0)) %>% 
-  arrange(-Smoke_days)
+  select(Label, City, Convocation, Smoke_baddays) %>% 
+  mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
+  arrange(-Smoke_baddays)
 
 # Histogram of above
 
 All_Parishes_Smoke %>% 
-  ggplot(aes(x=Smoke_days)) +
-  geom_histogram()
+  ggplot(aes(x=Smoke_baddays)) +
+  geom_histogram(bins=10)
 
 table <- 
 inner_join(Parishes %>% st_drop_geometry(), 
-           Smoke_days %>% st_drop_geometry(), 
+           Smoke_notgood %>% st_drop_geometry(), 
            by=c("County"="CNTY_NM")) %>%
-  select(Label, City, Convocation, Smoke_days) %>% 
-  mutate(Smoke_days=round(Smoke_days/17, 0)) %>% 
-  filter(Smoke_days>60) %>% 
-  arrange(-Smoke_days) %>% 
+  select(Label, City, Convocation, Smoke_baddays) %>% 
+  mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
+  filter(Smoke_baddays>0.5) %>%
+  arrange(-Smoke_baddays) %>% 
   gt::gt() %>% 
   gt::cols_label(
     Label="Church",
     City="City",
     Convocation="Convocation",
-    Smoke_days="Smoke Days per Year, Top Parishes"
+    Smoke_baddays="Bad Smoke Days per Year, Top Parishes"
   )
 
 gt::gtsave(table, paste0(out_path, "Smoke_days.docx"))
@@ -193,6 +221,167 @@ Smoke_Months %>%
 ggsave(paste0(out_path, "Smoke_days_per_month.jpg"))
 ```
 
+## Let's try a different dataset from the CDC
+
+https://data.cdc.gov/Environmental-Health-Toxicology/Daily-County-Level-PM2-5-Concentrations-2001-2019/dqwm-pbi7/about_data
+
+```{r}
+
+Smoke2<- read_csv(paste0(path, "Smoke/Daily_County-Level_PM2.5_Concentrations__2001-2019_20240319.csv"))
+
+Smoke2<- Smoke2%>% 
+  filter(statefips==48)
+
+Smoke2<- Smoke2%>% 
+  mutate(Date=lubridate::dmy(date)) %>% 
+  mutate(FIPS = paste0('48', sprintf("%03i", countyfips)))
+
+#   Add county name
+Smoke2<- inner_join(as_tibble(Counties %>% sf::st_drop_geometry()), 
+                    Smoke2, by=c('FIPS_ST_CN'='FIPS'))   
+
+#########   sum PM2.5
+
+Smoke_days2 <- Smoke2%>% 
+  mutate(AQI = case_when(
+    PM25_max_pred<=12 ~ "Good",
+    between(PM25_max_pred, 12, 35.4) ~ "Moderate",
+    between(PM25_max_pred, 35.5, 55.4) ~ "Unhealthy for Sensitive Grps",
+    between(PM25_max_pred, 55.5, 150) ~ "Unhealthy",
+    between(PM25_max_pred, 150, 250) ~ "Very Unhealthy",
+    PM25_max_pred>250 ~ "Hazardous"
+  )) %>% 
+  filter(PM25_max_pred>1) %>% 
+  group_by(CNTY_NM) %>% 
+    summarize(Smoke_baddays=sum(PM25_max_pred))
+
+Smoke_days2 <- Smoke_days2 %>% 
+  mutate(Smoke_baddays=Smoke_baddays/19) %>% # annual average
+  left_join(., Counties, by="CNTY_NM") %>%  
+  st_as_sf()
+
+#   Not good only 
+
+Smoke_notgood2 <- Smoke2 %>% 
+  mutate(AQI = case_when(
+    PM25_max_pred<=12 ~ "Good",
+    between(PM25_max_pred, 12, 35.4) ~ "Moderate",
+    between(PM25_max_pred, 35.5, 55.4) ~ "Unhealthy for Sensitive Grps",
+    between(PM25_max_pred, 55.5, 150) ~ "Unhealthy",
+    between(PM25_max_pred, 150, 250) ~ "Very Unhealthy",
+    PM25_max_pred>250 ~ "Hazardous"
+  )) %>% 
+  filter(PM25_max_pred>12) %>% 
+  group_by(CNTY_NM) %>% 
+    summarize(Smoke_baddays=n())  
+
+# Smoke_days2 <- collect(Smoke_days2_db) %>% 
+
+Smoke_notgood2 <- Smoke_notgood2 %>% 
+  mutate(Smoke_baddays=Smoke_baddays/19) %>% # annual average
+  left_join(., Counties, by="CNTY_NM") %>%  
+  st_as_sf()
+```
+
+
+##        Static map
+
+```{r}
+
+box <-sf::st_bbox(terrainr::add_bbox_buffer(Convocations, distance=5000)) # 5 kilometers
+
+Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+
+Smoke_notgood2 %>% 
+  sf::st_crop(box) %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(fill=Smoke_baddays) ,alpha=0.5) +
+  scale_fill_gradient(name="Avg Days/Yr with Smoke", 
+                      na.value = "transparent", 
+                      # limits=c(1, 26),
+                      low="yellow",
+                      high="brown"
+                      ) +
+  geom_sf(data=Parishes, show.legend=FALSE) +
+  # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+  #                                size=2, max.overlaps=25, force=80) +
+  labs(title="Average Bad Smoke Days per Year",
+       subtitle=paste("from 2001 to 2019 by county")) +
+  annotate("text", label="
+         Data sourced from https://data.cdc.gov/Environmental-Health-Toxicology/Daily-County-Level-PM2-5-Concentrations-2001-2019/dqwm-pbi7/about_data 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 2)
+
+  ggsave(paste0(out_path, "Smoke_Days_Bad_CDC_.jpg"))
+  
+################
+  
+ Smoke_days2 %>% 
+  sf::st_crop(box) %>% 
+  ggplot() +
+  Base_basemapR +
+  geom_sf(aes(fill=Smoke_baddays) ,alpha=0.5) +
+  scale_fill_gradient(name=bquote(SumPM[2.5]/Yr), 
+                      na.value = "transparent", 
+                      # limits=c(1, 26),
+                      low="yellow",
+                      high="brown"
+                      ) +
+  geom_sf(data=Parishes, show.legend=FALSE) +
+  # ggsflabel::geom_sf_label_repel(data=Convo_parishes, aes(label=Label), 
+  #                                size=2, max.overlaps=25, force=80) +
+  labs(title="Sum Smoke Exposure per Year",
+       subtitle=paste("from 2001 to 2019 by county")) +
+  annotate("text", label="
+         Data sourced from https://data.cdc.gov/Environmental-Health-Toxicology/Daily-County-Level-PM2-5-Concentrations-2001-2019/dqwm-pbi7/about_data 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 2)
+
+  ggsave(paste0(out_path, "Smoke_Days_Sum_CDC.jpg")) 
+```
+
+
+##        Table of worst parishes
+
+```{r}
+
+All_Parishes_Smoke <- 
+inner_join(Parishes %>% st_drop_geometry(), 
+           Smoke_notgood %>% st_drop_geometry(), 
+           by=c("County"="CNTY_NM")) %>%
+  select(Label, City, Convocation, Smoke_baddays) %>% 
+  mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
+  arrange(-Smoke_baddays)
+
+# Histogram of above
+
+All_Parishes_Smoke %>% 
+  ggplot(aes(x=Smoke_baddays)) +
+  geom_histogram(bins=10)
+
+table <- 
+inner_join(Parishes %>% st_drop_geometry(), 
+           Smoke_notgood %>% st_drop_geometry(), 
+           by=c("County"="CNTY_NM")) %>%
+  select(Label, City, Convocation, Smoke_baddays) %>% 
+  mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
+  filter(Smoke_baddays>0.5) %>%
+  arrange(-Smoke_baddays) %>% 
+  gt::gt() %>% 
+  gt::cols_label(
+    Label="Church",
+    City="City",
+    Convocation="Convocation",
+    Smoke_baddays="Bad Smoke Days per Year, Top Parishes"
+  )
+
+gt::gtsave(table, paste0(out_path, "Smoke_days.docx"))
+```
 
 
 
