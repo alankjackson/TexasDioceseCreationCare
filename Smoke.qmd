@@ -260,7 +260,7 @@ Smoke_days2 <- Smoke_days2 %>%
   left_join(., Counties, by="CNTY_NM") %>%  
   st_as_sf()
 
-#   Not good only 
+############   Not good only 
 
 Smoke_notgood2 <- Smoke2 %>% 
   mutate(AQI = case_when(
@@ -352,7 +352,7 @@ Smoke_notgood2 %>%
 
 All_Parishes_Smoke <- 
 inner_join(Parishes %>% st_drop_geometry(), 
-           Smoke_notgood %>% st_drop_geometry(), 
+           Smoke_notgood2 %>% st_drop_geometry(), 
            by=c("County"="CNTY_NM")) %>%
   select(Label, City, Convocation, Smoke_baddays) %>% 
   mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
@@ -362,15 +362,18 @@ inner_join(Parishes %>% st_drop_geometry(),
 
 All_Parishes_Smoke %>% 
   ggplot(aes(x=Smoke_baddays)) +
-  geom_histogram(bins=10)
+  geom_histogram(bins=10) +
+  labs(title="Distribution of Smoke Days by Parish")+
+  xlab("Number of Days Moderate and Above")
 
-table <- 
-inner_join(Parishes %>% st_drop_geometry(), 
-           Smoke_notgood %>% st_drop_geometry(), 
-           by=c("County"="CNTY_NM")) %>%
-  select(Label, City, Convocation, Smoke_baddays) %>% 
-  mutate(Smoke_baddays=round(Smoke_baddays, 2)) %>% 
-  filter(Smoke_baddays>0.5) %>%
+table <-
+# inner_join(Parishes %>% st_drop_geometry(), 
+#            Smoke_notgood %>% st_drop_geometry(), 
+#            by=c("County"="CNTY_NM")) %>%
+#   select(Label, City, Convocation, Smoke_baddays) %>% 
+  All_Parishes_Smoke %>% 
+  mutate(Smoke_baddays=round(Smoke_baddays, 0)) %>% 
+  filter(Smoke_baddays>15) %>%
   arrange(-Smoke_baddays) %>% 
   gt::gt() %>% 
   gt::cols_label(
@@ -383,6 +386,45 @@ inner_join(Parishes %>% st_drop_geometry(),
 gt::gtsave(table, paste0(out_path, "Smoke_days.docx"))
 ```
 
+##        Plot up what time of year we see smoke - a monthly bar chart
+
+```{r}
+
+Smoke_month <- Smoke2 %>% 
+  filter(PM25_max_pred>1) %>% 
+  mutate(Month=lubridate::month(Date)) %>% 
+  group_by(CNTY_NM, Month) %>% 
+    summarize(Smoke_days=n()) %>% 
+  mutate(Smoke_days=Smoke_days/19)
+
+Smoke_Months <- Smoke_month %>% 
+  inner_join(., Convocations, by=c("CNTY_NM"="County")) %>%  
+  sf::st_drop_geometry() 
+
+Smoke_Months %>% 
+  group_by(Month) %>% 
+    summarise(Smoke_days_avg=mean(Smoke_days),
+              Smoke_days_sd=2*sd(Smoke_days)) %>% 
+  ggplot(aes(x=Month, y=Smoke_days_avg)) +
+    geom_errorbar(aes(ymin=pmax(0, (Smoke_days_avg-Smoke_days_sd)), 
+                      ymax=Smoke_days_avg+Smoke_days_sd))+
+    geom_point() +
+    geom_line() +
+    scale_x_continuous(
+      breaks = seq_along(month.name), 
+      labels = month.abb
+    ) +
+    labs(title="Average Texas Smoke Days per Month per Year, and Range",
+         y="Smoke Days per Year") +
+  annotate("text", label="
+         Data sourced from https://www.stanfordecholab.com/wildfire_smoke 
+         Map a product of Alan Jackson", 
+         x=-Inf, 
+         y=-Inf,
+         hjust="inward", vjust="inward", size = 2)
+
+ggsave(paste0(out_path, "Smoke_days_per_month.jpg"))
+```
 
 
 
