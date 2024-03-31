@@ -192,7 +192,7 @@ maketable <- function(df){
 
 Worsen <- tribble(~Worsen,
                   'Yes', 'Unk', "Yes", "Yes", "Yes", "Yes", "Unk", "Yes",
-                  "No", "Yes", "Yes")
+                  "No", "Yes", "Unk")
 
 for (i in 1:163){
   df2 <- df[i,] %>% 
