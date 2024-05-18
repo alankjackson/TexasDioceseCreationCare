@@ -1,0 +1,23 @@
+---
+title: "CSV for First Street foundation"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+```{r}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+google_crs <- "EPSG:4326" # lat long
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+```
+
+```{r}
+
+```
+
