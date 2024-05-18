@@ -272,3 +272,61 @@ Parishes <- rbind(Parishes, CampAllen)
 write_rds(Parishes, paste0(path, "Parishes.rds"))
 ```
 
+##  More updates
+
+```{r}
+
+#   The Episcopal Church of Wichita Falls -> Faith Episcopal
+#   What about St. Matthew's, Fort Worth
+#   St Mary Magdalen Manor needs lat long
+#   lat longs foe 152, 154, 159, 162, 
+
+Addresses <- tribble(~ID, ~Description,
+                     113, "12800 Lexington Street, Manor, TX 78653",
+                     144, "15481 Farm to Market Road 134, Leigh, Tx 75661",
+                     150, "305 W. Main, Arlington, TX 76010",
+                     152, "9700 Saints Cir, Fort Worth, TX 76108",
+                     154, "2529 Mountain View Ave, Fort Worth, TX 76103",
+                     159, "463 West Harwood Road, Hurst, TX 76054",
+                     162, "1437 Southwest Parkway, Wichita Falls, Texas 76302",
+                     22, "1613 West 43rd Street, Houston, TX 77018<br>(713) 681-6422<br>hope-episcopal.org (http://hope-episcopal.org)",
+                     39, "14301 Stuebner Airline Road, Houston, TX 77069<br>(281) 440-0904<br>saintdunstans.org (http://www.saintdunstans.org)",
+                     4, "3401 Fannin Street, Houston, TX 77004-3806<br>(713) 526-0311<br>lordofthestreets.org (http://lordofthestreets.org)",
+                     2, "5700 Lawndale Houston, TX 77023<br>Phone (713) 928-3221<br>http://redeemerhouston.org/",
+                     117, "1420 E Palm Valley Blvd, Round Rock, TX 78664<br>(512) 255-5436<br>saintrichards.org",
+                     1, "1117 Texas Avenue, Houston, TX 77002-3113<br>(713) 222-2593<br>christchurchcathedral.org (http://christchurchcathedral.org)",
+                     82, "217 West 26th Street, Bryan, TX 77806<br>(979) 822-5176<br>standrewsbcs.org (http://standrewsbcs.org)
+"
+)
+                     
+for (i in 1:nrow(Parishes)){
+  ID <- Parishes[i,]$ID
+  if (ID %in% Addresses$ID) {
+    Parishes[i,]$Address <- Addresses[Addresses$ID==ID,]$Description
+  } 
+}     
+
+Parishes <-  Parishes %>% 
+  mutate(Address=stringr::str_remove(Address, "<br.*$"))
+
+#   Add Casa Mateo
+
+sfc = sf::st_sfc(sf::st_point(c(-95.19360396538428, 29.78491185529597)))
+
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+CasaMateo <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, ~County, ~Address
+                     ~geometry, ~Zip,
+                     164, "Casa Mateo", "Houston", "Casa Mateo", 
+                     "13125 Indianapolis St, Houston, TX 77015", "East Harris", "Harris",
+                     NA, "77015", "13125 Indianapolis St, Houston, TX 77015")
+
+sf::st_geometry(CasaMateo[1,]) <- sfc
+CasaMateo <- CasaMateo %>% sf::st_as_sf()
+
+Parishes <- rbind(Parishes, CasaMateo)
+
+
+```
+
