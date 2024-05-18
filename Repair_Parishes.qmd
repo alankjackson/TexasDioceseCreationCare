@@ -313,6 +313,7 @@ Parishes <-  Parishes %>%
 
 sfc = sf::st_sfc(sf::st_point(c(-95.19360396538428, 29.78491185529597)))
 
+
 sf::st_geometry(sfc)
 sf::st_crs(sfc) <- google_crs
 
