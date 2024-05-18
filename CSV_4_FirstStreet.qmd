@@ -19,5 +19,13 @@ Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
 ```{r}
 
+foo <- Parishes %>% 
+  select(ID, Label, Address, County, City, Zip) %>% 
+  mutate(lon=sf::st_coordinates(.)[,1],
+         lat = sf::st_coordinates(.)[,2]) %>% 
+  sf::st_drop_geometry()
+
+write_csv(foo, paste0(path, "First_Street_Data.csv"))
+
 ```
 
