@@ -373,5 +373,9 @@ Parishes <-  Parishes %>%
 Parishes <- Parishes %>% 
   mutate(Label=stringr::str_replace(Label, "^St\\.", "St"))
 
+########    Write out results
+
+write_rds(Parishes, paste0(path, "Parishes.rds"))
+
 ```
 
