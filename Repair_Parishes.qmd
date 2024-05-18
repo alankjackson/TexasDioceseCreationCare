@@ -276,10 +276,14 @@ write_rds(Parishes, paste0(path, "Parishes.rds"))
 
 ```{r}
 
-#   The Episcopal Church of Wichita Falls -> Faith Episcopal
-#   What about St. Matthew's, Fort Worth
-#   St Mary Magdalen Manor needs lat long
-#   lat longs foe 152, 154, 159, 162, 
+#   The Episcopal Church of Wichita Falls -> Faith Episcopal - done
+#   What about St. Matthew's, Fort Worth??? St Christopher's - done
+#   St Mary Magdalen Manor needs lat long - done
+#   lat longs for 152, 154, 159, 162,  - done
+#   Add St. Catherine's Hamilton - done, it's dead Jim
+#   North region to Fort Worth Convocation - done
+#   Repair St. -> St, Saint -> St, and apostrophes - period done
+#   remove temp label - done
 
 Addresses <- tribble(~ID, ~Description,
                      113, "12800 Lexington Street, Manor, TX 78653",
@@ -316,8 +320,8 @@ sfc = sf::st_sfc(sf::st_point(c(-95.19360396538428, 29.78491185529597)))
 sf::st_geometry(sfc)
 sf::st_crs(sfc) <- google_crs
 
-CasaMateo <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, ~County, ~Address
-                     ~geometry, ~Zip,
+CasaMateo <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, 
+                     ~County, ~geometry, ~Zip, ~Address,
                      164, "Casa Mateo", "Houston", "Casa Mateo", 
                      "13125 Indianapolis St, Houston, TX 77015", "East Harris", "Harris",
                      NA, "77015", "13125 Indianapolis St, Houston, TX 77015")
@@ -327,6 +331,47 @@ CasaMateo <- CasaMateo %>% sf::st_as_sf()
 
 Parishes <- rbind(Parishes, CasaMateo)
 
+#   Tidy up Wichita Falls (Faith Episcopal)
+
+Parishes[Parishes$ID==162,]$Label <- "Faith Episcopal"
+Parishes[Parishes$ID==162,]$Name <- "Faith Episcopal"
+Parishes[Parishes$ID==162,]$City <- "Wichita Falls"
+Parishes[Parishes$ID==162,]$Zip <- "76302"
+
+#   Fix St. Matthew's AKA St. Christopher's
+
+Parishes[Parishes$ID==153,]$Label <- "St Christopher's"
+Parishes[Parishes$ID==153,]$Name <- "St Christopher's"
+Parishes[Parishes$ID==153,]$Address <- "5709 Wedgwood Dr., Fort Worth, TX 76133"
+
+#   Add Zips
+
+Parishes[Parishes$ID==152,]$Zip <- "76108"
+Parishes[Parishes$ID==153,]$Zip <- "76133"
+Parishes[Parishes$ID==154,]$Zip <- "76103"
+Parishes[Parishes$ID==159,]$Zip <- "76054"
+
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+tmap::tmap_mode("view") # set mode to interactive plots
+  tmap::tm_shape(foo) + 
+  tmap::tm_dots(size=0.05) +
+  tmap::tm_shape(Parishes) + 
+  tmap::tm_dots(col="red")
+  
+#   North Region to Fort Worth Convocation and remove temp label
+  
+Parishes <-  Parishes %>% 
+  mutate(Convocation=stringr::str_replace(Convocation, 
+                                          "North Region", 
+                                          "Fort Worth")) %>% 
+  mutate(City=stringr::str_remove(City, " \\(temp\\)"))
+
+
+#   St. to St
+
+Parishes <- Parishes %>% 
+  mutate(Label=stringr::str_replace(Label, "^St\\.", "St"))
 
 ```
 
