@@ -1,0 +1,52 @@
+---
+title: "Tornado incidence"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##        Tornado incidence by county from FEMA data
+
+```{r setup}
+
+library(tidyverse)
+
+library(sf)
+library(gt)
+
+googlecrs <- "EPSG:4326"
+localUTM <- "EPSG:32615"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds")) %>% 
+  sf::st_transform(googlecrs)
+
+FEMA_county <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
+  select(County=COUNTY, 
+         Tornado_num=TRND_EVNTS, Tornado_freq=TRND_AFREQ
+         )
+
+#   Also read in NOAA tornado data from https://www.spc.noaa.gov/wcm/
+
+NOAA <- read_csv(paste0(path, "Tornado/1950-2022_actual_tornadoes.csv"),
+                 col_types="ccccccccccdccccddddddcccccccc") %>% 
+  filter(st=="TX") %>% 
+  select(Year=yr, Month=mo, Day=dy, EF_scale=mag, Start_lat=slat,
+         Start_lon=slon, End_lat=elat, End_lon=elon, Length=len, Width=wid,
+         County_fips_1=f1, County_fips_2=f2)
+
+```
+
+
+
+
+
+
+
+
+
