@@ -7,6 +7,8 @@ editor: source
 
 ## Analyze Hail data
 
+National Risk Index data from FEMA
+
 ```{r setup}
 
 library(tidyverse)
