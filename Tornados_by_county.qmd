@@ -38,10 +38,94 @@ NOAA <- read_csv(paste0(path, "Tornado/1950-2022_actual_tornadoes.csv"),
   filter(st=="TX") %>% 
   select(Year=yr, Month=mo, Day=dy, EF_scale=mag, Start_lat=slat,
          Start_lon=slon, End_lat=elat, End_lon=elon, Length=len, Width=wid,
-         County_fips_1=f1, County_fips_2=f2)
+         County_fips_1=f1, County_fips_2=f2) %>% 
+  filter(as.numeric(Year)>1985) %>% 
+  mutate(County_fips_1=paste0("48", stringr::str_pad(County_fips_1, 3, pad="0")),
+         County_fips_2=paste0("48", stringr::str_pad(County_fips_2, 3, pad="0"))
+         )
 
 ```
 
+##        Brief interlude to get county areas
+
+```{r}
+
+Hail <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
+  select(COUNTY, COUNTYFIPS, AREA) %>% 
+  mutate(COUNTYFIPS=paste0("48", stringr::str_pad(COUNTYFIPS, 3, pad="0"))) %>% 
+  mutate(COUNTY=stringr::str_replace(COUNTY, "DeWitt", "De Witt"))
+
+NOAA <- NOAA %>% 
+  left_join(., Hail, by=c("County_fips_1"="COUNTYFIPS"))
+
+```
+
+
+##        Attach county outlines, generate some stats, and map
+
+EF0-1 tornadoes only are tracked since 1986, so neeed to drop earlier records to
+make comparisons
+
+```{r}
+
+NOAA <- NOAA %>% 
+    left_join(., Counties, by=c("County_fips_1"="FIPS_ST_CN")) %>% 
+  st_as_sf()
+
+#   Sum up to get average by year. Also calculate % area
+
+# NOAA_sum <- NOAA %>% 
+# #   Conversion is width in yards to width in miles
+#   mutate(Path_area=Length*Width*0.0005681818) %>% 
+#   group_by(County_fips_1) %>% 
+#     summarize(T_per_yr=n()/36, 
+#               Pct_area=(30/36)*100*sum(Path_area/AREA, na.rm = TRUE))
+# 
+# NOAA_sum <- NOAA_sum %>% 
+#   mutate(Pct_area=replace_na(Pct_area, 0)) %>% 
+#   mutate(T_per_yr=replace_na(T_per_yr, 0)) %>% 
+#   filter(!stringr::str_detect(County_fips_1, "48000"))
+
+#   Split between EF 0-1, and EF>1, point where hurricane straps work
+
+NOAA_sum <- NOAA %>% 
+  mutate(EF_threshold=if_else(EF_scale<2, "weak", "strong")) %>% 
+#   Conversion is width in yards to width in miles
+  mutate(Path_area=Length*Width*0.0005681818) %>% 
+  group_by(County_fips_1, EF_threshold) %>% 
+    summarize(T_per_yr=n()/36, 
+              Pct_area=100*sum(Path_area/AREA, na.rm = TRUE)) %>% 
+  filter(!stringr::str_detect(County_fips_1, "48000"))
+
+NOAA_sum_weak <- NOAA_sum %>% 
+  filter(stringr::str_detect(EF_threshold,"weak"))
+
+NOAA_sum_strong <- NOAA_sum %>% 
+  filter(stringr::str_detect(EF_threshold,"strong"))
+
+NOAA_ratio <- NOAA_sum %>% 
+  sf::st_drop_geometry() %>% 
+  pivot_wider(!Pct_area, names_from = EF_threshold, values_from = T_per_yr) %>% 
+  mutate(ratio=strong/weak) %>% 
+  left_join(., Counties, by=c("County_fips_1"="FIPS_ST_CN")) %>% 
+  st_as_sf()
+
+#   make a diagnostic map
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(NOAA_ratio, name="Ratio Strong/Weak") + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  tmap::tm_fill(col = "ratio", title = "Ratio of Strong to Weak", alpha=0.6, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+tmap::tm_shape(NOAA_sum_weak, name="Tornadoes per Year") + 
+  tmap::tm_fill(col = "T_per_yr", title = "Tornados per Year", alpha=0.6, style="pretty")+
+  tmap::tm_borders(lwd=0.1) +
+  tmap::tm_layout(legend.position = c("right", "top"), title= 'Weak Tornadoes (EF 0-1)', title.position = c('left', 'top'))
+  
+```
 
 
 
