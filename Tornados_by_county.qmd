@@ -103,8 +103,12 @@ NOAA_sum_weak <- NOAA_sum %>%
 NOAA_sum_strong <- NOAA_sum %>% 
   filter(stringr::str_detect(EF_threshold,"strong"))
 
-NOAA_ratio <- NOAA_sum %>% 
+NOAA_ratio <- NOAA %>% 
   sf::st_drop_geometry() %>% 
+  mutate(EF_threshold=if_else(EF_scale<2, "weak", "strong")) %>% 
+  group_by(County_fips_1) %>% 
+    summarise(Total=n()) %>% 
+  mutate(Total=)
   pivot_wider(!Pct_area, names_from = EF_threshold, values_from = T_per_yr) %>% 
   mutate(ratio=strong/weak) %>% 
   left_join(., Counties, by=c("County_fips_1"="FIPS_ST_CN")) %>% 
@@ -127,6 +131,55 @@ tmap::tm_shape(NOAA_sum_weak, name="Tornadoes per Year") +
   
 ```
 
+##        Let's look at the EF2+ tornado day data from NOAA in a NetCDF file
+
+```{r}
+library(ncdf4)
+
+# src <- tidync::tidync(paste0(path, "Tornado/sigtorn.nc"))
+# print(src)
+
+# tmp_raster <- terra::rast(paste0(path, "Tornado/sigtorn.nc"))
+
+ncfname <- paste0(path, "Tornado/sigtorn.nc")
+ncin <- nc_open(ncfname)
+print(ncin)
+
+dname <- "sigtorn"
+
+# get longitude and latitude
+lon <- ncvar_get(ncin,"lon")
+nlon <- dim(lon)
+head(lon)
+
+lat <- ncvar_get(ncin,"lat")
+nlat <- dim(lat)
+head(lat)
+
+T_Days <- ncvar_get(ncin,"sigtorn")
+T_Days
+
+tmp_array <- ncvar_get(ncin,"sigtorn")
+fillvalue <- ncatt_get(ncin,"sigtorn","_FillValue")
+tmp_array[tmp_array==fillvalue$value] <- NA
+dim(tmp_array)
+image(purrr::list_flatten(lon), 
+      purrr::list_flatten(lat),
+      tmp_array)
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(tmp_raster) + 
+    #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
+  # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
+  tmap::tm_raster(alpha=0.3,
+                  title = "Tornado Threat",
+                  palette = "-RdYlGn") +
+  tmap::tm_shape(Parishes)+
+  tmap::tm_dots()
+```
 
 
 
