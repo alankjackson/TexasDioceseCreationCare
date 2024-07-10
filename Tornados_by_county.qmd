@@ -46,20 +46,211 @@ NOAA <- read_csv(paste0(path, "Tornado/1950-2022_actual_tornadoes.csv"),
 
 ```
 
-##        Brief interlude to get county areas
+##        different approach. 
+create X-Y grid
+convert to X-Y
+interpolate EF0-1, 2-3, 4-5 to the grid
+multiply each point by damage area/cell area (0.7, 9.6, 80.7 km**2)
+smooth
+intersect with parishes
 
 ```{r}
 
-Hail <- readRDS(paste0(path, "NRI_Table_Counties.rds")) %>% 
-  select(COUNTY, COUNTYFIPS, AREA) %>% 
-  mutate(COUNTYFIPS=paste0("48", stringr::str_pad(COUNTYFIPS, 3, pad="0"))) %>% 
-  mutate(COUNTY=stringr::str_replace(COUNTY, "DeWitt", "De Witt"))
-
 NOAA <- NOAA %>% 
-  left_join(., Hail, by=c("County_fips_1"="COUNTYFIPS"))
+        filter(between(Start_lon, -99, -93)) %>%
+        filter(between(Start_lat, 28.8, 34.2)) %>% 
+        sf::st_as_sf(coords=c("Start_lon", "Start_lat"), 
+                     crs=googlecrs, agr = "identity")
 
+#   Convert to X-Y
+
+NOAA_xy <- NOAA %>% 
+  sf::st_transform(crs = localUTM)
+
+#   Create a grid to interpolate to, and a box to contain it
+
+bbox <- sf::st_bbox(NOAA)
+#   Expand box by 20% to give a little extra room
+Dx <- (bbox[["xmax"]]-bbox[["xmin"]])*0.1
+Dy <- (bbox[["ymax"]]-bbox[["ymin"]])*0.1
+bbox["xmin"] <- bbox["xmin"] - Dx
+bbox["xmax"] <- bbox["xmax"] + Dx
+bbox["ymin"] <- bbox["ymin"] - Dy
+bbox["ymax"] <- bbox["ymax"] + Dy
+
+bbox_xy = bbox %>%
+  sf::st_as_sfc() %>%
+  sf::st_transform(crs = localUTM) %>%
+  sf::st_bbox()
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+#   30 km grid spacing, with lots of extra room for filter edges
+
+grd_terra <- terra::rast(xmin=bbox_xy["xmin"]-30000, xmax=bbox_xy["xmax"]+30000,
+                             ymin=bbox_xy["ymin"]-30000, ymax=bbox_xy["ymax"]+30000,
+                             resolution=30000,
+                             crs=localUTM,
+                             vals=0,
+                             names="Foo")
+
+#   Count number of hits in each grid cell
+
+Tornado_cnt <- terra::rasterize(NOAA_xy, grd_terra, fun="count")
+
+#   Smooth grid
+
+Tornado_sm <- terra::focal(Tornado_cnt, w=5, fun=mean,
+                           na.rm=TRUE) %>% 
+              terra::focal(w=3, fun=mean,
+                           na.rm=TRUE)
+
+#   display
+
+tmap::tm_shape(NOAA_xy) + 
+    tmap::tm_sf(col="black", size=0.005) +
+  #   contours from eks
+tmap::tm_shape(Tornado_sm) +
+    tmap::tm_raster(alpha=0.1)
+
+#   Make grids for each EF category, and convert to likelihood
+
+##########   EF 0-1
+
+T_01 <-  NOAA_xy %>% filter(EF_scale<2)
+T_cnt_01 <- T_01 %>% 
+  terra::rasterize(grd_terra, fun="count")
+T_cnt_01_sm <- terra::focal(T_cnt_01, w=5, fun=mean,
+                           na.rm=TRUE) %>% 
+              terra::focal(w=3, fun=mean,
+                           na.rm=TRUE)
+#   Create likelihood of a hit over 30 years
+Likelihood_01 <- T_cnt_01_sm*0.7*30/(900*36)
+#   Trim back to actual data
+Likelihood_01 <-  terra::crop(Likelihood_01, terra::ext(c(bbox_xy["xmin"]+60000,
+                                                          bbox_xy["xmax"]-60000,
+                                                          bbox_xy["ymin"]+60000,
+                                                          bbox_xy["ymax"]-60000)))
+#   Now lets transform the contours & grid to lat-long space and plot on the
+#   basemap
+#   Create contours
+brks <- seq(from = 0, to = 0.01, by = 0.002)
+Contours_sm <- stars::st_contour(stars::st_as_stars(Likelihood_01), 
+                                 contour_lines=TRUE, breaks=brks)
+
+#  One more step - let's smooth the contours themselves - really just
+#  aesthetically round off the pointy bits
+Contours_sm2 <- smoothr::smooth(Contours_sm, method="ksmooth", smoothness=2)
+Contours_LL <- sf::st_transform(Contours_sm, crs=googlecrs) 
+
+foo_sm_star_LL <- sf::st_transform(stars::st_as_stars(Likelihood_01) %>%
+                                     rename(Likelihood=focal_mean),
+                                     crs=googlecrs)
+ggplot() +
+  #   this is the best looking basemap
+  Base_basemapR +
+  #   Gridded data
+  stars::geom_stars(data=foo_sm_star_LL, alpha=0.4) +  
+  #   Add points
+  geom_sf(data=T_01, size=0.01) +
+  #   Create filled density "contours" 
+  geom_sf(data=Contours_LL, color="black") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4) +
+  #   Add a scale bar
+  ggspatial::annotation_scale(data=T_01,
+                              aes(unit_category="imperial",
+                                              style="ticks"),
+    location="br", width_hint=0.2, bar_cols=1) +
+  geom_contour(data=as_tibble(foo_sm_star_LL),
+               aes(x=x, y=y, z=Likelihood)
+               )+
+  coord_sf(crs=googlecrs) + # required 
+  #   Add title
+  labs(title="EF 0 & 1 Likelihood over 30 years",
+       subtitle="Points are historic tornados",
+       x="Longitude", y="Latitude")
+
+  ggsave(paste0(output_path, "Tornado/EF_0_1_Tornado_Likelihood_Map.jpg"))
+##########   EF 2-3
+
+T_23 <- NOAA_xy %>% filter(between(EF_scale, 2, 3)) 
+T_cnt_23 <- T_23 %>% 
+  terra::rasterize(grd_terra, fun="count")
+T_cnt_23_sm <- terra::focal(T_cnt_23, w=5, fun=mean,
+                           na.rm=TRUE) %>% 
+              terra::focal(w=3, fun=mean,
+                           na.rm=TRUE)
+#   Create likelihood of a hit over 30 years
+Likelihood_23 <- T_cnt_23_sm*9.6*30/(900*36)
+#   Trim back to actual data
+Likelihood_23 <-  terra::crop(Likelihood_23, terra::ext(c(bbox_xy["xmin"]+60000,
+                                                          bbox_xy["xmax"]-60000,
+                                                          bbox_xy["ymin"]+60000,
+                                                          bbox_xy["ymax"]-60000)))
+
+brks <- seq(from = 0, to = 0.03, by = 0.005)
+Contours_sm <- stars::st_contour(stars::st_as_stars(Likelihood_23), 
+                                 contour_lines=TRUE, breaks=brks)
+
+#  One more step - let's smooth the contours themselves - really just
+#  aesthetically round off the pointy bits
+Contours_sm2 <- smoothr::smooth(Contours_sm, method="ksmooth", smoothness=2)
+Contours_LL <- sf::st_transform(Contours_sm, crs=googlecrs) 
+
+foo_sm_star_LL <- sf::st_transform(stars::st_as_stars(Likelihood_23) %>%
+                                     rename(Likelihood=focal_mean),
+                                     crs=googlecrs)
+ggplot() +
+  #   this is the best looking basemap
+  Base_basemapR +
+  #   Gridded data
+  stars::geom_stars(data=foo_sm_star_LL, alpha=0.4) +  
+  #   Add points
+  geom_sf(data=T_23, size=1) +
+  #   Create filled density "contours" 
+  geom_sf(data=Contours_LL, color="black") +
+  scale_fill_viridis_c(direction=-1, alpha=0.4) +
+  #   Add a scale bar
+  ggspatial::annotation_scale(data=T_23,
+                              aes(unit_category="imperial",
+                                              style="ticks"),
+    location="br", width_hint=0.2, bar_cols=1) +
+  geom_contour(data=as_tibble(foo_sm_star_LL),
+               aes(x=x, y=y, z=Likelihood)
+               )+
+  coord_sf(crs=googlecrs) + # required 
+  #   Add title
+  labs(title="EF 2 & 3 Likelihood over 30 years",
+       subtitle="Points are historic tornados",
+       x="Longitude", y="Latitude")
+
+  ggsave(paste0(output_path, "Tornado/EF_2_3_Tornado_Likelihood_Map.jpg"))
+
+##########   EF 4-5
+
+T_cnt_45 <- NOAA_xy %>% filter(EF_scale>3) %>% 
+  terra::rasterize(grd_terra, fun="count")
+T_cnt_45_sm <- terra::focal(T_cnt_45, w=5, fun=mean,
+                           na.rm=TRUE) %>% 
+              terra::focal(w=3, fun=mean,
+                           na.rm=TRUE)
+ggplot() +
+  #   this is the best looking basemap
+  Base_basemapR +
+  #   Add points
+  geom_sf(data=NOAA_xy %>% filter(EF_scale>3), size=4, col="red") +
+  coord_sf(crs=googlecrs) + # required 
+  #   Add title
+  labs(title="Texas EF 4 & 5 Tornados over 36 years",
+       x="Longitude", y="Latitude")
+
+  ggsave(paste0(output_path, "Tornado/EF_4_5_Tornados_Map.jpg"))
+
+tmap::tm_shape(NOAA_xy) + 
+    tmap::tm_sf(col="black", size=0.005) +
+tmap::tm_shape(Likelihood_45) +
+    tmap::tm_raster(alpha=0.1)
+ 
 ```
-
 
 ##        Attach county outlines, generate some stats, and map
 
@@ -103,12 +294,12 @@ NOAA_sum_weak <- NOAA_sum %>%
 NOAA_sum_strong <- NOAA_sum %>% 
   filter(stringr::str_detect(EF_threshold,"strong"))
 
-NOAA_ratio <- NOAA %>% 
+NOAA_ratio <- NOAA_sum %>% 
   sf::st_drop_geometry() %>% 
-  mutate(EF_threshold=if_else(EF_scale<2, "weak", "strong")) %>% 
-  group_by(County_fips_1) %>% 
-    summarise(Total=n()) %>% 
-  mutate(Total=)
+  # mutate(EF_threshold=if_else(EF_scale<2, "weak", "strong")) %>% 
+  # group_by(County_fips_1) %>% 
+    # summarise(Total=n()) %>% 
+  # mutate(Total=)
   pivot_wider(!Pct_area, names_from = EF_threshold, values_from = T_per_yr) %>% 
   mutate(ratio=strong/weak) %>% 
   left_join(., Counties, by=c("County_fips_1"="FIPS_ST_CN")) %>% 
@@ -129,6 +320,9 @@ tmap::tm_shape(NOAA_sum_weak, name="Tornadoes per Year") +
   tmap::tm_borders(lwd=0.1) +
   tmap::tm_layout(legend.position = c("right", "top"), title= 'Weak Tornadoes (EF 0-1)', title.position = c('left', 'top'))
   
+
+#   Not very illuminating - too noisey.
+
 ```
 
 ##        Let's look at the EF2+ tornado day data from NOAA in a NetCDF file
@@ -162,16 +356,65 @@ T_Days
 tmp_array <- ncvar_get(ncin,"sigtorn")
 fillvalue <- ncatt_get(ncin,"sigtorn","_FillValue")
 tmp_array[tmp_array==fillvalue$value] <- NA
-dim(tmp_array)
-image(purrr::list_flatten(lon), 
-      purrr::list_flatten(lat),
-      tmp_array)
+
+lonlat <- as.matrix(expand.grid(lon,lat, stringsAsFactors = FALSE))
+tmp_vec <- as.vector(tmp_array)
+# create dataframe and add names
+tmp_df01 <- data.frame(cbind(lonlat,tmp_vec))  
+
+names(tmp_df01) <- c("lon","lat","T_days")  
+
+tmp_df01 <- tmp_df01 %>%
+  filter(between(lon, -99, -93)) %>%
+  filter(between(lat, 29, 34))
+#   
+# head(na.omit(tmp_df01), 10)
+
+foo <- sf::st_as_sf(tmp_df01,                         
+           coords = c("lon", "lat"),
+           crs = googlecrs)
+
+df_xy <- sf::st_transform(foo, crs=localUTM)
+
+tmap::qtm(df_xy)
+
+#     sfc POINT file
+
+bbox <- sf::st_bbox(foo)
+
+grd_sf <- sf::st_make_grid(x=bbox,
+                                  what="corners",
+                                  cellsize=0.5,
+                                  crs=google_crs
+                                  )
+
+#     Create interpolator and interpolate to grid
+
+fit_IDW <- gstat::gstat( 
+  formula = T_days ~ 1,
+  data = foo, 
+  #nmax = 10, nmin = 3, # can also limit the reach with these numbers
+  set = list(idp = 2) # inverse distance power
+)
+
+#   Use predict to apply the model fit to the grid (using the data frame grid
+#   version)
+
+#           We set debug.level to turn off annoying output
+interp_IDW <- predict(fit_IDW, grd_sf, debug.level=0)
+interp_IDW_stars <- stars::st_rasterize(interp_IDW %>% dplyr::select(T_days=var1.pred, geometry))
+
+ggplot() +
+  #   geom_stars is a good way to display a grid
+  stars::geom_stars(data=interp_IDW_stars)   
+
 
 tmap::tmap_options(basemaps="OpenStreetMap")
 
 tmap::tmap_mode("view") # set mode to interactive plots
 
-tmap::tm_shape(tmp_raster) + 
+# tmap::tm_shape(interp_IDW) + 
+tmap::tm_dots(foo) + 
     #tmap::tm_sf(col="ConvoColor", alpha=0.3) +
   # tmap::tm_fill(title = "Threat", alpha=0.3, style="pretty") +
   tmap::tm_raster(alpha=0.3,
