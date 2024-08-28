@@ -1,0 +1,132 @@
+---
+title: "Analyze First Street Spreadsheet"
+author: "Alan Jackson"
+description: "Analyzing data captured in a spreadsheet from the First Street Foundation for all the churches in the diocese of Texas"
+date: "8/27/2024"
+image: "cover.png"
+categories:
+  - Mapping
+  - Diocesan Creation Care
+  - Climate Change
+  - Natural Disasters
+execute:
+  freeze: auto  # re-render only when source changes
+format: html
+editor: source
+---
+
+##    First Street Data
+
+Using a non-commercial account (because the price for a commercial account is
+really high), I found the nearest residence to each of 164 churches in the
+diocese, and ran reports on those locations. For a couple of spots, where the
+distance was large, I used flood maps to get better data. I then captured by
+hand a few key indicators from the reports and entered them into a spreadsheet.
+The purpose of this mini-project is to analyze and summarize that data in a
+meaningful form.
+
+```{r}
+#   setup
+
+library(tidyverse)
+library(readxl)
+
+Local_path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreet/"
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+
+```
+
+##        Read in the spreadsheet 
+
+Read the spreadsheet in and do a little cleanup and error-checking
+
+```{r}
+
+df <- readxl::read_xls(paste0(output_path, "Churches.xls"))
+
+#   Let's break up some columns, and delete some.
+
+df <- df %>% 
+  select(-c(8:10)) %>% # drop Air, Heat, and address used
+  rename(Flood=5, Fire=6, Wind=7, Flood50=9, Wind50=10, FloodMax=11) %>% 
+  mutate(Flood50=stringr::str_replace(Flood50, "6 in", "0.5 ft")) %>% 
+  mutate(FloodMax=stringr::str_replace(FloodMax, "6 in", "0.5 ft")) %>% 
+  mutate(Flood50=as.numeric(stringr::str_extract(Flood50, "\\s[0-9\\.]+\\s"))) %>% 
+  mutate(Wind50=as.numeric(stringr::str_extract(Wind50, "\\s[0-9\\.]+\\s"))) %>% 
+  mutate(FloodMax=as.numeric(stringr::str_extract(FloodMax, "\\s[0-9\\.]+\\s")))
+  
+```
+
+##        Let's make some flood plots
+
+```{r}
+
+#   Number of 6 inch floods
+
+df %>% 
+  filter(Flood>0) %>% 
+  ggplot(aes(x=Flood)) +
+    geom_histogram() +
+    labs(title="Churches expected to see 6 inches of flooding over 30 years",
+         caption="Data from First Street Foundation reports",
+         x="Percent Probability of 6 inches of flooding in 30 years",
+         y="Number of churches")
+
+#   Max floods
+
+df %>% 
+  filter(FloodMax>0) %>% 
+  ggplot(aes(x=FloodMax)) +
+    geom_histogram() +
+    labs(title="Maximum Expected Flood Depth Over 30 Years",
+         caption="Data from First Street Foundation reports",
+         x="Flood Depth in Feet",
+         y="Number of churches")
+
+#   Depths of flood at 50% probability
+
+df %>% 
+  filter(Flood50>0) %>% 
+  ggplot(aes(x=Flood50)) +
+    geom_histogram() +
+    labs(title="50% Probability Flood Depth Over 30 Years",
+         caption="Data from First Street Foundation reports",
+         x="Flood Depth in Feet",
+         y="Number of churches")
+  
+  
+```
+
+##        Now let's make some fire plots
+
+```{r}
+
+df %>% 
+  filter(Fire>0) %>% 
+  ggplot(aes(x=Fire)) +
+    geom_histogram() +
+    labs(title="Probability of Wildfire over 30 Years",
+         caption="Data from First Street Foundation reports",
+         x="Percent probability",
+         y="Number of churches")
+
+```
+
+##        Wind plots
+
+```{r}
+
+df %>% 
+  filter(stringr::str_detect(Notes, "\\*", negate=TRUE)|is.na(Notes)) %>% 
+  ggplot(aes(x=Wind)) +
+    geom_histogram() +
+    labs(title="Probability of Tropical Winds of 100 mph over 30 Years",
+         caption="Data from First Street Foundation reports",
+         x="Percent probability",
+         y="Number of churches")
+
+```
+
+
