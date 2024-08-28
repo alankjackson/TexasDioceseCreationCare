@@ -69,10 +69,14 @@ df %>%
   filter(Flood>0) %>% 
   ggplot(aes(x=Flood)) +
     geom_histogram() +
-    labs(title="Churches expected to see 6 inches of flooding over 30 years",
+    labs(title="Likelihood of 6 Inches of Flooding",
+         subtitle="Over a 30-year period",
          caption="Data from First Street Foundation reports",
-         x="Percent Probability of 6 inches of flooding in 30 years",
+         x="Percent Probability",
          y="Number of churches")
+
+ggsave(paste0(output_path, "Six_inch_floods_chart.jpg"),
+       width=4, height=3, units="in")
 
 #   Max floods
 
@@ -80,10 +84,14 @@ df %>%
   filter(FloodMax>0) %>% 
   ggplot(aes(x=FloodMax)) +
     geom_histogram() +
-    labs(title="Maximum Expected Flood Depth Over 30 Years",
+    labs(title="Maximum Expected Flood Depth",
+         subtitle="Over a 30-year period",
          caption="Data from First Street Foundation reports",
          x="Flood Depth in Feet",
          y="Number of churches")
+
+ggsave(paste0(output_path, "Max_floods_chart.jpg"),
+       width=4, height=3, units="in")
 
 #   Depths of flood at 50% probability
 
@@ -112,6 +120,8 @@ df %>%
          x="Percent probability",
          y="Number of churches")
 
+ggsave(paste0(output_path, "Wildfire_Probabilities_chart.jpg"),
+       width=4, height=3, units="in")
 ```
 
 ##        Wind plots
@@ -122,11 +132,33 @@ df %>%
   filter(stringr::str_detect(Notes, "\\*", negate=TRUE)|is.na(Notes)) %>% 
   ggplot(aes(x=Wind)) +
     geom_histogram() +
-    labs(title="Probability of Tropical Winds of 100 mph over 30 Years",
+    labs(title="Probability of 100 mph Tropical Winds",
+         subtitle="Over a 30-year period",
          caption="Data from First Street Foundation reports",
          x="Percent probability",
          y="Number of churches")
 
+ggsave(paste0(output_path, "Winds_over_100mph_chart.jpg"),
+       width=4, height=3, units="in")
+
 ```
+
+##        Let's make some maps
+
+Maps for:
+
+churches with >50% chance of 6 inches of flood
+
+churches with > 5 feet maximum flood
+
+churches with > 10% wildfire
+
+churches with > 50% of 100 mph winds
+
+```{r}
+
+```
+
+
 
 
