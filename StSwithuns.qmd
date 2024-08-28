@@ -71,7 +71,7 @@ Hail
 ```{r}
 
 df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls")) %>% 
-  select(-26) %>% 
+  # select(-28) %>% 
   select(-Coast_Flood_Like, -Coast_Flood_Severe)
 
 df2 <- df %>% 
@@ -81,10 +81,12 @@ df2 <- df %>%
                names_pattern="(.+)_(Like|Severe)") %>% 
   rename(Likelihood=Like, Severity=Severe) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Tornado1", "EF-0/1 Tornado")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Tornado2", "EF-2+ Tornado")) %>% 
   mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Pluvial", "River Flooding"))
               
-foo <- df2 %>% head(8)
+foo <- df2 %>% head(12)
 
 maketable <- function(df){
   Parish1 <- df$Parish[1]
@@ -192,7 +194,7 @@ maketable <- function(df){
 
 Worsen <- tribble(~Worsen,
                   'Yes', 'Unk', "Yes", "Yes", "Yes", "Yes", "Unk", "Yes",
-                  "No", "Yes", "Unk")
+                  "No", "No", "Yes", "Unk")
 
 for (i in 1:163){
   df2 <- df[i,] %>% 
@@ -205,6 +207,8 @@ for (i in 1:163){
   mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge2", "Cat 2 Surge")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge3", "Cat 3 Surge")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge4", "Cat 4 Surge")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Tornado1", "EF-0/1 Tornado")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Tornado2", "EF-2+ Tornado")) %>% 
   # mutate(Disaster=stringr::str_replace(Disaster, "Coast_Flood", "Coastal Flooding")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
   mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
