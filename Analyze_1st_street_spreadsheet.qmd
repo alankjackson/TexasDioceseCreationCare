@@ -30,6 +30,7 @@ meaningful form.
 
 library(tidyverse)
 library(readxl)
+library(gt)
 
 Local_path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreet/"
@@ -157,8 +158,182 @@ churches with > 50% of 100 mph winds
 
 ```{r}
 
+#   maximum flood
+
+foo <- df %>% 
+  filter(FloodMax>4.9) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_as_sf()
+  
+bbox <- sf::st_bbox(foo)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+foo %>% 
+    rename(Max_Flood=FloodMax) %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_sf(color="red",aes(
+      size=Max_Flood), show.legend=TRUE) +
+    ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Max_Flood,2), "ft")),
+                                    size=2, max.overlaps=20, force=100) +
+    labs(title=paste("Maximum Flood Prediction (>5 ft only)"),
+         subtitle="First Street Foundation",
+         x="Longitude",
+         y="Latitude") +
+    coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+  
+  ggsave(paste0(output_path, "FirstStreet_Max_Flood.jpg"))
+
+#   6 inches of flooding
+
+foo <- df %>% 
+  filter(Flood>0) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_as_sf()
+  
+bbox <- sf::st_bbox(foo)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+foo %>% 
+    rename(Probability=Flood) %>% 
+    # mutate(Probability=0.2*Probability) %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_sf(color="red",
+      aes(size=Probability), show.legend=TRUE) +
+    ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Probability,2), "%")),
+                                    size=2, max.overlaps=20, force=100) +
+    labs(title="Probability of a 6 inch flood",
+         subtitle="First Street Foundation",
+         x="Longitude",
+         y="Latitude") +
+    coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+  
+  ggsave(paste0(output_path, "FirstStreet_6inch_Flood.jpg"))
+
+#   Wildfire
+
+foo <- df %>% 
+  filter(Fire>5.0) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_as_sf()
+  
+bbox <- sf::st_bbox(foo)
+
+Base_basemapR <- basemapR::base_map(bbox, basemap="mapnik", increase_zoom=2)
+
+foo %>% 
+    rename(Probability=Fire) %>% 
+    # mutate(Probability=0.2*Probability) %>% 
+    ggplot() +
+    Base_basemapR +
+    geom_sf(color="red",
+      aes(size=Probability), show.legend=TRUE) +
+    ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Probability,2), "%")),
+                                    size=2, max.overlaps=20, force=100) +
+    labs(title="Probability of a Wildfire (>5% only)",
+         subtitle="First Street Foundation",
+         x="Longitude",
+         y="Latitude") +
+    coord_sf(xlim=c(bbox$xmin, bbox$xmax),c(bbox$ymin, bbox$ymax))
+  
+  ggsave(paste0(output_path, "FirstStreet_Wildfire.jpg"))
+
+
 ```
 
+##        And let's make some tables
 
+```{r}
+
+#   maximum flood
+
+table <- df %>% 
+  filter(FloodMax>1) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(desc(FloodMax)) %>% 
+  select(Parish=Name.x, City=City.x, FloodMax) %>% 
+ gt() %>% 
+    tab_header(
+      title = md(paste("**Churches affected by Flooding**")),
+      subtitle="Maximum expected flooding over 30 years above 1 foot"
+    ) %>% 
+    tab_source_note(
+      source_note="Source: First Street Foundation") %>% 
+    fmt_number(
+      columns = 3,
+      decimals = 1
+    ) %>% 
+    cols_label(
+      FloodMax="Max Flood (ft)"
+    ) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold'
+    )
+    
+  gtsave(table, paste0(output_path, "Maximum_Flood_table.html"))
+
+#   6 inch flood
+
+table <- df %>% 
+  filter(Flood>0) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(desc(Flood)) %>% 
+  select(Parish=Name.x, City=City.x, Flood) %>% 
+  mutate(Flood=Flood/100) %>% 
+ gt() %>% 
+    tab_header(
+      title = md(paste("**Churches affected by Flooding**")),
+      subtitle="Probability of a 6 inch flood over 30 years"
+    ) %>% 
+    tab_source_note(
+      source_note="Source: First Street Foundation") %>% 
+    fmt_percent(
+      columns=3,
+      decimals=0
+    ) %>% 
+    cols_label(
+      Flood="Probability"
+    ) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold'
+    )
+    
+  gtsave(table, paste0(output_path, "Six_inch_flood_table.html"))
+
+#   Wildfire
+
+table <- df %>% 
+  filter(Fire>5.0) %>% 
+  left_join(., Parishes, by="ID") %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(desc(Fire)) %>% 
+  select(Parish=Name.x, City=City.x, Fire) %>% 
+  mutate(Fire=Fire/100) %>% 
+ gt() %>% 
+    tab_header(
+      title = md(paste("**Churches affected by Fire**")),
+      subtitle="Probability of a wildfire >5% over 30 years"
+    ) %>% 
+    tab_source_note(
+      source_note="Source: First Street Foundation") %>% 
+    fmt_percent(
+      columns=3,
+      decimals=0
+    ) %>% 
+    cols_label(
+      Fire="Probability"
+    ) %>% 
+    tab_options(
+      column_labels.font.weight = 'bold'
+    )
+    
+  gtsave(table, paste0(output_path, "Fire_table.html"))
+  
+```
 
 
