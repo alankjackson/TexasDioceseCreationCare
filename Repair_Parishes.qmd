@@ -379,3 +379,35 @@ write_rds(Parishes, paste0(path, "Parishes.rds"))
 
 ```
 
+##        Add in St. Isidore's
+
+```{r}
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+google_crs <- "EPSG:4326" # lat long
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+sfc = sf::st_sfc(sf::st_point(c(-95.44105539990372, 30.125189954787952)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Isidore <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, ~County, 
+                     ~geometry, ~Zip, ~Address,
+                     165, "St. Isidore's", "Spring", "St. Isidore's Episcopal Church", 
+                     "24803 Oakhurst Dr, Spring, TX 77386", "San Jacinto", "Harris",
+                     NA, "77386", "24803 Oakhurst Dr, Spring, TX 77386")
+
+sf::st_geometry(Isidore[1,]) <- sfc
+Isidore <- Isidore %>% sf::st_as_sf()
+
+Parishes <- rbind(Parishes, Isidore)
+
+write_rds(Parishes, paste0(path, "Parishes.rds"))
+```
+
+
+
+
+
