@@ -395,7 +395,7 @@ sf::st_crs(sfc) <- google_crs
 
 Isidore <- tribble(~ID, ~Label, ~City, ~Name, ~Description, ~Convocation, ~County, 
                      ~geometry, ~Zip, ~Address,
-                     165, "St. Isidore's", "Spring", "St. Isidore's Episcopal Church", 
+                     165, "St. Isidore", "Spring", "St. Isidore Episcopal Church", 
                      "24803 Oakhurst Dr, Spring, TX 77386", "San Jacinto", "Harris",
                      NA, "77386", "24803 Oakhurst Dr, Spring, TX 77386")
 
@@ -407,6 +407,22 @@ Parishes <- rbind(Parishes, Isidore)
 write_rds(Parishes, paste0(path, "Parishes.rds"))
 ```
 
+##        Fix isidore name
+
+```{r}
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+google_crs <- "EPSG:4326" # lat long
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+Parishes <- Parishes %>% 
+  mutate(Label=stringr::str_replace(Label, "Isidore\\'s", "Isidore")) %>% 
+  mutate(Name=stringr::str_replace(Name, "Isidore\\'s", "Isidore"))  
+  
+write_rds(Parishes, paste0(path, "Parishes.rds"))
+```
 
 
 
