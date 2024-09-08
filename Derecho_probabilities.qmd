@@ -1,0 +1,37 @@
+---
+title: "Derecho Probabilities"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## Calculate probabilities of getting hit by a derecho
+
+```{r}
+
+#   Average size of derecho
+length <- 325 # miles
+width <-  60 # miles
+Derecho_area <- length*width*2.58999 # km^2
+
+#   2 derechos per year occur in an area of 1.2e6 km^2
+Two_derech <- 1.2e6
+#   ! derecho per year occurs in an area of 2.7e6 km^2 minus overlap
+One_derech <- 2.7e6 - Two_derech
+
+#   Probability of being hit in a given year is just the fraction of the area
+
+P_two <- Derecho_area/Two_derech 
+P_one <- Derecho_area/(One_derech*2) #    The 2 is because there is one every 2 years
+
+#   Probability over 30 years is 1-prob of one year^30
+P_two_30 <- 1 - P_two**30
+P_one_30 <- 1 - P_one**30
+
+#   From calculator for return period https://www.weather.gov/epz/wxcalc_floodperiod
+#   Return period for area 2 is 12 years
+#   Return period for area 1 is 29 years
+
+
+```
+
