@@ -203,8 +203,8 @@ foo %>%
     Base_basemapR +
     geom_sf(color="red",
       aes(size=Probability), show.legend=TRUE) +
-    ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Probability,2), "%")),
-                                    size=2, max.overlaps=20, force=100) +
+    # ggsflabel::geom_sf_label_repel(aes(label=paste(Label, signif(Probability,2), "%")),
+                                    # size=1, max.overlaps=20, force=100) +
     labs(title="Probability of a 6 inch flood",
          subtitle="First Street Foundation",
          x="Longitude",
@@ -274,7 +274,7 @@ table <- df %>%
       column_labels.font.weight = 'bold'
     )
     
-  gtsave(table, paste0(output_path, "Maximum_Flood_table.html"))
+  gtsave(table, paste0(output_path, "Maximum_Flood_table.docx"))
 
 #   6 inch flood
 
@@ -303,7 +303,7 @@ table <- df %>%
       column_labels.font.weight = 'bold'
     )
     
-  gtsave(table, paste0(output_path, "Six_inch_flood_table.html"))
+  gtsave(table, paste0(output_path, "Six_inch_flood_table.docx"))
 
 #   Wildfire
 
@@ -332,7 +332,7 @@ table <- df %>%
       column_labels.font.weight = 'bold'
     )
     
-  gtsave(table, paste0(output_path, "Fire_table.html"))
+  gtsave(table, paste0(output_path, "Fire_table.docx"))
   
 ```
 
