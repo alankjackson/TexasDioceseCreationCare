@@ -1,6 +1,17 @@
 ---
 title: "Read Storm Surge data"
 author: "Alan Jackson"
+description: "Using NOAA storm surge grids to predict maximum surge at numerous locations."
+date: "6/12/2023"
+image: "cover.png"
+categories:
+  - Mapping
+  - Texas
+  - Disasters
+  - Diocesan Taskforce
+execute:
+  freeze: auto  # re-render only when source changes
+  warning: false
 format: html
 editor: source
 ---
@@ -28,6 +39,7 @@ inputcrs <- "EPSG:4269" # from metadata file
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
+#   Church locations
 Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
 #   Define an AOI
@@ -54,16 +66,30 @@ Basemap_attribution <- 'attribution: &copy; <a href="https://www.openstreetmap.o
 
 ## Read in the files and clip to AOI
 
+Read in Cat 3 data and use the data extent to build a box.
+
+Do a little test using one church to see what a 100 meter circle looks like.
+
+Plot the rasters, and then make a nice map showing affected churches and the
+depth of storm surge.
+
 ```{r read in and clip}
 
-x <- terra::rast(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
+x <- terra::rast(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category3_MOM_Inundation_HIGH.tif")) 
 
 #   Clip to AOI
 
 cropped <- terra::crop(x, bbox)
 
- pt1 <- sf::st_transform(Parishes, crs=inputcrs)[62,] %>% 
+#   The data has holes in it and I really don't want to take the depth
+#   at a single point - better would be to average water depth for
+#   about a block around the church, 100 meters say. Let's see what
+#   that looks like
+
+ pt1 <- sf::st_transform(Parishes, crs=inputcrs)[Parishes$Label=="Saint Augustine of Hippo",] %>% 
    st_buffer(100) %>% st_as_sf() # Units are meters
+ 
+# Add ID number to Parishes
 Parishes <- Parishes %>% 
   mutate(ID=row_number())
 
@@ -71,12 +97,13 @@ Parishes <- Parishes %>%
 pts <- sf::st_transform(Parishes, crs=inputcrs) %>% 
   st_buffer(100) %>% st_as_sf() # Units are meters
 
- pt <- sf::st_transform(Parishes, crs=inputcrs)[62,]
+ pt <- sf::st_transform(Parishes, crs=inputcrs)[Parishes$Label=="Saint Augustine of Hippo",]
  
- box <- sf::st_transform(Parishes, crs=inputcrs)[62,] %>% 
+ box <- sf::st_transform(Parishes, crs=inputcrs)[Parishes$Label=="Saint Augustine of Hippo",] %>% 
    st_buffer(1200) %>% st_as_sf() %>% st_bbox()
  
- Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=2)
+ 
+ Base_basemapR <- basemapR::base_map(box, basemap="mapnik", increase_zoom=5)
 
  pt1 %>% 
    ggplot() +
@@ -111,22 +138,22 @@ st_as_sf(foo) %>%
   geom_sf(color="black") +
   # geom_sf_label(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2)))) +
   ggsflabel::geom_sf_label_repel(aes(label=paste(stringr::str_remove(Name, "Episcopal Church"), signif(value,2), "ft"))) +
-  labs(title="SLOSH model from NOAA, Cat 1 Hurricane Storm Surge in feet",
+  labs(title="SLOSH model from NOAA, Cat 3 Hurricane Storm Surge in feet",
        x="Longitude",
        y="Latitude") +
   coord_sf(xlim=c(box$xmin, box$xmax),c(box$ymin, box$ymax))
 
-ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
-
-# plot.new()
-# plot(terra::crop(cropped, pt1))
-# points(vect(pt))
+# ggsave("/home/ajackson/Desktop/Cat_1_slosh_model.jpg")
 
 ```
 
 # Make contours (polygons) from the geotiff grid
 
+Just to see if that would make a suitable display.
+
 ```{r contour}
+
+#   Make a lower resolution grid to save resources
 
 Lowres <- cropped %>% 
   aggregate(fact=10, fun="median", na.rm=TRUE) %>% 
@@ -172,7 +199,15 @@ ggplot() +
 
 ## Levee polygons
 
+Extract levees from Cat 1 file and turn into polygons
+
 ```{r levees}
+
+x <- terra::rast(paste0(path, "US_SLOSH_MOM_Inundation_v3/us_Category1_MOM_Inundation_HIGH.tif")) 
+
+#   Clip to AOI
+
+cropped <- terra::crop(x, bbox)
 
 Levees <- cropped %>% 
   aggregate(fact=10, fun="median", na.rm=TRUE) %>% 
@@ -188,6 +223,7 @@ Levees <- cropped %>%
     Levee_ID==3 ~ "Freeport",
     Levee_ID==4 ~ "Matagorda"
   )) %>% 
+  filter(!is.na(Levee_name)) %>% 
   select(Levee_ID, Levee_name, geometry) 
 
 tmap::tmap_options(basemaps="OpenStreetMap")
@@ -200,12 +236,15 @@ tmap::tm_shape(Levees) +
   tmap::tm_text("Levee_name")+
   tmap::tm_borders()
 
-saveRDS(Levees, paste0(path, "StormSurge_Levee_Polygons.rds"))
+# saveRDS(Levees, paste0(path, "StormSurge_Levee_Polygons.rds"))
 ```
 
 ## Which churches are behind levees?
 
+Make a plot of protected churches
+
 ```{r levee protected}
+
 Protected <- st_join(sf::st_transform(Parishes, crs=inputcrs), Levees, join=st_within) %>%
   filter(!is.na(Levee_ID))
 # Protected <- st_join(Levees, sf::st_transform(Parishes, crs=inputcrs), join=st_contains) %>% 
@@ -223,6 +262,8 @@ tmap::tm_shape(Protected) +
   tmap::tm_dots() +
   tmap::tm_text("Label", just = "left", xmod = 0.1)
 ```
+
+##        Make a separate plot for each levee
 
 ```{r levee protected 2}
 #| warning: FALSE
