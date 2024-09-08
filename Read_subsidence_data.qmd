@@ -1,6 +1,16 @@
 ---
-title: "Read subsidence data"
+title: "Read and Analyze subsidence data"
 author: "Alan Jackson"
+description: "Map the subsidence rate near Houston, Texas"
+date: "12/16/2023"
+image: "cover.png"
+categories:
+  - Mapping
+  - Texas
+  - Harris county
+execute:
+  freeze: auto  # re-render only when source changes
+  warning: false
 format: html
 editor: source
 ---
@@ -79,7 +89,7 @@ df <- df %>%
 df_sf <- sf::st_as_sf(df, coords=c("Longitude", "Latitude"), crs=googlecrs, agr = "identity")
 df_xy <- sf::st_transform(df_sf, crs=localUTM)
 
-saveRDS(df_xy, paste0(path, "Subsidence_xy.rds"))
+# saveRDS(df_xy, paste0(path, "Subsidence_xy.rds"))
 
 bbox <- sf::st_bbox(df_sf)
 
@@ -300,7 +310,7 @@ dat.fit <- gstat::fit.variogram(var.smpl, fit.ranges = TRUE, fit.sills = TRUE,
                                    debug.level = 0,
                             gstat::vgm(psill=NA, model="Gau", range=NA, nugget=0))
 
-saveRDS(dat.fit, paste0(path, "gstat_variogram_Subsidence.rds"))
+# saveRDS(dat.fit, paste0(path, "gstat_variogram_Subsidence.rds"))
 
 Krigged_grid <- gstat::krige(Subsidence_Rate_cmperyr ~ 1,
                              df_xy,
@@ -347,8 +357,8 @@ ggplot() +
 Contours_LL <- sf::st_transform(Contours_Krig, crs=googlecrs) 
 Krig_star_LL <- sf::st_transform(Krigged_star, crs=googlecrs)
 
-saveRDS(Contours_LL, paste0(path, "Contours_LL_Subsidence.rds"))
-saveRDS(Krig_star_LL, paste0(path, "Star_Grid_LL_Subsidence.rds"))
+# saveRDS(Contours_LL, paste0(path, "Contours_LL_Subsidence.rds"))
+# saveRDS(Krig_star_LL, paste0(path, "Star_Grid_LL_Subsidence.rds"))
 
 ggplot() +
   #   this is the best looking basemap
@@ -377,7 +387,7 @@ ggplot() +
        subtitle="Points represent the measurement locations",
        x="Longitude", y="Latitude")
 
-ggsave(paste0(path, "Subsidence_map.png"),dpi=400)
+# ggsave(paste0(path, "Subsidence_map.png"),dpi=400)
 
 
 ```
