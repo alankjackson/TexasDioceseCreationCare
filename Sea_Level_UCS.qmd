@@ -117,16 +117,30 @@ foo <- foo %>%
 Two maps, 2030 High and 2035 Intermediate scenarios, color by pct in poverty
 
 ```{r}
+#   first an interactive map for QC
 
 #   Add the geometry
 
 foo2 <- left_join(foo, ZCTA_geom, by=join_by(Zip==GEOID)) %>% 
   select(-NAME, -variable, -estimate, -moe) %>% 
   filter(Poverty_pct>0.1) %>% 
+  mutate(Poverty_pct=signif(Poverty_pct, 3)) %>% 
   sf::st_as_sf()
 
 High30 <- foo2 %>% filter(str_detect(sheet, "2030"))
 Inter35 <- foo2 %>% filter(str_detect(sheet, "2035"))
+
+#   map
+tmap_mode("view")
+
+tm_shape(Inter35) +
+  tm_polygons("Poverty_pct", alpha=0.6, id="Poverty_pct") 
+
+```
+
+```{r}
+
+
 
 #   do maps by state
 
