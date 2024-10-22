@@ -72,7 +72,12 @@ Hail
 
 df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls")) %>% 
   # select(-28) %>% 
-  select(-Coast_Flood_Like, -Coast_Flood_Severe)
+  select(-Coast_Flood_Like, -Coast_Flood_Severe) %>% 
+  mutate(Flood_First_Like=paste0(as.character(Flood_First_Like), "%")) %>% 
+  mutate(Flood_First_Max_Like=paste0(as.character(Flood_First_Max_Like), "%")) %>% 
+  mutate(Flood_First_Max_Severe=paste0(as.character(Flood_First_Max_Severe), " ft")) %>% 
+  mutate(WildFire_FirstSt_Like=paste0(as.character(WildFire_FirstSt_Like), "%")) %>% 
+  mutate(WildFire_FirstSt_Severe=if_else(WildFire_FirstSt_Like=="0%", "Minor", "Medium"))
 
 df2 <- df %>% 
   # head(5) %>% 
@@ -80,11 +85,9 @@ df2 <- df %>%
                names_to=c("Disaster", ".value"),
                names_pattern="(.+)_(Like|Severe)") %>% 
   rename(Likelihood=Like, Severity=Severe) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "IceStorm", "Ice Storm")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Tornado1", "EF-0/1 Tornado")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Tornado2", "EF-2+ Tornado")) %>% 
-  mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Pluvial", "River Flooding"))
+  mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor"))  
               
 foo <- df2 %>% head(12)
 
