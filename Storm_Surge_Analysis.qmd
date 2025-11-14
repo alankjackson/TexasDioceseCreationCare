@@ -18,6 +18,8 @@ Data is from https://www.nhc.noaa.gov/nationalsurge/#data where it is stored as 
 
 Read in files and get everything onto the same CRS
 
+Note that zip file remains, the expanded directory was deleted.
+
 We will do all our work in EPSG:4269 since the GeoTIFF data comes in that CRS.
 
 ```{r setup}
