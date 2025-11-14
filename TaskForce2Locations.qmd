@@ -1,0 +1,74 @@
+---
+title: "Task Force 2 locations"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreetFlood/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+
+
+#   Some useful data
+
+Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+
+```
+
+##  Churches of members
+
+```{r}
+
+Taskforce <- 
+data.frame(
+  stringsAsFactors = FALSE,
+            Member = c("Debbie Allensworth",
+                       "Beth Bondurant","Alexander Colby","Doreen Gallevo",
+                       "Miles Hall","Gail Hudson","DJ Mitchell","Joel Yu",
+                       "Christine Havens","Janessa Tomberlin","Karen Morris",
+                       "Alan Jackson","Robin Bullington"),
+            Parish = c("St. Andrew's","St. Thomas'",
+                       "Trinity","Christ Church Cathedral","St. Paul's",
+                       "Good Shepherd","St. Martin-in-the-Fields","Resurrection",
+                       "St. Michael's","St. Alban's","St. Stephen's",
+                       "Christ Church Cathedral","Christ Church Cathedral"),
+              City = c("Pearland","College Station",
+                       "The Woodlands","Houston","Orange","Kingwood",
+                       "Keller","Austin","Austin","Austin","Liberty","Houston",
+                       "Houston")
+)
+
+Taskforce <- left_join(Taskforce, Parishes, by=c("Parish"="Label", "City"="City")) %>% 
+  sf::st_as_sf()
+
+```
+
+##    Make a map
+
+```{r}
+box <-sf::st_bbox(terrainr::add_bbox_buffer(Convocations, distance=5000)) # 5 kilometers
+
+tmap::tmap_options(basemaps="OpenStreetMap")
+
+tmap::tmap_mode("view") # set mode to interactive plots
+
+tmap::tm_shape(Counties %>% sf::st_crop(box)) + 
+tmap::tm_shape(Convocations) +
+tmap::tm_polygons(col = "Label",
+                  title = "Locations of Taskforce Members", 
+                  alpha=0.5,
+                  showNA = FALSE)+
+  # tmap::tm_fill(col = "Label", title = "Locations of Taskforce Members", alpha=0.5, style="pretty", showNA=FALSE)+
+  tmap::tm_borders(lwd=0.2) +
+  tmap::tm_shape(Taskforce) + 
+  tmap::tm_dots(size=0.6)
+```
+
