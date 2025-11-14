@@ -83,7 +83,7 @@ df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls")) %>%
     WildFire_FirstSt_Like<10 ~ "Low", 
     WildFire_FirstSt_Like>50 ~ "High",
     .default="Medium")) %>% 
-  mutate(WildFire_FirstSt_Severe=if_else(WildFire_FirstSt_Like=="0%", "Minor", "Medium")) %>% 
+  mutate(WildFire_FirstSt_Severe=if_else(WildFire_FirstSt_Like=="0%", "Minor", "Major")) %>% 
   mutate(Flood_First_Like=case_when(
     Flood_First_Like==0 ~ "None", 
     Flood_First_Like<10 ~ "Low", 
@@ -106,21 +106,6 @@ df <- readxl::read_excel(paste0(out_path, "Risk_Matrix.xls")) %>%
     .default="Medium")) %>% 
   mutate(Flood_First_Severe="Major")
 
-df2 <- df %>% 
-  # head(5) %>% 
-  pivot_longer(-Parish, 
-               names_to=c("Disaster", ".value"),
-               names_pattern="(.+)_(Like|Severe)") %>% 
-  rename(Likelihood=Like, Severity=Severe) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Tornado1", "EF-0/1 Tornado")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Tornado2", "EF-2+ Tornado")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Flood_First", "Flood 6 inches")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Flood_First_Max", "Flood Worst Case")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "WildFire_FirstSt", "WildFire 1st")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Wind", "Tropical Wind")) %>% 
-  mutate(Severity=stringr::str_replace(Severity, "Minimal", "Minor"))  
-              
-foo <- df2 %>% head(12)
 
 maketable <- function(df){
   Parish1 <- df$Parish[1]
@@ -238,7 +223,7 @@ maketable <- function(df){
     locations = cells_column_labels(columns = Extensive)
   ) %>% 
     tab_options(footnotes.multiline = FALSE) %>% 
-    tab_source_note(source_note = paste("Best guess based on nultiple sources.",
+    tab_source_note(source_note = paste("Best guess based on multiple sources.",
                     "Note that Heat, Cold, and Power Outages are issues for all parishes."))
       # data_color(
       #   columns = High,
@@ -261,8 +246,8 @@ for (i in 1:163){
   rename(Likelihood=Like, Severity=Severe) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Tornado1", "EF-0/1 Tornado")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Tornado2", "EF-2+ Tornado")) %>% 
-  mutate(Disaster=stringr::str_replace(Disaster, "Flood_First", "Flood 6 inches")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Flood_First_Max", "Flood Worst Case")) %>% 
+  mutate(Disaster=stringr::str_replace(Disaster, "Flood_First", "Flood 6 inches")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "WildFire_FirstSt", "WildFire 1st")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Wind", "Tropical Wind")) %>% 
   mutate(Disaster=stringr::str_replace(Disaster, "Hurricane_Surge", "Surge Cat ")) %>% 
