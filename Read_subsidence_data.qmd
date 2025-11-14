@@ -11,7 +11,10 @@ categories:
 execute:
   freeze: auto  # re-render only when source changes
   warning: false
-format: html
+format: 
+  html:
+    code-fold: true
+    code-tools: true
 editor: source
 ---
 
