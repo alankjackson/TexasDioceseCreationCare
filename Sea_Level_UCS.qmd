@@ -19,6 +19,7 @@ The data we are working with here looks at chronic inundation (flooding at least
 26 times per year), usually high-tide flooding.
 
 ```{r setup}
+#| code-fold: true
 
 library(tidyverse)
 library(stringr)
@@ -44,16 +45,17 @@ proportion at risk. We'll restrict ourselves to the two nearer-term scenarios,
 "2030 High" and "2035 Intermediate"
 
 ```{r}
+#| code-fold: true
 
 #   filter down to what is interesting
 
 df <- df %>%  
-  filter(str_detect(sheet, "2030 High|2035 Intermediate")) %>% 
+  # filter(str_detect(sheet, "2030 High|2035 Intermediate")) %>% 
   select(sheet, Year, State, Zip=`ZIP Code`, Homes_Risk=`Homes at Risk`,
          Pop_at_risk=`Population currently housed in at risk homes`,
          Total_Homes=`Total Homes`, Total_Pop=`Total Population`) %>% 
-  mutate(Homes_ratio=Homes_Risk/Total_Homes,
-         Pop_ratio=Pop_at_risk/Total_Pop) %>% 
+  mutate(Homes_ratio=signif(100*Homes_Risk/Total_Homes, 3),
+         Pop_ratio=signif(100*Pop_at_risk/Total_Pop, 3)) %>% 
   filter(Total_Homes>100) %>% 
   filter(Total_Pop>100) %>% 
   mutate(Zip=as.character(Zip))
@@ -63,6 +65,7 @@ df <- df %>%
 ##    Let's get some census data by zipcode to attach to the data
 
 ```{r}
+#| code-fold: true
 
 v20 <- tidycensus::load_variables(2020, "acs5", cache = TRUE)
 
@@ -95,6 +98,7 @@ foobar <- foo %>%
 ##      Let's do a join
 
 ```{r}
+#| code-fold: true
 
 foo <- df %>% 
   left_join(., foobar, by="Zip")
@@ -104,12 +108,17 @@ foo <- df %>%
 ##  Some cleanup
 
 ```{r}
+#| code-fold: true
 
 foo <- foo %>% 
   filter(Homes_Risk>100) %>% 
   filter(Total_Pop_acs>100) %>% 
   mutate(Avg_income=Total_income/Total_Pop_acs) %>% 
-  mutate(Poverty_pct=In_Poverty/Total_Pop_acs)
+  mutate(Poverty_pct=signif(100*In_Poverty/Total_Pop_acs, 3))
+
+#   Save for later
+
+saveRDS(foo, paste0(Curated_path,"SeaLevel/UCS_data.rds"))
 
 ```
 
@@ -122,15 +131,20 @@ and the ratio of homes at risk divided by total homes.
 
 
 ```{r}
+#| code-fold: true
+
 #   first an interactive map for QC
 
 #   Add the geometry
 
 foo2 <- left_join(foo, ZCTA_geom, by=join_by(Zip==GEOID)) %>% 
   select(-NAME, -variable, -estimate, -moe) %>% 
-  filter(Poverty_pct>0.1) %>% 
+  filter(Poverty_pct>5) %>% 
   mutate(Poverty_pct=signif(Poverty_pct, 3)) %>% 
   sf::st_as_sf()
+#   Save for later
+
+saveRDS(foo2, paste0(Curated_path,"SeaLevel/UCS_sfdata.rds"))
 
 High30 <- foo2 %>% filter(str_detect(sheet, "2030"))
 Inter35 <- foo2 %>% filter(str_detect(sheet, "2035"))
@@ -143,6 +157,7 @@ tm_shape(Inter35) +
   tm_polygons("Poverty_pct", alpha=0.5, popup.vars=c("Zip", 
                                                      "Homes_Risk",
                                                      "Homes_ratio")) +
+  tm_dots(size=0.02) +
 tm_shape(High30) +
   tm_polygons("Poverty_pct", alpha=0.5, popup.vars=c("Zip", "Homes_Risk",
                                                      "Homes_ratio")) 
@@ -150,6 +165,7 @@ tm_shape(High30) +
 ```
 
 ```{r}
+#| code-fold: true
 
 
 
