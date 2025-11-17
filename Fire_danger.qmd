@@ -1,0 +1,70 @@
+---
+title: "Match Churches to Fire Danger"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+## match parishes to Fire Danger
+
+Using the spreadsheet from
+https://headwaterseconomics.org/natural-hazards/wildfire/more-than-1100-communities-urban-wildfire-risk/
+
+match up by city so I can seee their estimates of fire danger by parish
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreetFlood/"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+Fire_path <- "/home/ajackson/Dropbox/projects/Creation_Care_and_Sustainable/Data/"
+
+
+#   Some useful data
+
+Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
+Parishes <- readRDS(paste0(path, "Parishes_plus_Census_tracts.rds"))
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+
+```
+
+##    Read in spreadsheet and clean up
+
+```{r}
+
+sheets <- readxl::excel_sheets(paste0(Fire_path, "Fire_risk_wrc_download_202505.xlsx"))
+
+#   Read in fifth sheet (that is where cities live)
+
+df <- sheets[5] %>% 
+  set_names() %>% 
+  map_df(~ readxl::read_excel(path = paste0(Fire_path, "Fire_risk_wrc_download_202505.xlsx"), 
+                      sheet = .x, 
+                      skip=0), 
+         .id = "sheet")
+
+
+
+#   Pull out Texas only, and strip the ", TX" from the city name field
+
+df <- df %>% 
+  filter(STUSPS=="TX") %>% 
+  mutate(NAME=stringr::str_remove(NAME, ", TX"))
+
+```
+
+##    Join spreadsheet to parishes
+
+```{r}
+
+```
+
+
+
+
+
+
+
