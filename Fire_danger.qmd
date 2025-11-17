@@ -16,6 +16,7 @@ match up by city so I can seee their estimates of fire danger by parish
 
 library(tidyverse)
 library(sf)
+library(gt)
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 output_path <- "/home/ajackson/Dropbox/projects/CeationCareTaskforce/FirstStreetFlood/"
@@ -52,7 +53,8 @@ df <- sheets[5] %>%
 
 df <- df %>% 
   filter(STUSPS=="TX") %>% 
-  mutate(NAME=stringr::str_remove(NAME, ", TX"))
+  mutate(NAME=stringr::str_remove(NAME, ", TX")) %>% 
+  mutate(NAME=stringr::str_remove(NAME, " \\(Travis\\)"))
 
 ```
 
@@ -60,7 +62,62 @@ df <- df %>%
 
 ```{r}
 
+Parishes <- Parishes %>% 
+  mutate(City=stringr::str_remove(City, " \\(temp\\)")) %>% 
+  mutate(City=stringr::str_remove(City, "^ "))
+
+df2 <- left_join(Parishes, df, join_by(City == NAME))
+
+
 ```
+
+##    Make tables of top 10
+
+```{r}
+
+#   Top ten by probability
+
+df2 %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(desc(BP_STATE_RANK)) %>% 
+  head(10) %>% 
+  select(Church=Label, City, Probability=BP_STATE_RANK) %>% 
+  gt() %>% 
+    tab_header(
+      title=md("**Top Ten Churches in Texas**"),
+      subtitle="Annual Probability of Wildfire in City"
+    )  %>% 
+    cols_label(
+      Church = md("**Church**"),
+      City = md("**City**"),
+      Probability = md("**Probability**")
+    ) %>% 
+    tab_footnote(md("*Data from https://wildfirerisk.org/*"))
+  
+#   Top ten by risk
+
+df2 %>% 
+  sf::st_drop_geometry() %>% 
+  arrange(desc(RISK_STATE_RANK)) %>% 
+  head(10) %>% 
+  select(Church=Label, City, Risk=RISK_STATE_RANK) %>% 
+  gt() %>% 
+    tab_header(
+      title=md("**Top Ten Churches in Texas**"),
+      subtitle="Risk of Wildfire in City"
+    )  %>% 
+    cols_label(
+      Church = md("**Church**"),
+      City = md("**City**"),
+      Risk = md("**Risk**")
+    ) %>% 
+    tab_footnote(md("*Data from https://wildfirerisk.org/*"))
+  
+  
+
+
+```
+
 
 
 
