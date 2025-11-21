@@ -1,0 +1,51 @@
+---
+title: "Map of churches who answered letter"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    Where did we get responses?
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+input_path <- "/home/ajackson/Dropbox/Rprojects//"
+Curated_path <- "/home/ajackson/Dropbox/Rprojects/Curated_Data_Files/Texas_Counties/"
+
+#   Some useful data
+
+Convocations <- readRDS(paste0(path, "Convocation_and_tracts.rds"))
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
+Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
+
+```
+
+##    Read in the spreadsheet
+
+```{r}
+
+df <- readxl::read_excel(paste0(path, "Survey_contacts.xlsx")) %>% 
+  filter(!is.na(City)) %>% 
+  select(Congregation, City, Label, Reply) %>% 
+  filter(!is.na(Reply))
+
+Clean_parish <- Parishes %>% 
+  mutate(Label = stringr::str_trim(Label, side="both")) %>% 
+  mutate(City = stringr::str_remove(City, " \\(temp\\)")) %>% 
+  mutate(Label = stringr::str_remove(Label, "'$"))
+
+Replies <- left_join(df, Clean_parish, by=c("Congregation"="Label", "City"="City")) %>% 
+  sf::st_as_sf()
+
+```
+
+
+
+
+
+
+
