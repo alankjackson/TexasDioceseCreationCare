@@ -1,0 +1,158 @@
+---
+title: "Update_parishes"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    Update parishes - Nov 2025
+
+```{r}
+
+library(tidyverse)
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+google_crs <- "EPSG:4326" # lat long
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+Parishes[Parishes$ID==152,]$Label <- "All Saints'" 
+
+#################################
+# Autry House Houston
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-95.39642748798482, 29.716510149082165)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 166,
+          Label = "Autry House",
+          City = "Houston",
+          Name = "Autry House: The Episcopal Mission to Rice University",
+          Description = "6221 Main Street, Houston, TX 77030",
+          Convocation = "East Harris",
+          County = "Harris",
+          geometry = sfc,
+          Zip = "77030",
+          Address = "6221 Main Street, Houston, TX 77030")
+
+#################################
+# Holy Family Houston
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-95.33242920741966, 29.754683321408944)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 167,
+          Label = "Holy Family",
+          City = "Houston",
+          Name = "Holy Family Episcopal Church",
+          Description = "3719 Navigation Boulevard, Houston, Texas 77003",
+          Convocation = "East Harris",
+          County = "Harris",
+          geometry = sfc,
+          Zip = "77003",
+          Address = "3719 Navigation Boulevard, Houston, Texas 77003")
+
+#################################
+# St Cornelius, Belton
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-97.46023192897152, 31.14594437684704)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 168,
+          Label = "St Cornelius",
+          City = "Belton",
+          Name = "St Cornelius, Belton",
+          Description = "1626 Morgan's Point Rd, Belton, TX 76513",
+          Convocation = "Northwest",
+          County = "Bell",
+          geometry = sfc,
+          Zip = "76513",
+          Address = "1626 Morgan's Point Rd, Belton, TX 76513")
+
+#################################
+# St Brigid Fort Worth
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-97.32562541281813, 32.74210974084278)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 169,
+          Label = "St Brigid",
+          City = "Fort Worth",
+          Name = "St Brigid, Fort Worth",
+          Description = "209 South Main Street, Fort Worth, TX 76104",
+          Convocation = "North",
+          County = "Tarrant",
+          geometry = sfc,
+          Zip = "76104",
+          Address = "209 South Main Street, Fort Worth, TX 76104")
+
+#################################
+# St Claires Tyler
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-95.27222692807565, 32.31261915005325)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 170,
+          Label = "St Claires",
+          City = "Tyler",
+          Name = "St Claires, Tyler",
+          Description = "3320 Troup Hwy #260, Tyler, TX 75701",
+          Convocation = "Northeast",
+          County = "Smith",
+          geometry = sfc,
+          Zip = "75701",
+          Address = "3320 Troup Hwy #260, Tyler, TX 75701")
+
+#################################
+# St Esteban Cleveland
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-95.08120703942448, 30.165700942867193)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 171,
+          Label = "St Esteban",
+          City = "Cleveland",
+          Name = "St Esteban, Cleveland",
+          Description = "1680 County Road 3549, Cleveland, TX 77357",
+          Convocation = "San Jacinto",
+          County = "Liberty",
+          geometry = sfc,
+          Zip = "77357",
+          Address = "1680 County Road 3549, Cleveland, TX 77357")
+
+#################################
+# Texas Canterbury Austin
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-97.73914040796262, 30.291612136848386)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 172,
+          Label = "Texas Canterbury",
+          City = "Austin",
+          Name = "Texas Canterbury, Austin",
+          Description = "209 W 27th St, Austin, TX 78705",
+          Convocation = "Austin",
+          County = "Travis",
+          geometry = sfc,
+          Zip = "78705",
+          Address = "209 W 27th St, Austin, TX 78705")
+
+
+saveRDS(Parishes, paste0(path, "Parishes.rds"))
+
+```
