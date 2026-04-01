@@ -1,0 +1,100 @@
+---
+title: "Read data from diocesan report"
+author: "Alan Jackson"
+format: html
+editor: source
+---
+
+##    read report
+
+```{r}
+library(tidyverse)
+library(pdftools)
+library(tesseract)
+library(readr)
+library(stringr)
+
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/Parishes/"
+
+```
+
+#   Read in the tables
+
+```{r}
+
+pdf_path <- paste0(path, "176th-Annual-Council-Journal-Volume-II.pdf")
+
+tables <- tabulapdf::extract_tables(pdf_path, page=83, col_names=FALSE)
+
+Parish_membership <- tables[[1]] %>% 
+  mutate(X11=paste(X3, X4, X5, X6, X7, X8, X9, X10)) %>% 
+  select(X1, X2, X11) %>% 
+  mutate(X11=str_remove_all(X11, "[a-zA-Z]")) %>% 
+  DataEditR:::data_edit()
+
+Parish_membership <- read_csv("/home/ajackson/Downloads/20260331-data.csv") %>% 
+  mutate(X11=str_remove(X11, "^\\s*")) %>% 
+  mutate(X11=str_replace_all(X11, "  +", " ")) %>% 
+  separate_wider_delim(
+    col = X11,
+    delim = " ",
+    names = c("X3", "X4", "X5", "X6", "X7")
+  ) %>% 
+  rename(Num=X1, Parish=X2, Confirmed=X3, Conf_under16=X4, Baptisms=X5,
+         Confirmations=X6, Recieved=X7) %>% 
+  mutate(across(c(3:7), ~ as.numeric(na_if(., "-"))))
+
+```
+
+The rest of the tables had to be OCR'd, so they just need to be read in and
+appended
+
+```{r}
+
+Tab_1 <- as.character(c(84:86))
+Tab_2 <- as.character(c(87:88))
+Tab_3 <- as.character(c(89:92))
+Tab_4 <- as.character(c(93:94))
+Tab_5 <- as.character(c(95:98))
+Tab_6 <- as.character(c(99:100))
+Tab_7 <- as.character(c(101:104))
+Tab_8 <- as.character(c(105:106))
+
+foo <- NULL
+for (page in Tab_1) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, Confirmed=3, Conf_under16=4, Baptisms=5,
+           Confirmations=6, Recieved=7) %>% 
+    bind_rows(foo, .)
+}
+Parish_membership <- bind_rows(Parish_membership, foo)
+saveRDS(Parish_membership, paste0(path, "Parish_membership2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_2) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Mission=2, Confirmed=3, Conf_under16=4, Baptisms=5,
+           Confirmations=6, Recieved=7) %>% 
+    bind_rows(foo, .)
+}
+Mission_membership <- foo
+saveRDS(Mission_membership, paste0(path, "Mission_membership2024.rds"))
+
+```
+
+
+
+
+
+
+
+
+
+
