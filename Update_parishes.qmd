@@ -8,15 +8,19 @@ editor: source
 ##    Update parishes - Nov 2025
 
 ```{r}
-
 library(tidyverse)
+library(sf)
 
 path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
 
 google_crs <- "EPSG:4326" # lat long
 
-Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+Parishes <- readRDS(paste0(path, "Parishes.rds"))
 
+```
+
+
+```{r}
 Parishes[Parishes$ID==152,]$Label <- "All Saints'" 
 
 #################################
@@ -89,7 +93,7 @@ Parishes <- Parishes %>%
           City = "Fort Worth",
           Name = "St Brigid, Fort Worth",
           Description = "209 South Main Street, Fort Worth, TX 76104",
-          Convocation = "North",
+          Convocation = "Fort Worth",
           County = "Tarrant",
           geometry = sfc,
           Zip = "76104",
@@ -152,7 +156,151 @@ Parishes <- Parishes %>%
           Zip = "78705",
           Address = "209 W 27th St, Austin, TX 78705")
 
+#################################
+# St Peters Lago Vista - closed?
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-98.01472225397532, 30.434610970675774)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 173,
+          Label = "St Peter's",
+          City = "Lago Vista",
+          Name = "St Peter's, Lago Vista",
+          Description = "3305 Pinnacle Cove, Lago Vista, TX 78645",
+          Convocation = "Austin",
+          County = "Travis",
+          geometry = sfc,
+          Zip = "78645",
+          Address = "3305 Pinnacle Cove, Lago Vista, TX 78645")
+
 
 saveRDS(Parishes, paste0(path, "Parishes.rds"))
 
 ```
+
+
+##    Minor repairs
+
+```{r}
+
+Parishes <- readRDS(paste0(path, "Parishes.rds"))  
+
+Parishes[Parishes$ID==169,]$Convocation <- "Fort Worth" 
+
+saveRDS(Parishes, paste0(path, "Parishes.rds"))
+
+```
+
+##    Make a truly clean dataset
+
+```{r}
+
+#     Tidy up labels
+
+Parishes[Parishes$ID==109,]$Label <- "St Julian of Norwich" 
+Parishes[Parishes$ID==116,]$Label <- "St Peter's" 
+Parishes[Parishes$ID==12,]$Label <- "St Peter's and San Pedro" 
+Parishes[Parishes$ID==142,]$Label <- "St Michael & All Angels" 
+Parishes[Parishes$ID==144,]$Label <- "St Paul's" 
+Parishes[Parishes$ID==126,]$Label <- "St Joseph's" 
+Parishes[Parishes$ID==45,]$Label <- "All Saints'" 
+Parishes[Parishes$ID==20,]$Label <- "Holy Apostles'" 
+Parishes[Parishes$ID==27,]$Label <- "St Francis'" 
+Parishes[Parishes$ID==165,]$Label <- "St Isidore's" 
+Parishes[Parishes$ID==168,]$Label <- "St Cornelius'" 
+Parishes[Parishes$ID==169,]$Label <- "St Brigid's" 
+Parishes[Parishes$ID==170,]$Label <- "St Claire's" 
+Parishes[Parishes$ID==171,]$Label <- "St Esteban's" 
+Parishes[Parishes$ID==16,]$Label <- "Ascension" 
+Parishes[Parishes$ID==151,]$Label <- "Resurrection" 
+Parishes[Parishes$ID==162,]$Label <- "Faith" 
+Parishes[Parishes$ID==102,]$Label <- "St Christopher's" 
+
+Parishes <- Parishes %>% 
+  select(ID, Label, City, Convocation, County, Zip, Address, Description)
+
+Parishes <- Parishes %>% 
+  sf::st_as_sf()
+
+saveRDS(Parishes, paste0(path, "Clean_Parishes.rds"))
+
+
+```
+
+##    Add churches to clean version
+
+```{r}
+
+Parishes <- readRDS(paste0(path, "Clean_Parishes.rds")) 
+  
+Parishes[Parishes$ID==66,]$Label <- "St Christopher's" 
+Parishes[Parishes$ID==117,]$Label <- "St Richard's" 
+Parishes[Parishes$ID==39,]$Label <- "St Dunstan's" 
+Parishes[Parishes$ID==154,]$Label <- "St Luke's in the Meadow" 
+
+Parishes <- Parishes %>% 
+  mutate(Status="Open")
+
+Parishes[Parishes$ID==116,]$Status <- "Closed" 
+
+  
+#################################
+# St Peters Lago Vista - closed?
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-98.01472225397532, 30.434610970675774)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 173,
+          Label = "St Peter's",
+          City = "Lago Vista",
+          Convocation = "Austin",
+          County = "Travis",
+          Zip = "78645",
+          Address = "3305 Pinnacle Cove, Lago Vista, TX 78645",
+          Description = "3305 Pinnacle Cove, Lago Vista, TX 78645",
+          geometry = sfc)
+
+saveRDS(Parishes, paste0(path, "Clean_Parishes.rds"))
+
+```
+
+
+##    Add ID to spreadsheet
+
+```{r}
+
+Parishes <- readRDS(paste0(path, "Clean_Parishes.rds")) %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(across(everything(), stringr::str_trim)) %>% 
+  mutate(Label=stringr::str_remove(Label, "\'"))
+
+df <- readxl::read_excel(paste0(path, "Survey_contacts.xlsx")) %>% 
+  filter(!is.na(City)) %>%
+  select(-1) %>% 
+  mutate(across(everything(), stringr::str_trim)) %>% 
+  mutate(Congregation=stringr::str_remove(Congregation, "\'"))
+
+foo <- full_join(Parishes, df, by=c("Label" = "Congregation", "City"))
+
+```
+
+##    Save as excel file
+
+```{r}
+
+foo %>% 
+  rename(Congregation=Label, Label=Label.y) %>% 
+  filter(!Status=="Closed") %>% 
+  writexl::write_xlsx(path=paste0(path, "Survey_contacts_2.xlsx"))
+
+
+```
+
+
+
+
+
