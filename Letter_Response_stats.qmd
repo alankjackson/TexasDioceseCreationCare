@@ -31,7 +31,10 @@ Counties <- readRDS(paste0(Curated_path, "County_Outlines.rds"))
 df <- readxl::read_excel(paste0(path, "Survey_contacts.xlsx")) %>% 
   filter(!is.na(City)) %>% 
   select(Congregation, City, Label, Reply) %>% 
-  filter(!is.na(Reply))
+  filter(!is.na(Reply)) %>% 
+  mutate(Congregation = stringr::str_remove(Congregation, "'$")) %>% 
+  mutate(Congregation = stringr::str_remove(Congregation, "\\.")) %>% 
+  mutate(Congregation = stringr::str_replace(Congregation, "Claire's", "Claires"))
 
 Clean_parish <- Parishes %>% 
   mutate(Label = stringr::str_trim(Label, side="both")) %>% 
@@ -43,6 +46,31 @@ Replies <- left_join(df, Clean_parish, by=c("Congregation"="Label", "City"="City
 
 ```
 
+
+##    Create stats
+
+```{r}
+
+Replies_by_convo <- Replies %>% 
+  group_by(Convocation) %>% 
+  summarise(Replies=n()) %>% 
+  sf::st_drop_geometry()
+
+Cong_by_convo <- Parishes %>% 
+  group_by(Convocation) %>% 
+  summarise(Congregations=n()) %>% 
+  sf::st_drop_geometry()
+
+left_join(Cong_by_convo, Replies_by_convo, by="Convocation") %>% 
+  mutate(Percent=Replies/Congregations) %>% 
+  gt() %>% 
+  tab_header(
+    title="Letter Responses by Convocation",
+    subtitle=paste("as of",today())
+  ) %>% 
+  fmt_percent(columns=Percent)
+
+```
 
 
 
