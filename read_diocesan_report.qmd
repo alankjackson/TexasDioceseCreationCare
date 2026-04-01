@@ -87,6 +87,92 @@ for (page in Tab_2) {
 Mission_membership <- foo
 saveRDS(Mission_membership, paste0(path, "Mission_membership2024.rds"))
 
+##############
+
+foo <- NULL
+for (page in Tab_3) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, Sunday_avg=3, Weekday_avg=4, Easter=5,
+           Christmas=6, Daily_office=7, Eucharists=8, Marriages=9,
+           Burials=10) %>% 
+    bind_rows(foo, .)
+}
+Parish_services <- foo
+saveRDS(Parish_services, paste0(path, "Parish_services2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_4) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Mission=2, Sunday_avg=3, Weekday_avg=4, Easter=5,
+           Christmas=6, Daily_office=7, Eucharists=8, Marriages=9,
+           Burials=10) %>% 
+    bind_rows(foo, .)
+}
+Mission_services <- foo
+saveRDS(Mission_services, paste0(path, "Mission_services2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_5) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, Pledge_cards=3, Pledged_amt=4, Pledge_payment=5,
+           Restricted=6, Other_revenue=7, Total_Op_Rev=8, Total_revenue=9) %>% 
+    bind_rows(foo, .)
+}
+Parish_revenue <- foo
+saveRDS(Parish_revenue, paste0(path, "Parish_revenue2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_6) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, Pledge_cards=3, Pledged_amt=4, Pledge_payment=5,
+           Restricted=6, Other_revenue=7, Total_Op_Rev=8, Total_revenue=9) %>% 
+    bind_rows(foo, .)
+}
+Mission_revenue <- foo
+saveRDS(Mission_revenue, paste0(path, "Mission_revenue2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_7) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, OpEx=3, Non_OpEx=4, Total_Expenses=5,
+           Cash=6, Total_Invest=7) %>% 
+    bind_rows(foo, .)
+}
+Parish_OpEx <- foo
+saveRDS(Parish_OpEx, paste0(path, "Parish_OpEx2024.rds"))
+
+##############
+
+foo <- NULL
+for (page in Tab_8) {
+  filename <- paste0("page_", page, "_extraction.csv")
+  foo <- read_delim(paste0(path,  filename), delim=";",
+                                             na="-") %>% 
+    rename(Num=1, Parish=2, OpEx=3, Non_OpEx=4, Total_Expenses=5,
+           Cash=6, Total_Invest=7) %>% 
+    bind_rows(foo, .)
+}
+Mission_OpEx <- foo
+saveRDS(Mission_OpEx, paste0(path, "Mission_OpEx2024.rds"))
+
 ```
 
 
