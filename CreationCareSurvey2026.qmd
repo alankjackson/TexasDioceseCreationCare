@@ -1,0 +1,856 @@
+---
+title: "Creation Care Assessment"
+author: "Alan Jackson"
+date: "4/28/2026"
+format: 
+  docx:
+    fig-dpi: 300
+    fontsize: "10pt"
+    number-sections: false
+  html:
+    fig-dpi: 300
+editor: source
+---
+
+```{r, setup}
+#| echo: false
+#| warning: false
+
+library(tidyverse)
+library(tmap)
+library(gt)
+library(gtExtras)
+library(ggtext)
+
+GoogleCRS <- "EPSG:4326"
+
+path <- "/home/ajackson/Dropbox/Rprojects/TexasDioceseCreationCare/Data/"
+
+df <- readxl::read_excel(paste0(path, 
+                   "Congregational_Creation_Care_Self-Assessment_Survey.xlsx"))  
+
+Parishes <- readRDS(paste0(path, "Clean_Parishes.rds")) %>% sf::st_as_sf()
+
+bbox <- sf::st_bbox(c(xmin = -98.86, xmax = -93.20, ymax = 34.21, ymin = 28.32), 
+                       crs = GoogleCRS)
+
+```
+
+```{r, file repair}
+#| echo: false
+#| warning: false
+#| message: false
+
+df[df$ID==54,9] <- "Yes" 
+df[df$ID==118,9] <- "Yes" 
+df[df$ID==99,9] <- "Yes" 
+
+```
+
+## Analysis of the Creation Care Survey
+
+An invitation to the survey was sent out in November, and interviews began
+December 11, ending in March of 2026. There were 25 congregations surveyed at
+the end of the day, out of roughly 170 congregations invited. Note that due to
+this response rate, the results cannot realistically be extrapolated to make a
+statement about the entire diocese. One obvious source of bias in these results
+is that these were congregations where someone cared enough about the topic to
+reply.
+
+Geographically the distribution of responses was not too bad, but missing input
+from North-east Texas and the central part of the diocese inside the Houston,
+Austin, Fort Worth triangle.
+
+```{r, map of respondees}
+#| echo: false
+#| warning: false
+#| message: false
+
+tmap::tmap_options(basemap.server="OpenStreetMap", component.autoscale = FALSE)
+tmap::tmap_mode("plot") # set mode to static plots
+# tmap::tmap_mode("view") # set mode to interactive plots
+
+left_join(df, Parishes, by="ID") %>% 
+  sf::st_as_sf() %>% 
+  tmap::tm_shape(., bbox=bbox) +
+  tmap::tm_basemap("OpenStreetMap") +
+  tm_symbols(shape = 24, fill = "yellow", col = "black", size = 0.6) +
+  # tmap::tm_markers(
+                    # col="blue",
+                    # lwd=1
+   # ) +
+  tm_title("Survey Responders") +
+  tm_credits("© 2026 Alan Jackson. All Rights Reserved.", 
+             position = c("right", "bottom"))
+
+
+
+```
+
+### Summary of results
+
+A summary of the defined answer questions. We will go into each of these areas in more detail, this is just to get a feel for how the responses look.
+
+Most congregations have thought about disaster planning (Good!), most have not done an energy audit(Opportunity!). Most congregations are not very engaged in Creation Care, with a few notable exceptions. Most are interested in a least one pilot - maybe even all three.
+
+
+
+```{r, summary}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean <- left_join(df, Parishes, by="ID") %>% 
+  sf::st_drop_geometry() %>%
+  rename(Audit=5, Disaster=9, Formation=13, Finance=17, Pilot=20, WhichPilot=21)
+
+Clean %>% 
+  select(Label, City, Audit, Disaster, Formation, Finance, Pilot, WhichPilot) %>% 
+  mutate(Pilot=if_else(Pilot=="Yes", "Yes", "Maybe")) %>% 
+  mutate(Pilot_Env=if_else(str_detect(WhichPilot, "Ecological"), "Yes", "No")) %>% 
+  mutate(Pilot_Dis=if_else(str_detect(WhichPilot, "Disaster"), "Yes", "No")) %>% 
+  mutate(Pilot_For=if_else(str_detect(WhichPilot, "Formation"), "Yes", "No")) %>% 
+  select(-WhichPilot, -Pilot) %>% 
+  arrange(Label) %>% 
+  gt()  %>% 
+  # fmt_markdown(columns = TRUE) %>% 
+  tab_options(
+    latex.use_longtable = TRUE,
+    table.font.size = "small"
+  ) %>%
+  opt_table_font(
+    font = "Arial",
+    size = px(9) # Set font size to 10 pixels
+  ) %>%
+  tab_header(
+    title="Survey Results Summary"
+  ) %>%
+  cols_label(
+    Label="Name      ",
+    City="City       ",
+    Audit="Energy<br>Audit?",
+    Disaster="Disaster<br>Audit?",
+    Formation="Cong<br>Engage",
+    Pilot_Dis="Disaster<br>Pilot?",
+    Pilot_Env="Environ<br>Pilot?",
+    Pilot_For="Form<br>Pilot?",
+    .fn = md
+  )
+  
+  
+
+```
+
+  \
+
+## Adaptation
+
+Preparation for better resilience to disasters.
+
+Four congregations had not done step one - identifying what you should prepare
+for.
+
+  \
+```{r, no disaster id}
+#| echo: false
+#| warning: false
+#| message: false
+
+#   Who has not identified risks?
+
+Risks=tribble(~ID, ~Medium, ~High,
+              93, "Hail, Smoke", "None",
+              105, "Hail, Smoke", "None",
+              130, "Hail, Tornado", "None",
+              159, "Smoke, Tornado", "Hail"
+              )
+
+Clean %>% 
+  filter(Disaster=="No") %>% 
+  right_join(., Risks, by="ID") %>% 
+  select(Label, City, Medium, High) %>% 
+  arrange(Label) %>% 
+  gt()  %>% 
+  tab_header(
+    title="Congregations that have not identified Disaster Risks"
+  ) %>%   
+  tab_options(
+    column_labels.font.size = "small",
+    column_labels.font.weight = "normal" # Ensure they aren't bold by default
+  ) %>% 
+  tab_spanner(
+    label = "Congregation",
+    columns = c(Label, City)  
+  ) %>%   
+  tab_spanner(
+    label = "Taskforce Expected Risks",
+    columns = c(Medium, High)  
+  ) %>% 
+  cols_label(
+    Label="Name",
+  ) %>%
+  tab_style(
+    style = cell_text(style = "italic"),
+    locations = cells_column_labels()
+  ) %>% 
+  tab_source_note(source_note = md("*Medium = 10%-50% over 30 years, High > 50% over 30 years*"))
+
+```
+
+  \
+
+### Risks Identified, but unprepared
+
+Six congregations have identified at least some risks, but have not done much to
+prepare.
+
+Some comments from those congregations:
+
+*Would like to do more on this front (Disaster Prep). Heard about grants/funding for this type of effort, but not sure where to look.*
+
+*Whole house surge protectors were installed in breaker boxes to prevent future possible damage. (from lightning)*
+
+  \
+
+
+```{r, no disaster plan}
+#| echo: false
+#| warning: false
+#| message: false
+
+#   Who has identified risks but not prepared?
+
+Risks=tribble(~ID, ~Self, ~Medium, ~High,
+              47, "Storms","Hail, Wind", "None",
+              34, "Wind, Flood", "Smoke, Wind", "6 in Flood",
+              20, "Wind, Flood", "Smoke, Wind", "None",
+              99, "Wildfire", "Hail, Smoke", "None",
+              86, "Hurricane", "Hail, Wind", "None",
+              74, "Flood", "Wind, Smoke, Hail, Cat 2 surge", "Cat 3 surge, 6 in Flood"
+              )
+
+Clean %>% 
+  filter(Disaster=="Yes") %>% 
+  right_join(., Risks, by="ID") %>% 
+  select(Label, City, Self, Medium, High) %>%
+  # select(ID, Label, City, 10, 11, 12) %>% 
+  arrange(Label) %>% 
+  gt()  %>% 
+  tab_header(
+    title="Congregations Which Identified Disaster Risks", 
+    subtitle="But Have Minimal Preparations"
+  ) %>%   
+  tab_options(
+    column_labels.font.size = "small",
+    column_labels.font.weight = "normal" # Ensure they aren't bold by default
+  ) %>% 
+  tab_spanner(
+    label = "Congregation",
+    columns = c(Label, City)  
+  ) %>%   
+  tab_spanner(
+    label = "Self ID Risks",
+    columns = c(Self)  
+  ) %>%   
+  tab_spanner(
+    label = "Taskforce Expected Risks",
+    columns = c(Medium, High)  
+  ) %>% 
+  cols_label(
+    Label="Name",
+    Self="Self ID"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "yellow"),
+      cell_text(weight = "bold")
+    ),
+    locations = 
+      cells_body(
+        columns = c(Self)) # Highlight multiple columns
+  ) %>% 
+    tab_style(
+    style = cell_text(style = "italic"),
+    locations = cells_column_labels()
+  ) %>% 
+  tab_source_note(source_note = md("*Medium = 10%-50% over 30 years, High > 50% over 30 years*"))
+```
+  \
+
+### Adaptation stars
+
+These are the responders that have been working to be prepared for the next disaster.
+
+
+> *The new retention pond works well to prevent flooding.*
+
+> *Recently they put together a disaster response focused on care for parishioners*
+
+> *We make trimming our trees a priority. There is a network to care for parishioners should the need arise.*
+
+> *Success was housing people during the freezing temperatures. For our building, we have sealed cracks in the sidewalks and between the building and sidewalks where water was likely entering.*
+
+> *Working with local officials to establish St. Augustine of Hippo as emergency response center, positioned on high ground, in middle of island.*
+
+> *Part of the property restructuring effort (currently 9 acres, 2 of which are for the detention pond took into consideration wildfire risk in the open fields, so active vegetation management underway. Tornado assessment performed after the derecho*
+
+> *Infrastructure improvements were accomplished to discourage flooding.*
+
+> *Currently have a task force on church property safety.*
+
+> *We have an old disaster plan that needs to be updated*
+
+> *Freeze protection plan in place. Hurricane plan in place to use church's commercial kitchen during emergencies to help feed first responders and community.*
+
+> *fire dept annual audit, fire trail, lease land to fire dept*
+
+> *A disaster plan in place.*
+
+> *disaster recovery- roof repair from rain \$15,000- , for their ash garden on hill-added rock to move rain from garden, rain barrels*
+
+  \
+
+
+```{r, disaster plans}
+#| echo: false
+#| warning: false
+#| message: false
+
+#   Who has identified risks but not prepared?
+
+Risks=tribble(~ID, ~Self, ~Medium, ~High,
+              33, "Flood, Wind, Freeze","Smoke, Wind", "None",
+              36, "Wind", "Wildfire, Smoke, Wind", "None",
+              71, "Wind, Flood", "Smoke, Wind, Cat 4 surge", "6 in Flood",
+              4, "Flood", "Smoke, Wind, 6 in Flood", "None",
+              64, "Hurricane", "Hail, Wind, Cat 1 surge", "Cat 3 surge, 6 in Flood",
+              37, "Wildfire, Wind, Flood", "Wind, Smoke", "None",
+              28, "Flood, Wind", "Smoke, 6 in flood", "None",
+              54, "Wind", "Wind, Hail", "None",
+              76, "Hurricane", "Wind, Smoke", "6 in Flood",
+              43, "Freeze", "Wind, Hail", "None",
+              175, "Wildfire", "Wind, Smoke, Hail", "Wildfire",
+              69, "Flood", "Smoke, Cat 4 surge", "Cat 3 surge, 6 in Flood, Wind",
+              118, "Flood", "Hail", "None"
+              )
+
+Clean %>% 
+  filter(Disaster=="Yes") %>% 
+  right_join(., Risks, by="ID") %>%
+  select(Label, City, Self, Medium, High) %>%
+  # select(ID, Label, City, 10, 11, 12) %>%
+  arrange(Label) %>% 
+  gt()  %>% 
+  tab_header(
+    title="Congregations Which Identified Disaster Risks",
+    subtitle="And Have Done Preparation Work"
+  ) %>%
+  tab_options(
+    column_labels.font.size = "small",
+    column_labels.font.weight = "normal" # Ensure they aren't bold by default
+  ) %>% 
+  tab_spanner(
+    label = "Congregation",
+    columns = c(Label, City)
+  ) %>%
+  tab_spanner(
+    label = "Self ID Risks",
+    columns = c(Self)
+  ) %>%
+  tab_spanner(
+    label = "Taskforce Expected Risks",
+    columns = c(Medium, High)
+  ) %>%
+  cols_label(
+    Label="Name",
+    Self="Self ID"
+  ) %>%
+    tab_style(
+    style = list(
+      cell_fill(color = "yellow"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = c(Self) # Highlight multiple columns
+    )
+  ) %>%
+  tab_style(
+    style = cell_text(style = "italic"),
+    locations = cells_column_labels()
+  ) %>% 
+  tab_source_note(source_note = md("*Medium = 10%-50% over 30 years, High > 50% over 30 years*"))
+```
+  \
+
+## Mitigation
+
+Six congregations have had some form of energy audit, primarily somewhat ad hoc.
+
+Results were generally positive:
+
+
+> *Two partial energy audits were conducted. One was based on DC humidifiers and the other was regarding the feasibility of adding solar energy. DC humidifiers were deemed to be not advised. The solar energy audit helped scope out a solar system that was purchased and is due to be installed in March 2026.*
+
+> *Energy audits are conducted periodically by in-house staff that supports the Director of Facilities. Efficiencies and cost cutting activities have been identified and implemented over several years as an ongoing process.*
+
+> *Prior to 2019 an HVAC-focused energy audit was conducted. Air conditioning units were changed to more efficient ones and tied to a schedule. Zones were defined for different buildings. This resulted in saving money.*
+
+> *Added to the church building's footprint 5 years ago. Did a conservation analysis and launched into LED bulbs, HVAC upgrade, and other upgrades (windows, etc.) as part of the capital project. 4 portable buildings on site, but no efforts with those yet.*
+
+> *Smart Thermostats and LED lights*
+
+> *The audit was an internal assessment only. As a result of the audit, thermostats were adjusted. A recycling program was initiated. They converted to LED lights.*
+
+  \
+
+
+```{r, mitigation 1}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  filter(Audit=="Yes") %>% 
+  select(Label, City) %>% 
+  arrange(Label) %>% 
+  gt()  %>% 
+  tab_header(
+    title="Congregations that have Done an Energy Audit"
+  ) %>%   
+  cols_label(
+    Label="Name",
+  ) %>%
+  tab_style(
+    style = cell_text(style = "italic"),
+    locations = cells_column_labels()
+  )  
+
+```
+  \
+
+### Progress without formal audits
+
+Some congregations have made upgrades even without getting an audit.
+
+
+> *No formal audit. However, projects undertaken to install programmable thermostats on the HVAC system to manage energy use. Re-lamping to LEDs across the building. On-demand hot water systems and low water appliances. 1992 building, so all these efforts were retrofit. No functional irrigation system. New rectory does have a water system optimized for irrigation.*
+
+> *We have updated our thermostat to allow for greater control and less waste.*
+
+> *Did some review on a capital campaign with a referral from the Diocese - church pension folks (sounds like maybe it was insurance related). Updated air conditioning units for building+parish+rectory. Other upgrades were looking too expensive, but needs review.*
+
+  \
+
+
+```{r, mitigation 2}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  filter(ID %in% c(4, 43, 47)) %>% 
+  select(Label, City) %>% 
+  arrange(Label) %>% 
+  gt()  %>% 
+  tab_header(
+    title="Congregations that have Made Changes Without an Energy Audit"
+  ) %>%   
+  cols_label(
+    Label="Name",
+  ) %>%
+  tab_style(
+    style = cell_text(style = "italic"),
+    locations = cells_column_labels()
+  )  
+```
+  \
+
+## Formation
+
+How educated and engaged are your parishioners on the topic of creation care?
+
+About 3/4 show a score of 5 or less. A lot of opportunity.
+
+I should note too that "Creation Care" is a broad topic, and it is apparent from
+the responses that different people interpret that differently. Is Creation Care
+being prepared for and responding to natural disasters? Working to lower our
+environmental footprint? Changing our worldview from one of "ruling over" the
+earth, animals, and resources to one of taking responsibility for the earth,
+treating other beings with respect, and preserving the planet for future
+generations?
+
+I think it is all of these, but that is not a universal sentiment.
+
+  \
+
+
+```{r, How engaged in formation}
+#| echo: false
+#| warning: false
+#| message: false
+
+Activities <- tribble(~ID, ~Activity,
+                      169,"Med",
+                      99,"High",
+                      4,"Low",
+                      64,"High",
+                      118,"Med",
+                      86,"Low",
+                      71,"Low",
+                      76,"Low",
+                      14,"Med",
+                      54,"Low",
+                      43,"High",
+                      47,"Low",
+                      93,"High",
+                      175,"High",
+                      36,"High",
+                      34,"Low",
+                      159,"Low",
+                      130,"Low",
+                      105,"Low",
+                      69,"High",
+                      28,"Low",
+                      20,"Low",
+                      37,"High",
+                      74,"Low",
+                      33,"High"
+                      ) %>% 
+    mutate(Activity = factor(Activity, levels = c("Low", "Med", "High")))
+
+Clean %>% 
+  mutate(Formation=as_factor(Formation)) %>%
+  ggplot(aes(x=Formation)) +
+  geom_bar(fill="grey50") +
+  annotate("text",
+       x=2,
+       y=4.7,
+       size=3,
+       label=str_wrap("Most congregations are not very engaged with Creation Care.",20),
+       fontface = "bold",
+       color="blue") +
+  theme(plot.subtitle = element_text(face = "italic",
+                                     color = "gray50")
+        ) +
+  labs(title="How Engaged are Parishioners?",
+       subtitle="1=least engaged, 10=most engaged",
+       y="Number of Replies",
+       x="Level of Engagement"
+       )
+  
+  
+```
+  \
+
+### Congregations with active Formation programs
+
+By active, I arbitrarily draw the line between "We do Earth day" and "We have
+classes". Although I will concede that at least recognizing Earth day is a start.
+There is a correlation between the perceived level of engagement by the
+congregation and the number and intensity of activities, although it is a bit
+loose. 
+
+  \
+
+> *2 years of creation care monthly meetings, including book studies (scripture, poetry, essays, books); Creation Care sermons and integrating creation care themes into worship (songs and liturgy) in September season of creation; Creation Care prayer retreat (1/2 day in a local park); A formation class offered by Clergy on Creation Care; Newsletter tips and highlights; Bird watching events and volunteering with "It's my park day"* - Resurrection, Austin, score 4
+
+> *workshops, sermons, action group* - St. Augustine of Hippo, Galveston, score 2
+
+> *Yes, monthly "Church in the Wild" experience is used to educate folks. Clergy will tie the experiences back into scripture. It is an immersion experience.* - St. Stephens, Huntsville, score 9
+
+> *In 2024 a parishioner led a book study on "Not the End of the World." Offered first session of "For God So Loved the World" on Zoom; will offer "Love God, Love God's World" in Spring 2026; staffed a table at Ministries Fair with wildflower seed-ball making, info about Creation Care Ministry(CCM) and sign up to work with it; submitted articles to Saints Alive about Austin's expanded recycling and alternatives to domestic plastics use, meatless meals* - All Saints, Austin, score 5
+
+> *clubs, academics, service learning, recycling, land management, animal care* - St Stephen's School, Austin, score 8
+
+> *They have offered several parishioner-led classes, but there is not one currently. Parishioners started a garden with a compost pile, but those in charge have taken a step back. He sees that a few parishioners are very engaged in CC in their non-church lives, often through lifestyle choices; most seem to favor the church being involved, too.* - Holy Comforter, Spring, score 5
+
+> *The church is located near NASA. The congregation includes a high number of engineers who are highly educated and readily support sustainability. The church reinforces creation care in small ways through everything they do rather than specifically focus on it since the level of formation is already high.* - St. Thomas the Apostle, Houston, score 8
+
+> *More than casual interests--a lot of mutual support within the community. There have been some past activities -- after Katrina, organized 20 people to help folks at the stadium, housing provided by church members to folks who were displaced from Louisiana--some are still in the community. A lot of the education happened in real-time.* - St. Aidan's, Cypress, score 8
+
+> *The rector has given sermons to education the parishioners on the need for sustainability.* - Christ the King, Atascocita, score 6
+
+  \
+
+
+```{r, formation 2}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  left_join(., Activities, by="ID") %>% 
+  mutate(Formation=as_factor(Formation)) %>%
+  ggplot(aes(x=Formation, fill=Activity)) +
+  geom_bar() +
+  scale_fill_manual(values = c("pink", "lightblue", "green")) +
+  annotate("text",
+       x=2,
+       y=4.7,
+       size=3,
+       label=str_wrap("Most congregations are not very engaged with Creation Care.",20),
+       fontface = "bold",
+       color="blue") +
+  annotate("text",
+       x=7.5,
+       y=4.0,
+       size=3,
+       label=str_wrap("But Formation activities can cause change",20),
+       fontface = "bold",
+       color="blue") +
+  theme(plot.subtitle = element_text(face = "italic",
+                                     color = "gray50")
+        ) +
+  labs(title="How Engaged are Parishioners?",
+       subtitle="1=least engaged, 10=most engaged",
+       y="Number of Replies",
+       x="Level of Engagement",
+       fill = "Formation Activity")
+  
+```
+  \
+
+## Financials
+
+Does the parish have sufficient funding to execute on planned or in-progress
+creation care projects? Mostly no. There is a reason church mice are called
+poor.
+
+  \
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  filter_out(is.na(Finance)) %>% 
+  ggplot(aes(x=Finance)) +
+  geom_bar(fill="gray50") +
+  theme(plot.subtitle = element_text(face = "italic",
+                                     color = "gray50")
+        ) +
+  annotate("text",
+       x=3,
+       y=7.5,
+       size=3,
+       label=str_wrap("Most congregations are funding limited.",20),
+       fontface = "bold",
+       color="blue") +
+  labs(title="Are There Sufficient Funds To Execute Projects?",
+       subtitle="Planned or in-progress Creation Care projects",
+       y="Number of Replies",
+       x="Finances"
+       )
+
+```
+
+  \
+  
+##  Other barriers
+
+> *Funding is always helpful, campus is expensive to maintain, sharing awareness of the work they are doing*
+
+> *Biggest barrier is age of parishioners- mostly older adults.*
+
+> *Cost is the main barrier. Another barrier could possibly be the way in which we tell the story of going solar due to our area and neighbors. *
+
+> *older, conservative congregation; limitations due to location, dollars constraint*
+
+> *Summary of challenges faced by churches in the Fort Worth area, esp regarding weather.*
+
+> *As an all-volunteer group engaged on Creation Care, they've attended some online resources. Need to provide some guidance to clergy - maybe a Camp Allan conference to educate and engage folks by convening people? Want to encourage folks to take action. Want efforts that also support outreach to the broader community surrounding the church - for example, taking go-bags out to the neighborhoods and inviting folks to join the community. Note - the church was priest-less for 18 months and just brought in a new priest within the last month, so there is a ramp up time needed for the new priest to engage.*
+
+> *Think ecological footprint is a strength of the church and would like to share best practices. Think formation would be most interesting for the church to grow in.*
+
+> *Currently part of the Ministers Alliance for the Food Pantry, challenges getting engagement from the other clergy and not sure the Mayor is prioritizing the pantry for potential disaster preparedness. Think engagement on ecological footprint from a dollars and cents perspective. Disaster mitigation efforts would be priority. The church members are not interested in attending council or getting out to Camp Allen. Might be able to get vestry out to Camp Allen on a retreat.*
+
+> *Subsidies seem meager for solar, rainwater collection, induction stove, etc. to be done during renovation; maybe dioceses could help to identify resources. Their church could use help in putting together cost/benefit analysis of including lower footprint items to include in a master plan to be implemented over time. Think the diocese should take a more visible role in Creation Care, through communication of available resources and stories of what other churches are doing, and maybe visible collaborations with CBOs and interfaith groups.*
+
+> *Increasing awareness of available resources, idea and resource sharing*
+
+> *There has been no pushback about spending some money in this area, e.g., for recycling sevice, replacing disposable serveware with compostable.  nthe church doesn't have a lot of money forr this, maybe a few thousand a year.  Education info is low cost.  CC is connected to evangellism--people they have had community folks come for activities that are active, like planting tress or giving tress away (in collaboration with a CBO).  Time is a barrier--his is limited, so maybe needs more staffing; volunteers are less reliable. The diocese could provide curricula "that you can pull off the shelf" to use with parishioners, since it can be overwheling to know where to start.*
+
+> *The parishioners are aware of the need for sustainability but are not really invested very deeply in doing much about it.*
+
+> *We really need an energy audit to identify how to decrease our utility costs.*
+
+  \
+
+##  Pilots
+
+Almost everyone would like to participate in a pilot, which is encouraging. Now
+we have to deliver!
+
+  \
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  rename(item=20) %>% 
+  select(ID, item) %>% 
+  mutate(item=str_remove_all(item, " \\(.*?\\)")) %>% 
+  separate_longer_delim(item, delim = ",") %>% 
+  mutate(item=factor(item, levels = c("No", "Maybe", "Yes"))) %>% 
+  ggplot(aes(x=item)) +
+  geom_bar(fill="gray50") +
+  theme(plot.subtitle = element_text(face = "italic",
+                                     color = "gray50")
+        ) +
+  annotate("text",
+       x=1,
+       y=3,
+       size=3,
+       label=str_wrap("St Paul's, Orange",20),
+       # fontface = "bold",
+       color="blue") +
+  annotate("text",
+       x=1.5,
+       y=12,
+       size=3,
+       label="St John the Divine, Houston\nLord of the Streets, Houston\nHoly Apostles, Houston\nSt John, Columbus\nHoly Trinity, Port Neches\nSt Stephen's, Beaumont\nSt Stephen's, Hurst",
+       # fontface = "bold",
+       hjust = 0,
+       color="blue") +
+  labs(title="Are You Interested in Participating in a Pilot?",
+       y="Number of Replies",
+       x="Pilot Interest"
+       )
+
+```
+  \
+
+###   So which pilot(s)?
+
+Formation and Mitigation seem to have the most interest. Perhaps because 
+Mitigation also implies potentially saving money, and Formation is a familiar
+beast. A bit disappointing to see Adaptation coming in last - I have to wonder
+if in part that may be because many people are not familiar with some of the
+potential measures that can be taken? In any event, that points up an area that
+could use some work.
+
+  \
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+Clean %>% 
+  rename(item=21) %>% 
+  select(ID, item) %>% 
+  mutate(item=str_remove_all(item, "\\(.*?\\)")) %>% 
+  separate_longer_delim(item, delim = ",") %>% 
+  filter_out(is.na(item)) %>% 
+  mutate(item = case_when(
+    str_detect(item, "Footprint") ~ "Mitigation",
+    str_detect(item, "Disaster") ~ "Adaptation",
+    str_detect(item, "Formation") ~ "Formation",
+  )) %>% 
+  mutate(item=factor(item, levels = c("Adaptation", "Mitigation", "Formation"))) %>% 
+  ggplot(aes(x=item)) +
+  geom_bar(fill="gray50") +
+  theme(plot.subtitle = element_text(face = "italic",
+                                     color = "gray50")
+        ) +
+  labs(title="Which Pilot(s) Would Interest You?",
+       y="Number of Replies",
+       x="Pilot Type"
+       )
+```
+  \
+  
+###   Which Congregations for Which Pilots?
+
+  \
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-side-by-side
+#| tbl-cap: "Pilot Interest"
+#| layout-ncol: 3
+
+tables_list <- Clean %>% 
+  rename(pilot=21) %>% 
+  select(Label, City, pilot) %>% 
+  mutate(pilot=str_remove_all(pilot, "\\(.*?\\)")) %>% 
+  separate_longer_delim(pilot, delim = ",") %>% 
+  filter_out(is.na(pilot)) %>% 
+  mutate(pilot = case_when(
+    str_detect(pilot, "Footprint") ~ "Mitigation",
+    str_detect(pilot, "Disaster") ~ "Adaptation",
+    str_detect(pilot, "Formation") ~ "Formation",
+  )) %>% 
+  mutate(pilot=factor(pilot, levels = c("Adaptation", "Mitigation", "Formation"))) %>% 
+  group_by(pilot) %>%
+  group_split() %>%
+  # Map over the list to create a gt table for each dataframe
+  map(~ {
+    # Extract the pilot name for the title
+    cat_name <- unique(.x$pilot)
+    
+    .x %>%
+      select(-pilot) %>% # Remove pilot col if desired
+      arrange(Label) %>% 
+      gt() %>%
+      tab_options(table.font.size = px(12)) %>% 
+      opt_table_outline(style = "solid", width = px(3), color = "black") %>%
+  # 2. Add whitespace (margin) around the outside
+    tab_options(
+      table.margin.left = px(15), # whitespace
+      table.margin.right = px(15), # whitespace
+      table.align = "center"
+    ) %>% 
+      tab_header(
+        title = md(paste0("Pilot Interest: **", cat_name, "**"))
+      ) %>% 
+      cols_label(
+        Label="Name",
+      ) %>% 
+      tab_options(
+        column_labels.font.size = "small",
+        column_labels.font.weight = "normal" # Ensure they aren't bold by default
+      ) %>% 
+      tab_spanner(
+        label = "Congregation",
+        columns = c(Label, City)  
+      ) %>%   
+      tab_style(
+        style = cell_text(style = "italic"),
+        locations = cells_column_labels()
+      )  
+  })
+  
+tables_list[[1]]
+tables_list[[2]]
+tables_list[[3]]
+  
+```
+
+
+  \
+
+##    Summary
+
+While the response rate was disappointing, I believe that we still got useful
+information that can help guide our future steps. At least in this sample, there
+is interest in doing pilots, and strong interest in Formation. Mitigation has
+the strongest interest - perhaps in part because that also implies the potential
+to save money. Always a good carrot. Adaptation is less popular, which to me
+says that we need to educate people more on the likelihood of more frequent and
+severe natural disasters, as well as the disasters that they may not quite
+recognize yet (heat waves, smoke). 
+
+
+
+
+
