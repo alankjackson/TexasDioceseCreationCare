@@ -268,6 +268,41 @@ saveRDS(Parishes, paste0(path, "Clean_Parishes.rds"))
 
 ```
 
+##    Add St Stephen's school 26 Apr 2026
+
+```{r}
+Parishes <- readRDS(paste0(path, "Clean_Parishes.rds")) 
+
+Parishes <- Parishes %>% 
+  mutate(Zip=as.character(Zip))
+  
+#################################
+# St Stephen's school
+#################################
+sfc = sf::st_sfc(sf::st_point(c(-97.81917743079927, 30.330547540331125)))
+sf::st_geometry(sfc)
+sf::st_crs(sfc) <- google_crs
+
+Parishes <- Parishes %>% 
+  add_row(ID = 175,
+          Label = "St Stephen's",
+          City = "Austin",
+          Convocation = "Austin",
+          County = "Travis",
+          Zip = "78746",
+          Address = "6500 St Stephens Dr, Austin, TX 78746",
+          Description = "6500 St Stephens Dr, Austin, TX 78746",
+          Status = "Open",
+          geometry = sfc)
+
+Parishes[Parishes$ID==175,]$Status <- "Open" 
+Parishes[Parishes$ID==175,]$Label <- "St Stephen's School" 
+Parishes[Parishes$ID==33,]$City <- "Atascosita" 
+
+saveRDS(Parishes, paste0(path, "Clean_Parishes.rds"))
+
+```
+
 
 ##    Add ID to spreadsheet
 
